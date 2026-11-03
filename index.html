@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#111c20" />
+    <meta name="description" content="Step inside Port FreeCommerce. An immense, original first-person space station experience inspired by the Murderbot universe, built with Three.js." />
+    <title>Port FreeCommerce — A Station Experience</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect fill='%23e4a06a' width='64' height='64'/%3E%3Cpath d='M18 45V19h27v7H25v7h15v7H25v5z' fill='%23131d20'/%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <canvas id="station" aria-label="Three-dimensional Port FreeCommerce space station"></canvas>
+    <div class="vignette" aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true"></div>
+
+    <header class="topbar">
+      <a class="wordmark" href="#" id="home" aria-label="Port FreeCommerce home">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 27V5h25v6H10v5h14v6H10v5z" fill="currentColor"/></svg>
+        <span>PORT<br>FREECOMMERCE</span>
+      </a>
+      <span class="topbar-label">AN ORBITAL EXPERIENCE</span>
+      <div class="topbar-actions">
+        <span class="live-status"><i></i> STATION ONLINE</span>
+        <button class="icon-button" id="sound-button" aria-label="Enable ambient sound" title="Ambient sound">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path class="sound-on" d="M15 8c3 2 3 6 0 8m3-11c5 4 5 10 0 14"/><path class="sound-off" d="m16 9 6 6m0-6-6 6"/></svg>
+        </button>
+        <button class="icon-button" id="fullscreen-button" aria-label="Enter fullscreen" title="Fullscreen">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <main id="arrival" class="arrival">
+      <div class="arrival-copy">
+        <p class="eyebrow"><span class="tiny-cross">+</span> CORPORATION RIM · TRANSIT HUB 07</p>
+        <h1>EVERYONE<br>IS <span>IN TRANSIT.</span></h1>
+        <p class="intro">A thousand destinations. A million passing lives.<br>And somewhere in between, a place to disappear.</p>
+        <button id="enter-button" class="enter-button" disabled><span id="enter-label">INITIALIZING STATION</span><span class="button-arrow">↗</span></button>
+        <p class="entry-note"><span class="keycap">W A S D</span> TO MOVE <span class="note-dot">·</span> MOUSE TO LOOK</p>
+      </div>
+      <aside class="arrival-location" aria-label="Current station view">
+        <div class="location-rule"><span></span> YOU ARE APPROACHING</div>
+        <div class="location-number">01<span>/ 04</span></div>
+        <h2>THE CONCOURSE</h2>
+        <p>Where every journey crosses.</p>
+        <div class="location-coordinates">DECK 01 <span>09.714 / 62.008</span></div>
+      </aside>
+      <footer class="arrival-footer">
+        <span>PORT FREECOMMERCE <b> / </b> INDEPENDENT TRADE STATION</span>
+        <span class="fan-note">AN UNOFFICIAL MURDERBOT-INSPIRED EXPLORATION</span>
+        <span class="scroll-mark">NO MISSION. JUST EXPLORE. <svg viewBox="0 0 20 20"><path d="M10 3v13m-5-5 5 5 5-5" fill="none" stroke="currentColor"/></svg></span>
+      </footer>
+    </main>
+
+    <section id="exploration" class="exploration" hidden aria-label="Exploration controls">
+      <div class="explore-location"><span id="deck-name" class="eyebrow">PORT FREECOMMERCE / DECK 01</span><h2 id="zone-name">The concourse</h2><span id="zone-description">All arrivals become departures.</span></div>
+      <div class="crosshair" aria-hidden="true"></div>
+      <div id="interaction-hint" class="interaction-hint" hidden><span class="keycap">E</span><span id="interaction-label">Read terminal</span></div>
+      <div class="explore-bottom">
+        <div class="navigation-buttons"><button id="map-button" class="text-button"><span class="keycap">M</span> STATION MAP</button><button id="help-button" class="text-button"><span class="keycap">?</span> CONTROLS</button><button id="pause-button" class="text-button"><span class="keycap">ESC</span> PAUSE</button></div>
+        <span class="discovery-count"><span id="discovered-count">01</span> / 04 SECTORS VISITED</span>
+      </div>
+      <div class="compass" aria-hidden="true"><span>W</span><span id="compass-heading">N</span><span>E</span><i></i></div>
+      <button id="touch-interact" class="touch-interact" aria-label="Interact with terminal" hidden>E</button>
+      <div id="joystick" class="joystick" aria-label="Movement joystick"><div id="joystick-thumb"></div></div>
+      <div id="look-pad" class="look-pad" aria-label="Drag to look"></div>
+    </section>
+
+    <dialog id="map-dialog" class="station-dialog map-dialog">
+      <div class="dialog-top"><span class="eyebrow">STATION DIRECTORY / PUBLIC DECKS</span><button class="close-button" aria-label="Close station map" data-close>×</button></div>
+      <h2>A place in the in-between.</h2><p class="dialog-intro">Select a sector to take the station transit.</p>
+      <div class="map-layout">
+        <div class="station-map" aria-hidden="true"><svg viewBox="0 0 380 380"><defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0H0V20" fill="none" stroke="#b4c0b1" stroke-opacity=".08"/></pattern></defs><rect width="380" height="380" fill="url(#grid)"/><path d="M153 56h74v66h-14v76h115v65H213v57h-46v-63H46v-61h121v-74h-14z" fill="#e2a575" fill-opacity=".06" stroke="#d5ad83"/><path d="M190 83v221m-120-80h240" stroke="#c3a17b" stroke-dasharray="4 5" stroke-opacity=".5"/><circle cx="190" cy="272" r="5" fill="#e9ac79"/><text x="204" y="277">01</text><text x="270" y="216">02</text><text x="73" y="216">03</text><text x="204" y="94">04</text><path d="M23 28v-8h8M349 20h8v8M23 352v8h8m318 0h8v-8" stroke="#adc1b1" fill="none"/></svg><span id="map-current">YOU ARE IN THE CONCOURSE</span></div>
+        <div class="sector-list">
+          <button data-sector="concourse"><span class="sector-number">01</span><span><strong>The concourse</strong><small>Transfers below. Public promenades and bridges above.</small></span><b>↗</b></button>
+          <button data-sector="observation"><span class="sector-number">02</span><span><strong>Observation gallery</strong><small>A quiet fan-shaped gallery rising toward the rings.</small></span><b>↗</b></button>
+          <button data-sector="market"><span class="sector-number">03</span><span><strong>The exchange</strong><small>Winding streets, low awnings, and a common table.</small></span><b>↗</b></button>
+          <button data-sector="docks"><span class="sector-number">04</span><span><strong>Transit docks</strong><small>Customs, three boarding piers, and working berths.</small></span><b>↗</b></button>
+        </div>
+      </div>
+      <button class="promenade-transit" data-sector="promenade"><span>DECK 02 / PUBLIC PROMENADE</span><span>TRANSIT UP ↑</span></button>
+    </dialog>
+
+    <dialog id="help-dialog" class="station-dialog help-dialog"><div class="dialog-top"><span class="eyebrow">PERSONAL NAVIGATION / QUICK GUIDE</span><button class="close-button" aria-label="Close controls" data-close>×</button></div><h2>Find your own way.</h2><div class="controls-list"><p><span>Move</span><b>W A S D / ARROW KEYS</b></p><p><span>Look around</span><b>MOUSE / DRAG</b></p><p><span>Move faster</span><b>HOLD SHIFT</b></p><p><span>Inspect / read</span><b>E</b></p><p><span>Station transit</span><b>M</b></p><p><span>Pause / release mouse</span><b>ESC</b></p></div><p class="dialog-intro">On touch screens, use the left joystick to move and drag the right side to look around. Amber ramps near Arrivals lead to the upper concourse. The gallery’s broad ramp leads to the viewing terrace. Sound is optional.</p><label class="motion-setting"><input id="motion-setting" type="checkbox"> Reduced camera motion</label><label class="motion-setting"><input id="chatter-setting" type="checkbox" checked> Nearby voices and notices</label><p class="model-credit-note"><a href="/models/poly-pizza/credits.txt" target="_blank" rel="noopener noreferrer">Selected models by Quaternius · credits</a></p><button class="enter-button" data-close>BACK TO THE STATION <span>↗</span></button></dialog>
+
+    <dialog id="pause-dialog" class="station-dialog pause-dialog"><div class="dialog-top"><span class="eyebrow">PERSONAL FEED / PAUSED</span><span class="pause-indicator">Ⅱ</span></div><h2>The station carries on.</h2><p class="dialog-intro">Take a moment. There is no schedule to keep.</p><button class="enter-button" id="resume-button">RESUME EXPLORING <span>↗</span></button><button id="return-button" class="return-button">RETURN TO ARRIVAL VIEW</button></dialog>
+
+    <dialog id="terminal-dialog" class="station-dialog terminal-dialog"><div class="dialog-top"><span class="eyebrow">PUBLIC INFORMATION / OPEN ACCESS</span><button class="close-button" aria-label="Close terminal" data-close>×</button></div><span id="terminal-code" class="terminal-code">PFC—001</span><h2 id="terminal-title"></h2><div id="terminal-body"></div><button class="text-button terminal-close" data-close>DISCONNECT <span>↗</span></button></dialog>
+
+    <div id="station-chatter" class="ambient-chatter" aria-live="off"><span id="chatter-speaker"></span><p id="chatter-line"></p></div>
+    <div id="toast" class="toast" role="status"></div>
+    <div id="transition" class="transition" aria-hidden="true"></div>
+    <div id="loading" class="loading"><span class="loading-symbol">F</span><span>ESTABLISHING STATION LINK</span><div class="loading-bar"><i></i></div></div>
+    <div id="error" class="error" hidden><span class="eyebrow">STATION LINK UNAVAILABLE</span><h1>We couldn’t open the viewport.</h1><p id="error-message">This experience needs a browser with WebGL 2 enabled. Try enabling hardware acceleration, then reload.</p><button onclick="location.reload()" class="enter-button">RECONNECT <span>↗</span></button></div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

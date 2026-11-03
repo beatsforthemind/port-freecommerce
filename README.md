@@ -1,0 +1,88 @@
+# Port FreeCommerce
+
+A vast, explorable first-person space station built with [Three.js](https://threejs.org/). An original, unofficial fan interpretation inspired by the commercial stations of Martha Wells’s *The Murderbot Diaries*. Architecture, signs, planets, crowds, and sound are procedural. Selected CC0 foreground models by Quaternius are packaged with the project; the four GLBs total about 482 KiB and need no third-party runtime requests.
+
+## Run locally
+
+```sh
+nvm use
+npm ci
+npm run dev
+```
+
+Use Node 24 (`.nvmrc`); run `nvm install` first if that version is not installed.
+
+Open the local URL printed by Vite. For a production build:
+
+```sh
+npm run build
+npm run preview
+```
+
+The build outputs a static site to `dist/`, suitable for any static host. WebGL 2 and hardware acceleration are required. Fonts are loaded from Google Fonts, with local fallbacks if unavailable. No backend, account, or API key is needed.
+
+## Deploy through Vercel
+
+The project includes Vercel configuration for a static Vite deployment with Node 24, reproducible dependency installation, and asset caching. Every production build checks the compiled files and all four packaged models, including their credits. No environment variables are required.
+
+From this folder, run `vercel` for a preview deployment, then `vercel --prod` when ready to publish to production. See [deployment instructions](docs/deployment.md) for settings, validation, and the Git import alternative. These commands publish to your selected Vercel account; preparing this project does not create a deployment.
+
+## Explore
+
+- **WASD / arrows:** walk. **Shift:** move faster.
+- **Mouse:** look around. If pointer lock is unavailable, click and drag the scene.
+- **E:** read nearby public information terminals.
+- **E near independent traders:** inspect their wares and discover short environmental stories.
+- **M:** open the sector map and transit between sectors.
+- **H / ?:** controls and reduced camera motion.
+- **Escape:** pause and release the mouse.
+- On touch screens, move with the left joystick and drag the right side to look.
+- Sound and fullscreen can be toggled in the upper right. Sound is off initially.
+
+Four physically connected sectors are walkable: the monumental concourse, the planetary observation gallery, the commercial exchange, and transit docks. The sector map provides instant transit. Public terminals contain original station notices and environmental stories. Find all four sectors at your own pace.
+
+The sectors now have distinct architecture and circulation:
+
+- **Concourse:** two long amber-edged ramps climb to the public promenade, 7.625 m above the main deck. Two bridges connect the side galleries. The map also offers transit directly upstairs.
+- **Observation:** a narrow vestibule opens into a faceted fan with reading alcoves, roof petals, and panoramic glazing. A broad ramp rises 2.8 m toward the planet-facing terrace.
+- **Exchange:** low overlapping canopies shelter a winding street around irregular shop islands. Follow the bends to the common table, food stalls, and repair lane.
+- **Docks:** customs opens into a tall octagonal holding hall. Three glazed piers branch toward the local shuttle, long-haul liner, and freight tender.
+
+Travelers follow each area's real routes; readers sit on both observation levels and commuters cross the upper bridges. The map traces the actual public floors, including raised routes. The optional soundscape changes with each area's use and softens the crowd upstairs.
+
+## Project structure
+
+| File | Purpose |
+| --- | --- |
+| `src/main.js` | Renderer, lighting, bloom, interface, sectors, transit, interaction |
+| `src/world.js` | Batched concourse architecture, balconies, floor, navigation sculpture, space |
+| `src/districts.js` | Shared district batching, signs, travelers, and drones |
+| `src/district-observation.js` | Fan-shaped observatory, ramp, terrace, ringed planet, and quiet alcoves |
+| `src/district-market.js` | Irregular bazaar, winding streets, canopies, shop islands, and common court |
+| `src/district-docks.js` | Octagonal departure hall, branching boarding piers, pressure locks, and ships |
+| `src/concourse-access.js` | Public promenade ramps, bridges, railings, and upper-level floor metadata |
+| `src/navigation.js` | Shared polygon floors, height sampling, vertical collisions, and sector classification |
+| `src/station-plan.js` | Station map generated from the real public floors |
+| `src/surfaces.js` | Cached procedural panel albedo/normal atlases with physically scaled UVs |
+| `src/furnishings.js` | Batched seating, planters, departure boards, decals, baked contact shadows |
+| `src/atmosphere.js` | GPU dust, vent steam, light shafts, route chevrons, exterior traffic |
+| `src/population.js` | Diverse travelers, readers, social groups, workers, and service units |
+| `src/commerce.js` | Tea caravan, specimen broker, salvage workshop, suspended seed library |
+| `src/station-life.js` | Cargo tram, cleaners, automated repair cell, dock winch, local notices |
+| `src/imported-models.js` | Local GLB loading, scale/origin normalization, static instancing, animated service robot |
+| `src/controls.js` | First-person movement, collision queries, pointer lock, mouse/touch fallback |
+| `src/audio.js` | Optional Web Audio station ambience |
+| `src/kit.js` | Shared geometry, signs, and material helpers |
+| `src/style.css` | Arrival view, exploration HUD, dialogs, responsive touch interface |
+
+Architecture and repeated props use material-based instancing. The renderer caps pixel density, uses inexpensive unshadowed lighting, and pauses rendering in background tabs. It respects the system reduced-motion setting, with an in-app override for camera motion. To extend a district, add geometry, vertically bounded colliders, floor polygons or ramp surfaces, and population routes to its builder. Walking, crowd placement, terminal heights, and the station plan share that floor metadata.
+
+The detail pass adds worn metal panels, grilles, surface relief, service equipment, passenger rest areas, stocked counters, vendor displays, cargo labels, and orbital instruments. Four shared 1024² textures supply the new surface/print detail. Atmospheric motion runs in shaders on immutable geometry; contact shadows are baked decals. No additional lights, shadow maps, or full-screen effects are introduced. Crowd matrix uploads are limited to 30 Hz, and HUD text changes only when its value changes. See [the performance comparison](docs/performance.md) for measured rendering costs and test limitations.
+
+The inhabited-station pass adds 80 more inhabitants in seven instanced batches, with varied travel clothing, respirators, augmentations, bags, seated readers, and social groups. Doorway visibility culls people hidden by sector walls, and distant accessories use simpler detail; uploads cap at 20 Hz. Four independent traders create new places to visit and inspect. A cargo tram, cleaners, repair manipulators, and a dock winch keep the station working around its passengers. Optional nearby voices and notices reveal short original stories; disable them from Controls. When sound is enabled, the synthetic soundscape changes between the market, observation gallery, concourse, and docks. It uses no recorded dialogue, downloads, or speech services.
+
+The imported foreground models are **Animated Robot**, **Scifi Computer**, **Tree Spiral**, and **Cooking Pot** by Quaternius, downloaded from Poly Pizza under CC0. The service unit uses its supplied idle animation. Repeated consoles, plants, and pots share geometry and materials. Selected terminal bodies, planter growth, specimen branches, and cookware proxies are omitted only after their replacement asset loads successfully; otherwise the procedural versions remain available. Creator/source links and exact file inspection records are in [model assets](docs/model-assets.md), [machine-readable metadata](docs/model-assets.json), and the in-app Controls credits link. Run `node scripts/inspect-glb.mjs public/models/poly-pizza/*.glb` to inspect the original files again.
+
+No game assets, text, or official maps from the books are included. This is an atmospheric exploration, with original names and notices, rather than a canonical reconstruction.
+
+The [adversarial review](docs/adversarial-review.md) records reproduced bugs, fixes, rendering comparisons, and remaining scope limits. It covers bounded model loading, viewport/DPR changes, cached history restoration, resource ownership, pointer-lock timing, wall/floor boundaries, long-session crowd routes, reduced motion, and touch controls. Raw measurements are retained in [review results](docs/review-results.json).

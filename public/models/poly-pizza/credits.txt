@@ -1,0 +1,29 @@
+Port FreeCommerce — imported model credits
+
+All four models below are by Quaternius and were downloaded from Poly Pizza.
+Their source listings identify the models as public-domain CC0 1.0 releases.
+License: https://creativecommons.org/publicdomain/zero/1.0/
+Creator: https://quaternius.com/
+
+Animated Robot
+https://poly.pizza/m/QCm7qe9uNJ
+Local file: animated-robot.glb
+
+Scifi Computer
+https://poly.pizza/m/U0xmt6tUlL
+Local file: scifi-computer.glb
+
+Tree Spiral
+https://poly.pizza/m/poFJzEWCk8
+Local file: tree-spiral.glb
+
+Cooking Pot
+https://poly.pizza/m/jAUb3FoCN7
+Local file: cooking-pot.glb
+
+Integration changes: normalized scale and origin; shared static instances;
+selected rigid robot parts consolidated while preserving their bone animation.
+Original downloaded GLB files are retained unchanged.
+
+This project is an unofficial fan interpretation. These are independent models,
+not official assets from The Murderbot Diaries or an adaptation.

@@ -1,0 +1,13 @@
+.git/
+.vercel/
+node_modules/
+dist/
+docs/
+.impeccable.md
+.agents/
+.codex/
+.env
+.env.*
+*.local
+*.log
+.DS_Store

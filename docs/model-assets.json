@@ -1,0 +1,605 @@
+{
+  "schemaVersion": 1,
+  "inspectedOn": "2026-11-03",
+  "totalSourceBytes": 493948,
+  "note": "Metadata describes downloaded source files before runtime batching, normalization, material adjustment, or shared instancing. These are third-party Quaternius models, not official Murderbot assets.",
+  "assets": [
+    {
+      "id": "animated-robot",
+      "title": "Animated Robot",
+      "creator": "Quaternius",
+      "source": "https://poly.pizza/m/QCm7qe9uNJ",
+      "license": {
+        "id": "CC0-1.0",
+        "url": "https://creativecommons.org/publicdomain/zero/1.0/"
+      },
+      "localPath": "public/models/poly-pizza/animated-robot.glb",
+      "listedTriangles": "1.4k",
+      "inspection": {
+        "bytes": 401024,
+        "sha256": "54f1a6999cca701cdc2f8fb67bcd9a283e1154cb80cac356f031bed7c2e74cbe",
+        "sceneTriangles": 3237,
+        "scenePrimitives": 19,
+        "meshCount": 14,
+        "meshInstances": 14,
+        "usedMaterialCount": 3,
+        "declaredMaterialCount": 5,
+        "materials": [
+          {
+            "index": 0,
+            "name": "Grey",
+            "alphaMode": "OPAQUE",
+            "doubleSided": false,
+            "baseColor": [
+              0.373757988214493,
+              0.371300429105759,
+              0.334965020418167,
+              1
+            ],
+            "metalness": 0.400000005960464,
+            "roughness": 0.415087103843689,
+            "emissive": [
+              0,
+              0,
+              0
+            ],
+            "hasBaseColorTexture": false,
+            "hasNormalTexture": false
+          },
+          {
+            "index": 1,
+            "name": "Main",
+            "alphaMode": "OPAQUE",
+            "doubleSided": false,
+            "baseColor": [
+              0.590328395366669,
+              0.291314452886581,
+              0.0383376032114029,
+              1
+            ],
+            "metalness": 0.400000005960464,
+            "roughness": 0.415087103843689,
+            "emissive": [
+              0,
+              0,
+              0
+            ],
+            "hasBaseColorTexture": false,
+            "hasNormalTexture": false
+          },
+          {
+            "index": 2,
+            "name": "Black",
+            "alphaMode": "OPAQUE",
+            "doubleSided": false,
+            "baseColor": [
+              0.046244353055954,
+              0.046244353055954,
+              0.046244353055954,
+              1
+            ],
+            "metalness": 0.400000005960464,
+            "roughness": 0.415087103843689,
+            "emissive": [
+              0,
+              0,
+              0
+            ],
+            "hasBaseColorTexture": false,
+            "hasNormalTexture": false
+          },
+          {
+            "index": 3,
+            "name": "Main",
+            "alphaMode": "OPAQUE",
+            "doubleSided": false,
+            "baseColor": [
+              0.590328395366669,
+              0.291314452886581,
+              0.0383376032114029,
+              1
+            ],
+            "metalness": 0.400000005960464,
+            "roughness": 0.415087103843689,
+            "emissive": [
+              0,
+              0,
+              0
+            ],
+            "hasBaseColorTexture": false,
+            "hasNormalTexture": false
+          },
+          {
+            "index": 4,
+            "name": "Grey",
+            "alphaMode": "OPAQUE",
+            "doubleSided": false,
+            "baseColor": [
+              0.373757988214493,
+              0.371300429105759,
+              0.334965020418167,
+              1
+            ],
+            "metalness": 0.400000005960464,
+            "roughness": 0.415087103843689,
+            "emissive": [
+              0,
+              0,
+              0
+            ],
+            "hasBaseColorTexture": false,
+            "hasNormalTexture": false
+          }
+        ],
+        "textureCount": 0,
+        "images": [],
+        "skins": [
+          {
+            "index": 0,
+            "name": null,
+            "joints": 43
+          },
+          {
+            "index": 1,
+            "name": null,
+            "joints": 43
+          }
+        ],
+        "animations": [
+          {
+            "name": "RobotArmature|Robot_Dance",
+            "duration": 3.33333325386047,
+            "channels": 10,
+            "targets": [
+              "rotation"
+            ]
+          },
+          {
+            "name": "RobotArmature|Robot_Death",
+            "duration": 0.958333313465118,
+            "channels": 17,
+            "targets": [
+              "translation",
+              "rotation"
+            ]
+          },
+          {
+            "name": "RobotArmature|Robot_Idle",
+            "duration": 3.33333325386047,
+            "channels": 6,
+            "targets": [
+              "translation",
+              "rotation"
+            ]
+          },
+          {
+            "name": "RobotArmature|Robot_Jump",
+            "duration": 0.708333313465118,
+            "channels": 17,
+            "targets": [
+              "translation",
+              "rotation"
+            ]
+          },
+          {
+            "name": "RobotArmature|Robot_No",
+            "duration": 1.66666662693024,
+            "channels": 6,
+            "targets": [
+              "translation",
+              "rotation"
+            ]
+          },
+          {
+            "name": "RobotArmature|Robot_Punch",
+            "duration": 0.833333313465118,
+            "channels": 14,
+            "targets": [
+              "translation",
+              "rotation"
+            ]
+          },
+          {
+            "name": "RobotArmature|Robot_Running",
+            "duration": 0.958333313465118,
+            "channels": 17,
+            "targets": [
+              "translation",
+              "rotation"
+            ]
+          },
+          {
+            "name": "RobotArmature|Robot_Sitting",
+            "duration": 0.416666656732559,
+            "channels": 8,
+            "targets": [
+              "translation",
+              "rotation"
+            ]
+          },
+          {
+            "name": "RobotArmature|Robot_Standing",
+            "duration": 0.416666656732559,
+            "channels": 8,
+            "targets": [
+              "translation",
+              "rotation"
+            ]
+          },
+          {
+            "name": "RobotArmature|Robot_ThumbsUp",
+            "duration": 1.58333337306976,
+            "channels": 14,
+            "targets": [
+              "translation",
+              "rotation"
+            ]
+          },
+          {
+            "name": "RobotArmature|Robot_Walking",
+            "duration": 0.958333313465118,
+            "channels": 19,
+            "targets": [
+              "translation",
+              "rotation"
+            ]
+          },
+          {
+            "name": "RobotArmature|Robot_WalkJump",
+            "duration": 0.833333313465118,
+            "channels": 17,
+            "targets": [
+              "translation",
+              "rotation"
+            ]
+          },
+          {
+            "name": "RobotArmature|Robot_Wave",
+            "duration": 1.83333337306976,
+            "channels": 17,
+            "targets": [
+              "translation",
+              "rotation"
+            ]
+          },
+          {
+            "name": "RobotArmature|Robot_Yes",
+            "duration": 1.66666662693024,
+            "channels": 6,
+            "targets": [
+              "translation",
+              "rotation"
+            ]
+          }
+        ],
+        "requiredExtensions": [],
+        "extensionsUsed": [],
+        "externalResources": [],
+        "bounds": {
+          "min": [
+            -3.3119901018217233,
+            -0.020304434275416505,
+            -1.4050911732378206
+          ],
+          "max": [
+            3.3065588278695968,
+            4.614044762716506,
+            1.373348246219275
+          ],
+          "size": [
+            6.61854892969132,
+            4.634349196991923,
+            2.7784394194570954
+          ],
+          "note": "Default-scene accessor bounds after node transforms; skinned animation may exceed these base bounds."
+        }
+      }
+    },
+    {
+      "id": "cooking-pot",
+      "title": "Cooking Pot",
+      "creator": "Quaternius",
+      "source": "https://poly.pizza/m/jAUb3FoCN7",
+      "license": {
+        "id": "CC0-1.0",
+        "url": "https://creativecommons.org/publicdomain/zero/1.0/"
+      },
+      "localPath": "public/models/poly-pizza/cooking-pot.glb",
+      "listedTriangles": 260,
+      "inspection": {
+        "bytes": 15016,
+        "sha256": "3836f63ea0a1135d1dbb6f8a942af6a1bc27912c21d5112c1820e88c64779995",
+        "sceneTriangles": 260,
+        "scenePrimitives": 1,
+        "meshCount": 1,
+        "meshInstances": 1,
+        "usedMaterialCount": 1,
+        "declaredMaterialCount": 1,
+        "materials": [
+          {
+            "index": 0,
+            "name": "Grey",
+            "alphaMode": "OPAQUE",
+            "doubleSided": false,
+            "baseColor": [
+              0.0788000747561455,
+              0.0788000747561455,
+              0.0788000747561455,
+              1
+            ],
+            "metalness": 0.400000005960464,
+            "roughness": 0.415087103843689,
+            "emissive": [
+              0,
+              0,
+              0
+            ],
+            "hasBaseColorTexture": false,
+            "hasNormalTexture": false
+          }
+        ],
+        "textureCount": 0,
+        "images": [],
+        "skins": [],
+        "animations": [],
+        "requiredExtensions": [],
+        "extensionsUsed": [],
+        "externalResources": [],
+        "bounds": {
+          "min": [
+            -1.2339534237980798,
+            -0.4117979468467016,
+            -0.9960806548320228
+          ],
+          "max": [
+            1.183598395437,
+            0.6639025353837082,
+            0.9960806209595375
+          ],
+          "size": [
+            2.41755181923508,
+            1.07570048223041,
+            1.9921612757915603
+          ],
+          "note": "Default-scene accessor bounds after node transforms; skinned animation may exceed these base bounds."
+        }
+      }
+    },
+    {
+      "id": "scifi-computer",
+      "title": "Scifi Computer",
+      "creator": "Quaternius",
+      "source": "https://poly.pizza/m/U0xmt6tUlL",
+      "license": {
+        "id": "CC0-1.0",
+        "url": "https://creativecommons.org/publicdomain/zero/1.0/"
+      },
+      "localPath": "public/models/poly-pizza/scifi-computer.glb",
+      "listedTriangles": 624,
+      "inspection": {
+        "bytes": 41964,
+        "sha256": "2462a9e43d8ef20636a5be154cb092c17548b9baac2e3538fde7319e9928b923",
+        "sceneTriangles": 624,
+        "scenePrimitives": 5,
+        "meshCount": 1,
+        "meshInstances": 1,
+        "usedMaterialCount": 5,
+        "declaredMaterialCount": 5,
+        "materials": [
+          {
+            "index": 0,
+            "name": "Main",
+            "alphaMode": "OPAQUE",
+            "doubleSided": false,
+            "baseColor": [
+              0.401963323354721,
+              0.401963323354721,
+              0.401963323354721,
+              1
+            ],
+            "metalness": 0.400000005960464,
+            "roughness": 1,
+            "emissive": [
+              0,
+              0,
+              0
+            ],
+            "hasBaseColorTexture": false,
+            "hasNormalTexture": false
+          },
+          {
+            "index": 1,
+            "name": "DarkGrey",
+            "alphaMode": "OPAQUE",
+            "doubleSided": false,
+            "baseColor": [
+              0.239547312259674,
+              0.239547312259674,
+              0.239547312259674,
+              1
+            ],
+            "metalness": 0.400000005960464,
+            "roughness": 1,
+            "emissive": [
+              0,
+              0,
+              0
+            ],
+            "hasBaseColorTexture": false,
+            "hasNormalTexture": false
+          },
+          {
+            "index": 2,
+            "name": "Accent",
+            "alphaMode": "OPAQUE",
+            "doubleSided": false,
+            "baseColor": [
+              0.558340728282928,
+              0.296138226985931,
+              0.0666259974241257,
+              1
+            ],
+            "metalness": 0.400000005960464,
+            "roughness": 1,
+            "emissive": [
+              0,
+              0,
+              0
+            ],
+            "hasBaseColorTexture": false,
+            "hasNormalTexture": false
+          },
+          {
+            "index": 3,
+            "name": "Black",
+            "alphaMode": "OPAQUE",
+            "doubleSided": false,
+            "baseColor": [
+              0.0420254841446877,
+              0.0420254841446877,
+              0.0420254841446877,
+              1
+            ],
+            "metalness": 0.400000005960464,
+            "roughness": 1,
+            "emissive": [
+              0,
+              0,
+              0
+            ],
+            "hasBaseColorTexture": false,
+            "hasNormalTexture": false
+          },
+          {
+            "index": 4,
+            "name": "DarkAccent",
+            "alphaMode": "OPAQUE",
+            "doubleSided": false,
+            "baseColor": [
+              0.226578950881958,
+              0.123378187417984,
+              0.030147360637784,
+              1
+            ],
+            "metalness": 0.400000005960464,
+            "roughness": 1,
+            "emissive": [
+              0,
+              0,
+              0
+            ],
+            "hasBaseColorTexture": false,
+            "hasNormalTexture": false
+          }
+        ],
+        "textureCount": 0,
+        "images": [],
+        "skins": [],
+        "animations": [],
+        "requiredExtensions": [],
+        "extensionsUsed": [],
+        "externalResources": [],
+        "bounds": {
+          "min": [
+            -0.29020663350820497,
+            -0.004168983855912316,
+            -0.2416244011331991
+          ],
+          "max": [
+            0.29020663350820497,
+            2.075316203294486,
+            0.4024517698254788
+          ],
+          "size": [
+            0.5804132670164099,
+            2.0794851871503983,
+            0.644076170958678
+          ],
+          "note": "Default-scene accessor bounds after node transforms; skinned animation may exceed these base bounds."
+        }
+      }
+    },
+    {
+      "id": "tree-spiral",
+      "title": "Tree Spiral",
+      "creator": "Quaternius",
+      "source": "https://poly.pizza/m/poFJzEWCk8",
+      "license": {
+        "id": "CC0-1.0",
+        "url": "https://creativecommons.org/publicdomain/zero/1.0/"
+      },
+      "localPath": "public/models/poly-pizza/tree-spiral.glb",
+      "listedTriangles": 748,
+      "inspection": {
+        "bytes": 35944,
+        "sha256": "16b571e404dff48380d8289a92596d41a5b49e75fae9e0151d1a3fc1fc0a4e86",
+        "sceneTriangles": 748,
+        "scenePrimitives": 1,
+        "meshCount": 1,
+        "meshInstances": 1,
+        "usedMaterialCount": 1,
+        "declaredMaterialCount": 1,
+        "materials": [
+          {
+            "index": 0,
+            "name": "Atlas",
+            "alphaMode": "OPAQUE",
+            "doubleSided": false,
+            "baseColor": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "metalness": 0.400000005960464,
+            "roughness": 1,
+            "emissive": [
+              0,
+              0,
+              0
+            ],
+            "hasBaseColorTexture": true,
+            "hasNormalTexture": false
+          }
+        ],
+        "textureCount": 1,
+        "images": [
+          {
+            "index": 0,
+            "name": "Atlas.png",
+            "mimeType": "image/png",
+            "embedded": true,
+            "bytes": 5276,
+            "dimensions": [
+              512,
+              512
+            ]
+          }
+        ],
+        "skins": [],
+        "animations": [],
+        "requiredExtensions": [],
+        "extensionsUsed": [],
+        "externalResources": [],
+        "bounds": {
+          "min": [
+            -0.742496410384774,
+            -0.005451382336001629,
+            -0.6823273843674509
+          ],
+          "max": [
+            1.62121579051018,
+            4.485844850563313,
+            1.5452366420458832
+          ],
+          "size": [
+            2.363712200894954,
+            4.491296232899315,
+            2.227564026413334
+          ],
+          "note": "Default-scene accessor bounds after node transforms; skinned animation may exceed these base bounds."
+        }
+      }
+    }
+  ]
+}
