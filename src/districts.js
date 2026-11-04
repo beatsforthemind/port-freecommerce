@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { label } from './kit.js';
+import { createHumanHeadGeometry, createHumanTorsoGeometry, createHumanLimbGeometry, HUMAN_PALETTE, HUMAN_PROFILE } from './humanoid.js';
 import { buildObservationDistrict } from './district-observation.js';
 import { buildMarketDistrict } from './district-market.js';
 import { buildDocksDistrict } from './district-docks.js';
@@ -28,9 +29,12 @@ export function createDistricts() {
     if (!batches.has(material)) batches.set(material, []);
     batches.get(material).push(transform.matrix.clone());
   }
+  function footprint(x, y, z, w, h, d) {
+    colliders.push({ minX: x - w / 2 - .25, maxX: x + w / 2 + .25, minZ: z - d / 2 - .25, maxZ: z + d / 2 + .25, minY:y-h/2,maxY:y+h/2 });
+  }
   function solid(material, x, y, z, w, h, d, ry = 0) {
     box(material, x, y, z, w, h, d, ry);
-    colliders.push({ minX: x - w / 2 - .25, maxX: x + w / 2 + .25, minZ: z - d / 2 - .25, maxZ: z + d / 2 + .25, minY:y-h/2,maxY:y+h/2 });
+    footprint(x,y,z,w,h,d);
   }
   function sign(text, x, y, z, width, height = 1, ry = 0, color = '#eed2a2', background = '#1a2b2d') {
     const mesh = label(text, { width, height, color, background, fontSize: 100 });
@@ -97,7 +101,7 @@ export function createDistricts() {
     }
   }
 
-  const context={box,solid,sign,mesh,decal,m};
+  const context={box,solid,footprint,sign,mesh,decal,m};
   const layouts=[buildObservationDistrict(context),buildMarketDistrict(context),buildDocksDistrict(context)];
 
   // Repeated static box work becomes one draw call per material.
@@ -130,28 +134,39 @@ export function createDistricts() {
     group.add(drone); drones.push(drone);
   }
 
-  // Travelers share instanced geometries. Static clothing colors and a few
-  // carried bags give distinct silhouettes without increasing mesh count per
-  // person. Body/limb uploads are capped at 30Hz rather than every render frame.
+  // Adult proportions and tailored travel layers share the same four batches.
+  // Segmented limbs pivot at joints; hands, boots and luggage follow the chain.
   const crowdCount = 20;
-  // Four commuter streams stay inside the public spine, clear of the traders.
   const commuterLanes = [5.2,7.7,7.7,5.2];
-  const bodies = new THREE.InstancedMesh(new THREE.CylinderGeometry(.26, .32, .86, 7), mat('#b7bcab', {roughness:.9, metalness:.05}), crowdCount);
-  const heads = new THREE.InstancedMesh(new THREE.SphereGeometry(.19, 7, 6), m.cream, crowdCount);
-  const legs = new THREE.InstancedMesh(new THREE.CylinderGeometry(.075, .08, .75, 5), m.dark, crowdCount * 4);
-  const bags = new THREE.InstancedMesh(unitCube, m.rust, Math.ceil(crowdCount / 3));
-  bodies.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-  heads.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-  legs.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-  bags.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-  const coatColors = ['#3e5859', '#615b4d', '#766d54', '#536653', '#8a6c57'];
-  for (let i = 0; i < crowdCount; i++) {
-    bodies.setColorAt(i, new THREE.Color(coatColors[i % coatColors.length]));
-    heads.setColorAt(i, new THREE.Color(i % 3 ? '#b9aa85' : '#817663'));
+  const bodies = new THREE.InstancedMesh(createHumanTorsoGeometry(),mat('#ffffff',{roughness:.9,metalness:0}),crowdCount);
+  const heads = new THREE.InstancedMesh(createHumanHeadGeometry(),mat('#ffffff',{roughness:.95,metalness:0,vertexColors:true}),crowdCount);
+  const legs = new THREE.InstancedMesh(createHumanLimbGeometry(),mat('#ffffff',{roughness:.92,metalness:0}),crowdCount*8);
+  const bags = new THREE.InstancedMesh(unitCube,mat('#ffffff',{roughness:.87,metalness:0}),crowdCount*5+Math.ceil(crowdCount/3));
+  bodies.name='Commuters / tailored jackets';
+  heads.name='Commuters / oval heads';
+  legs.name='Commuters / jointed sleeves and trousers';
+  bags.name='Commuters / hands boots and luggage';
+  const tint = new THREE.Color();
+  const crowdMeshes=[bodies,heads,legs,bags];
+  for(const object of crowdMeshes){object.instanceMatrix.setUsage(THREE.DynamicDrawUsage);object.frustumCulled=false;}
+  for(let i=0;i<crowdCount;i++) {
+    const coat=HUMAN_PALETTE.coats[i%HUMAN_PALETTE.coats.length];
+    const trousers=HUMAN_PALETTE.trousers[i%HUMAN_PALETTE.trousers.length];
+    const skin=HUMAN_PALETTE.skin[(i*3)%HUMAN_PALETTE.skin.length];
+    bodies.setColorAt(i,tint.set(coat));heads.setColorAt(i,tint.set(skin));
+    for(let part=0;part<8;part++)legs.setColorAt(i*8+part,tint.set(part<4?trousers:coat));
+    for(let part=0;part<5;part++)bags.setColorAt(i*5+part,tint.set(part<3?skin:'#293338'));
+    if(i%3===0)bags.setColorAt(crowdCount*5+i/3,tint.set(HUMAN_PALETTE.trim[i%HUMAN_PALETTE.trim.length]));
   }
-  bodies.frustumCulled = heads.frustumCulled = legs.frustumCulled = bags.frustumCulled = false;
-  group.add(bodies, heads, legs, bags);
-  const crowdMeshes = [bodies,heads,legs,bags];
+  for(const object of crowdMeshes){object.instanceColor.needsUpdate=true;group.add(object);}
+  const actorMatrix=new THREE.Matrix4(),partMatrix=new THREE.Matrix4();
+  const legPoses=[{},{}];
+  function place(object,index,x,y,z,sx,sy,sz,rx=0,ry=0,rz=0) {
+    transform.position.set(x,y,z);transform.rotation.set(rx,ry,rz);transform.scale.set(sx,sy,sz);transform.updateMatrix();
+    partMatrix.multiplyMatrices(actorMatrix,transform.matrix);object.setMatrixAt(index,partMatrix);
+  }
+  const crowdTriangles=crowdMeshes.reduce((sum,object)=>sum+(object.geometry.index?.count??object.geometry.attributes.position.count)/3*object.count,0);
+  group.userData.commuters=Object.freeze({actors:crowdCount,drawCalls:4,triangles:crowdTriangles,updateHz:30,adultHeight:HUMAN_PROFILE.height});
   const crowdBounds = new THREE.Box3(new THREE.Vector3(-20,-.5,-97),new THREE.Vector3(20,2.6,63));
   const crowdFrustum = new THREE.Frustum();
   const crowdProjection = new THREE.Matrix4();
@@ -188,31 +203,43 @@ export function createDistricts() {
     if (!crowdVisible) return;
     if (time - lastCrowdUpdate < 1 / 30 && !(justShown && time > lastCrowdUpdate)) return;
     lastCrowdUpdate = time;
-    for (let i = 0; i < crowdCount; i++) {
-      const direction = i % 2 ? 1 : -1;
-      const x = (i % 2 ? -1 : 1) * commuterLanes[i % commuterLanes.length];
-      const along = i * 19.2 + time * direction * .65 + 1300;
-      const z = ((along % 156) + 156) % 156 - 95;
-      const bob = Math.sin(time * 4 + i * 2) * .025;
-      const yaw = direction > 0 ? 0 : Math.PI;
-      transform.position.set(x, 1.15 + bob, z); transform.rotation.set(0, yaw, 0); transform.scale.set(1, 1, 1); transform.updateMatrix(); bodies.setMatrixAt(i, transform.matrix);
-      transform.position.set(x, 1.83 + bob, z); transform.updateMatrix(); heads.setMatrixAt(i, transform.matrix);
-      for (let foot = 0; foot < 2; foot++) {
-        transform.position.set(x + (foot ? .13 : -.13), .42, z);
-        transform.rotation.set(Math.sin(time * 4 + i * 2 + foot * Math.PI) * .35, yaw, 0);
-        transform.updateMatrix(); legs.setMatrixAt(i * 4 + foot, transform.matrix);
+    for(let i=0;i<crowdCount;i++) {
+      const direction=i%2?1:-1;
+      const x=(i%2?-1:1)*commuterLanes[i%commuterLanes.length];
+      const along=i*19.2+time*direction*.65+1300;
+      const z=((along%156)+156)%156-95;
+      const phase=time*4.65+i*.83,gait=Math.sin(phase),cadence=Math.cos(phase);
+      const stature=.972+(i%5)*.014,breadth=.95+(i%4)*.03;
+      let minimumFoot=Infinity;
+      for(let side=0;side<2;side++) {
+        const p=legPoses[side],sign=side?1:-1;
+        p.x=sign*.112;p.thigh=(side?-gait:gait)*.28;
+        p.calf=p.thigh+.06+.46*Math.max(0,side?cadence:-cadence);
+        p.ky=HUMAN_PROFILE.hipY-Math.cos(p.thigh)*.40;p.kz=-Math.sin(p.thigh)*.40;
+        p.ay=p.ky-Math.cos(p.calf)*.38;p.az=p.kz-Math.sin(p.calf)*.38;
+        p.foot=Math.max(-.12,Math.min(.12,p.calf*.35));
+        p.fy=p.ay-.045*Math.cos(p.foot)-.065*Math.sin(p.foot);
+        p.fz=p.az-.045*Math.sin(p.foot)+.065*Math.cos(p.foot);
+        minimumFoot=Math.min(minimumFoot,p.fy-.055*Math.abs(Math.cos(p.foot))-.13*Math.abs(Math.sin(p.foot)));
       }
-      for (let arm = 0; arm < 2; arm++) {
-        transform.position.set(x + (arm ? .35 : -.35), 1.13 + bob, z);
-        transform.rotation.set(Math.sin(time * 4 + i * 2 + arm * Math.PI) * -.2, yaw, 0);
-        transform.scale.set(1, .74, 1);
-        transform.updateMatrix(); legs.setMatrixAt(i * 4 + 2 + arm, transform.matrix);
-      }
-      if (i % 3 === 0) {
-        transform.position.set(x + .52, .92 + bob, z);
-        transform.rotation.set(0, yaw, .08);
-        transform.scale.set(.42, .52, .24);
-        transform.updateMatrix(); bags.setMatrixAt(i / 3, transform.matrix);
+      const bob=Math.max(0,-minimumFoot*stature)+Math.abs(Math.sin(phase*2))*.003;
+      transform.position.set(x,bob,z);transform.rotation.set(0,direction>0?0:Math.PI,0);transform.scale.set(breadth,stature,breadth);transform.updateMatrix();actorMatrix.copy(transform.matrix);
+      place(bodies,i,0,HUMAN_PROFILE.torsoY,0,...HUMAN_PROFILE.torsoScale);
+      place(heads,i,0,HUMAN_PROFILE.headY,0,...HUMAN_PROFILE.headScale);
+      place(bags,i*5,0,1.49,.005,.105,.10,.10);
+      for(let side=0;side<2;side++) {
+        const p=legPoses[side],sign=side?1:-1;
+        place(legs,i*8+side*2,p.x,(HUMAN_PROFILE.hipY+p.ky)/2,p.kz/2,.135,.425,.15,p.thigh);
+        place(legs,i*8+side*2+1,p.x,(p.ky+p.ay)/2,(p.kz+p.az)/2,.105,.405,.12,p.calf);
+        place(bags,i*5+3+side,p.x,p.fy,p.fz,.14,.11,.26,p.foot);
+        const upper=-p.thigh*.72;
+        const lower=upper-.12-.10*Math.max(0,side?-cadence:cadence);
+        const sx=sign*.272,ey=HUMAN_PROFILE.shoulderY-Math.cos(upper)*.29,ez=-Math.sin(upper)*.29;
+        const wy=ey-Math.cos(lower)*.27,wz=ez-Math.sin(lower)*.27;
+        place(legs,i*8+4+side*2,sx,(HUMAN_PROFILE.shoulderY+ey)/2,ez/2,.125,.315,.14,upper,0,-sign*.025);
+        place(legs,i*8+5+side*2,sx,(ey+wy)/2,(ez+wz)/2,.095,.295,.11,lower);
+        place(bags,i*5+1+side,sx,wy-.047*Math.cos(lower),wz-.047*Math.sin(lower),.078,.115,.075,lower);
+        if(side===1&&i%3===0)place(bags,crowdCount*5+i/3,sx+.105,wy-.22,wz-.035,.25,.34,.15,0,0,.035);
       }
     }
     bodies.instanceMatrix.needsUpdate = heads.instanceMatrix.needsUpdate = legs.instanceMatrix.needsUpdate = bags.instanceMatrix.needsUpdate = true;

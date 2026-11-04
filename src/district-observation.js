@@ -6,7 +6,7 @@ import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
  * then an unbroken, gently rising floor delivers visitors to the curved glass.
  * Navigation surfaces describe the very same clipped polygons as the deck.
  */
-export function buildObservationDistrict({box, solid, sign, mesh, decal, m}) {
+export function buildObservationDistrict({box, solid, footprint: registerFootprint, sign, mesh, decal, m}) {
   const pale = new THREE.MeshStandardMaterial({color: '#b7c3b8', roughness: .78, metalness: .22});
   const deck = new THREE.MeshStandardMaterial({color: '#4c6263', roughness: .82, metalness: .22});
   const vault = new THREE.MeshStandardMaterial({color: '#203238', roughness: .85, metalness: .32, side: THREE.DoubleSide});
@@ -169,10 +169,12 @@ export function buildObservationDistrict({box, solid, sign, mesh, decal, m}) {
   }
 
   function seat(x,z,w,d,y) {
-    s(m.dark, x,y + .38,z,w,.76,d);
-    b(pale, x,y + .82,z,w,.13,d);
-    b(m.sage, x,y + .93,z,w - .16,.12,d - .16);
-    b(pale, x - w / 2 + .1,y + 1.23,z,.16,.7,d);
+    // Keep the existing solid footprint while fitting an adult seated pose.
+    b(m.dark, x,y + .2,z,w,.4,d);
+    registerFootprint(x,y + .38,z,w,.76,d);
+    b(pale, x,y + .43,z,w,.06,d);
+    b(m.sage, x,y + .49,z,w - .16,.12,d - .16);
+    b(pale, x - w / 2 + .1,y + .92,z,.16,.75,d);
     b(m.dark, x,y + .15,z,w - .2,.09,d + .1);
   }
   seat(47,-33,5.7,1.7,0);

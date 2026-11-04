@@ -1,0 +1,1882 @@
+{
+  "pass": "human-v8",
+  "baselineCommit": "991661a56ae4545a91c3e3649706a401ace2c20b",
+  "sourceHashes": {
+    "before": {
+      "src/humanoid.js": null,
+      "src/population.js": "906dfc5da4d45ad767187ab8bc71c5b8ef724616ff662d982ccebbe4c3b13437",
+      "src/districts.js": "5a46e2ce90349a65f45f80cbe25b3e02b73e3b8c7028c273d0051687643ea127",
+      "src/district-market.js": "c38d2df10dc0888cdf037730a60b674f740f005ecf5b04e469fc5cb2e33391a1",
+      "src/district-observation.js": "cd125c81c0063f53bfa85a305ec49acf73f453d180474b426a54b660f8f72bda",
+      "src/furnishings.js": "a3a147674d0188fd25dcb6740e3b4993845e8cd31e30a944f39973f1ebd94c13"
+    },
+    "after": {
+      "src/humanoid.js": "f210a30947f7af82b9842bc6b93c06cb96fbffec042c1b17ec58b9008313ddb7",
+      "src/population.js": "eb15b4de65cfccc92587832e24f7944324079a10abb41841d0366d33eb7fd968",
+      "src/districts.js": "85641e263b75887c6f055aee5d5551c3bb92453c2b14601f20fed92da576b49d",
+      "src/district-market.js": "ea5f43f766c9e00b2eb9b86b1bda6faadce52c521cf374cc5231a033f031527a",
+      "src/district-observation.js": "28c8276774b57671a578ed6c1607213c9046d5a2a2b320fbcc91e3a2f24299e0",
+      "src/furnishings.js": "bffe3b934a9384c1c39a927b93fdde10fefd0e5bc39546334ec96e09b0f9e7e0"
+    }
+  },
+  "before": {
+    "label": "before",
+    "renderer": "Chromium ANGLE/SwiftShader; CPU callback includes submission and may include blocking, not hardware FPS",
+    "date": "2026-11-03",
+    "origin": "http://127.0.0.1:5176",
+    "measurements": [
+      {
+        "device": "desktop",
+        "pose": "arrival",
+        "position": [
+          12.5,
+          10.5,
+          66
+        ],
+        "target": [
+          -3,
+          10,
+          -58
+        ],
+        "drawCalls": 193,
+        "triangles": 105416,
+        "points": 3140,
+        "textures": 52,
+        "geometries": 147,
+        "resolution": {
+          "pixelRatio": 1,
+          "width": 1280,
+          "height": 800,
+          "composerWidth": 1280,
+          "composerHeight": 800
+        },
+        "population": {
+          "actors": 80,
+          "travelers": 56,
+          "seated": 8,
+          "social": 12,
+          "serviceUnits": 4,
+          "pathRoutes": 10,
+          "upperDeckTravelers": 8,
+          "drawCalls": 7,
+          "triangles": 17944,
+          "updateHz": 20,
+          "textures": 0,
+          "lights": 0,
+          "visibleActors": 64,
+          "submittedTriangles": 9612,
+          "detailedActors": 18
+        },
+        "modelErrors": [],
+        "calls": {
+          "min": 193,
+          "median": 193,
+          "p95": 193,
+          "max": 193
+        },
+        "submittedTriangles": {
+          "min": 105416,
+          "median": 105416,
+          "p95": 105416,
+          "max": 105416
+        },
+        "cpuMs": {
+          "min": 1.9000000059604645,
+          "median": 2.2000000178813934,
+          "p95": 2.5999999940395355,
+          "max": 2.5999999940395355
+        },
+        "samples": 16
+      },
+      {
+        "device": "desktop",
+        "pose": "concourse",
+        "position": [
+          0,
+          1.75,
+          48
+        ],
+        "target": [
+          0,
+          1.75,
+          -58
+        ],
+        "drawCalls": 179,
+        "triangles": 104896,
+        "points": 3140,
+        "textures": 52,
+        "geometries": 147,
+        "resolution": {
+          "pixelRatio": 1,
+          "width": 1280,
+          "height": 800,
+          "composerWidth": 1280,
+          "composerHeight": 800
+        },
+        "population": {
+          "actors": 80,
+          "travelers": 56,
+          "seated": 8,
+          "social": 12,
+          "serviceUnits": 4,
+          "pathRoutes": 10,
+          "upperDeckTravelers": 8,
+          "drawCalls": 7,
+          "triangles": 17944,
+          "updateHz": 20,
+          "textures": 0,
+          "lights": 0,
+          "visibleActors": 68,
+          "submittedTriangles": 11112,
+          "detailedActors": 27
+        },
+        "modelErrors": [],
+        "calls": {
+          "min": 179,
+          "median": 179,
+          "p95": 179,
+          "max": 179
+        },
+        "submittedTriangles": {
+          "min": 104896,
+          "median": 104896,
+          "p95": 104896,
+          "max": 104896
+        },
+        "cpuMs": {
+          "min": 1.5999999940395355,
+          "median": 2.0999999940395355,
+          "p95": 2.699999988079071,
+          "max": 2.699999988079071
+        },
+        "samples": 16
+      },
+      {
+        "device": "desktop",
+        "pose": "observation",
+        "position": [
+          75,
+          3.675,
+          -20
+        ],
+        "target": [
+          140,
+          3.675,
+          -20
+        ],
+        "drawCalls": 68,
+        "triangles": 70991,
+        "points": 3140,
+        "textures": 53,
+        "geometries": 150,
+        "resolution": {
+          "pixelRatio": 1,
+          "width": 1280,
+          "height": 800,
+          "composerWidth": 1280,
+          "composerHeight": 800
+        },
+        "population": {
+          "actors": 80,
+          "travelers": 56,
+          "seated": 8,
+          "social": 12,
+          "serviceUnits": 4,
+          "pathRoutes": 10,
+          "upperDeckTravelers": 8,
+          "drawCalls": 7,
+          "triangles": 17944,
+          "updateHz": 20,
+          "textures": 0,
+          "lights": 0,
+          "visibleActors": 45,
+          "submittedTriangles": 7212,
+          "detailedActors": 17
+        },
+        "modelErrors": [],
+        "calls": {
+          "min": 68,
+          "median": 68,
+          "p95": 68,
+          "max": 68
+        },
+        "submittedTriangles": {
+          "min": 70991,
+          "median": 70991,
+          "p95": 70991,
+          "max": 70991
+        },
+        "cpuMs": {
+          "min": 0.7999999821186066,
+          "median": 1.0999999940395355,
+          "p95": 1.5999999940395355,
+          "max": 1.5999999940395355
+        },
+        "samples": 16
+      },
+      {
+        "device": "desktop",
+        "pose": "market",
+        "position": [
+          -38,
+          1.75,
+          30
+        ],
+        "target": [
+          -90,
+          1.75,
+          30
+        ],
+        "drawCalls": 90,
+        "triangles": 70100,
+        "points": 2440,
+        "textures": 60,
+        "geometries": 160,
+        "resolution": {
+          "pixelRatio": 1,
+          "width": 1280,
+          "height": 800,
+          "composerWidth": 1280,
+          "composerHeight": 800
+        },
+        "population": {
+          "actors": 80,
+          "travelers": 56,
+          "seated": 8,
+          "social": 12,
+          "serviceUnits": 4,
+          "pathRoutes": 10,
+          "upperDeckTravelers": 8,
+          "drawCalls": 7,
+          "triangles": 17944,
+          "updateHz": 20,
+          "textures": 0,
+          "lights": 0,
+          "visibleActors": 63,
+          "submittedTriangles": 11404,
+          "detailedActors": 38
+        },
+        "modelErrors": [],
+        "calls": {
+          "min": 90,
+          "median": 90,
+          "p95": 90,
+          "max": 90
+        },
+        "submittedTriangles": {
+          "min": 70100,
+          "median": 70100,
+          "p95": 70100,
+          "max": 70100
+        },
+        "cpuMs": {
+          "min": 0.9000000059604645,
+          "median": 1.4000000059604645,
+          "p95": 2.0999999940395355,
+          "max": 2.0999999940395355
+        },
+        "samples": 16
+      },
+      {
+        "device": "desktop",
+        "pose": "docks",
+        "position": [
+          0,
+          1.75,
+          -150
+        ],
+        "target": [
+          0,
+          1.75,
+          -204
+        ],
+        "drawCalls": 66,
+        "triangles": 66328,
+        "points": 3140,
+        "textures": 60,
+        "geometries": 160,
+        "resolution": {
+          "pixelRatio": 1,
+          "width": 1280,
+          "height": 800,
+          "composerWidth": 1280,
+          "composerHeight": 800
+        },
+        "population": {
+          "actors": 80,
+          "travelers": 56,
+          "seated": 8,
+          "social": 12,
+          "serviceUnits": 4,
+          "pathRoutes": 10,
+          "upperDeckTravelers": 8,
+          "drawCalls": 7,
+          "triangles": 17944,
+          "updateHz": 20,
+          "textures": 0,
+          "lights": 0,
+          "visibleActors": 53,
+          "submittedTriangles": 8060,
+          "detailedActors": 14
+        },
+        "modelErrors": [],
+        "calls": {
+          "min": 66,
+          "median": 66,
+          "p95": 66,
+          "max": 66
+        },
+        "submittedTriangles": {
+          "min": 66328,
+          "median": 66328,
+          "p95": 66328,
+          "max": 66328
+        },
+        "cpuMs": {
+          "min": 0.9000000059604645,
+          "median": 1.0999999940395355,
+          "p95": 1.5999999940395355,
+          "max": 1.5999999940395355
+        },
+        "samples": 16
+      },
+      {
+        "device": "desktop",
+        "pose": "promenade",
+        "position": [
+          -24,
+          9.375,
+          48
+        ],
+        "target": [
+          5,
+          12,
+          -25
+        ],
+        "drawCalls": 190,
+        "triangles": 109744,
+        "points": 3140,
+        "textures": 60,
+        "geometries": 160,
+        "resolution": {
+          "pixelRatio": 1,
+          "width": 1280,
+          "height": 800,
+          "composerWidth": 1280,
+          "composerHeight": 800
+        },
+        "population": {
+          "actors": 80,
+          "travelers": 56,
+          "seated": 8,
+          "social": 12,
+          "serviceUnits": 4,
+          "pathRoutes": 10,
+          "upperDeckTravelers": 8,
+          "drawCalls": 7,
+          "triangles": 17944,
+          "updateHz": 20,
+          "textures": 0,
+          "lights": 0,
+          "visibleActors": 70,
+          "submittedTriangles": 11704,
+          "detailedActors": 32
+        },
+        "modelErrors": [],
+        "calls": {
+          "min": 189,
+          "median": 189,
+          "p95": 190,
+          "max": 190
+        },
+        "submittedTriangles": {
+          "min": 109732,
+          "median": 109732,
+          "p95": 109744,
+          "max": 109744
+        },
+        "cpuMs": {
+          "min": 1.699999988079071,
+          "median": 2.199999988079071,
+          "p95": 2.699999988079071,
+          "max": 2.699999988079071
+        },
+        "samples": 16
+      },
+      {
+        "device": "mobile",
+        "pose": "arrival",
+        "position": [
+          12.5,
+          10.5,
+          66
+        ],
+        "target": [
+          -3,
+          10,
+          -58
+        ],
+        "drawCalls": 154,
+        "triangles": 92572,
+        "points": 3140,
+        "textures": 39,
+        "geometries": 116,
+        "resolution": {
+          "pixelRatio": 1,
+          "width": 390,
+          "height": 844,
+          "composerWidth": 390,
+          "composerHeight": 844
+        },
+        "population": {
+          "actors": 80,
+          "travelers": 56,
+          "seated": 8,
+          "social": 12,
+          "serviceUnits": 4,
+          "pathRoutes": 10,
+          "upperDeckTravelers": 8,
+          "drawCalls": 7,
+          "triangles": 17944,
+          "updateHz": 20,
+          "textures": 0,
+          "lights": 0,
+          "visibleActors": 64,
+          "submittedTriangles": 9612,
+          "detailedActors": 18
+        },
+        "modelErrors": [],
+        "calls": {
+          "min": 154,
+          "median": 154,
+          "p95": 154,
+          "max": 154
+        },
+        "submittedTriangles": {
+          "min": 92572,
+          "median": 92572,
+          "p95": 92572,
+          "max": 92572
+        },
+        "cpuMs": {
+          "min": 1.5999999940395355,
+          "median": 1.9000000059604645,
+          "p95": 2.300000011920929,
+          "max": 2.300000011920929
+        },
+        "samples": 16
+      },
+      {
+        "device": "mobile",
+        "pose": "concourse",
+        "position": [
+          0,
+          1.75,
+          48
+        ],
+        "target": [
+          0,
+          1.75,
+          -58
+        ],
+        "drawCalls": 151,
+        "triangles": 94036,
+        "points": 3140,
+        "textures": 39,
+        "geometries": 116,
+        "resolution": {
+          "pixelRatio": 1,
+          "width": 390,
+          "height": 844,
+          "composerWidth": 390,
+          "composerHeight": 844
+        },
+        "population": {
+          "actors": 80,
+          "travelers": 56,
+          "seated": 8,
+          "social": 12,
+          "serviceUnits": 4,
+          "pathRoutes": 10,
+          "upperDeckTravelers": 8,
+          "drawCalls": 7,
+          "triangles": 17944,
+          "updateHz": 20,
+          "textures": 0,
+          "lights": 0,
+          "visibleActors": 68,
+          "submittedTriangles": 11112,
+          "detailedActors": 27
+        },
+        "modelErrors": [],
+        "calls": {
+          "min": 151,
+          "median": 151,
+          "p95": 151,
+          "max": 151
+        },
+        "submittedTriangles": {
+          "min": 94036,
+          "median": 94036,
+          "p95": 94036,
+          "max": 94036
+        },
+        "cpuMs": {
+          "min": 1.199999988079071,
+          "median": 1.699999988079071,
+          "p95": 2,
+          "max": 2
+        },
+        "samples": 16
+      },
+      {
+        "device": "mobile",
+        "pose": "observation",
+        "position": [
+          75,
+          3.675,
+          -20
+        ],
+        "target": [
+          140,
+          3.675,
+          -20
+        ],
+        "drawCalls": 68,
+        "triangles": 70991,
+        "points": 3140,
+        "textures": 40,
+        "geometries": 126,
+        "resolution": {
+          "pixelRatio": 1,
+          "width": 390,
+          "height": 844,
+          "composerWidth": 390,
+          "composerHeight": 844
+        },
+        "population": {
+          "actors": 80,
+          "travelers": 56,
+          "seated": 8,
+          "social": 12,
+          "serviceUnits": 4,
+          "pathRoutes": 10,
+          "upperDeckTravelers": 8,
+          "drawCalls": 7,
+          "triangles": 17944,
+          "updateHz": 20,
+          "textures": 0,
+          "lights": 0,
+          "visibleActors": 45,
+          "submittedTriangles": 7212,
+          "detailedActors": 17
+        },
+        "modelErrors": [],
+        "calls": {
+          "min": 68,
+          "median": 68,
+          "p95": 68,
+          "max": 68
+        },
+        "submittedTriangles": {
+          "min": 70991,
+          "median": 70991,
+          "p95": 70991,
+          "max": 70991
+        },
+        "cpuMs": {
+          "min": 0.800000011920929,
+          "median": 1.100000023841858,
+          "p95": 1.399999976158142,
+          "max": 1.399999976158142
+        },
+        "samples": 16
+      },
+      {
+        "device": "mobile",
+        "pose": "market",
+        "position": [
+          -38,
+          1.75,
+          30
+        ],
+        "target": [
+          -90,
+          1.75,
+          30
+        ],
+        "drawCalls": 82,
+        "triangles": 69624,
+        "points": 2440,
+        "textures": 47,
+        "geometries": 143,
+        "resolution": {
+          "pixelRatio": 1,
+          "width": 390,
+          "height": 844,
+          "composerWidth": 390,
+          "composerHeight": 844
+        },
+        "population": {
+          "actors": 80,
+          "travelers": 56,
+          "seated": 8,
+          "social": 12,
+          "serviceUnits": 4,
+          "pathRoutes": 10,
+          "upperDeckTravelers": 8,
+          "drawCalls": 7,
+          "triangles": 17944,
+          "updateHz": 20,
+          "textures": 0,
+          "lights": 0,
+          "visibleActors": 63,
+          "submittedTriangles": 11404,
+          "detailedActors": 38
+        },
+        "modelErrors": [],
+        "calls": {
+          "min": 82,
+          "median": 82,
+          "p95": 82,
+          "max": 82
+        },
+        "submittedTriangles": {
+          "min": 69624,
+          "median": 69624,
+          "p95": 69624,
+          "max": 69624
+        },
+        "cpuMs": {
+          "min": 1,
+          "median": 1.2999999821186066,
+          "p95": 1.800000011920929,
+          "max": 1.800000011920929
+        },
+        "samples": 16
+      },
+      {
+        "device": "mobile",
+        "pose": "docks",
+        "position": [
+          0,
+          1.75,
+          -150
+        ],
+        "target": [
+          0,
+          1.75,
+          -204
+        ],
+        "drawCalls": 61,
+        "triangles": 66320,
+        "points": 2440,
+        "textures": 47,
+        "geometries": 143,
+        "resolution": {
+          "pixelRatio": 1,
+          "width": 390,
+          "height": 844,
+          "composerWidth": 390,
+          "composerHeight": 844
+        },
+        "population": {
+          "actors": 80,
+          "travelers": 56,
+          "seated": 8,
+          "social": 12,
+          "serviceUnits": 4,
+          "pathRoutes": 10,
+          "upperDeckTravelers": 8,
+          "drawCalls": 7,
+          "triangles": 17944,
+          "updateHz": 20,
+          "textures": 0,
+          "lights": 0,
+          "visibleActors": 53,
+          "submittedTriangles": 8060,
+          "detailedActors": 14
+        },
+        "modelErrors": [],
+        "calls": {
+          "min": 61,
+          "median": 61,
+          "p95": 61,
+          "max": 61
+        },
+        "submittedTriangles": {
+          "min": 66320,
+          "median": 66320,
+          "p95": 66320,
+          "max": 66320
+        },
+        "cpuMs": {
+          "min": 0.800000011920929,
+          "median": 0.9000000059604645,
+          "p95": 1.4000000059604645,
+          "max": 1.4000000059604645
+        },
+        "samples": 16
+      },
+      {
+        "device": "mobile",
+        "pose": "promenade",
+        "position": [
+          -24,
+          9.375,
+          48
+        ],
+        "target": [
+          5,
+          12,
+          -25
+        ],
+        "drawCalls": 166,
+        "triangles": 103288,
+        "points": 3140,
+        "textures": 56,
+        "geometries": 154,
+        "resolution": {
+          "pixelRatio": 1,
+          "width": 390,
+          "height": 844,
+          "composerWidth": 390,
+          "composerHeight": 844
+        },
+        "population": {
+          "actors": 80,
+          "travelers": 56,
+          "seated": 8,
+          "social": 12,
+          "serviceUnits": 4,
+          "pathRoutes": 10,
+          "upperDeckTravelers": 8,
+          "drawCalls": 7,
+          "triangles": 17944,
+          "updateHz": 20,
+          "textures": 0,
+          "lights": 0,
+          "visibleActors": 70,
+          "submittedTriangles": 11704,
+          "detailedActors": 32
+        },
+        "modelErrors": [],
+        "calls": {
+          "min": 166,
+          "median": 166,
+          "p95": 166,
+          "max": 166
+        },
+        "submittedTriangles": {
+          "min": 103288,
+          "median": 103288,
+          "p95": 103288,
+          "max": 103288
+        },
+        "cpuMs": {
+          "min": 1.800000011920929,
+          "median": 2.0999999940395355,
+          "p95": 2.600000023841858,
+          "max": 2.600000023841858
+        },
+        "samples": 16
+      }
+    ],
+    "errors": []
+  },
+  "after": {
+    "label": "after-optimized",
+    "renderer": "Chromium ANGLE/SwiftShader; CPU callback includes submission and may include blocking, not hardware FPS",
+    "date": "2026-11-03",
+    "origin": "http://127.0.0.1:5177",
+    "measurements": [
+      {
+        "device": "desktop",
+        "pose": "arrival",
+        "position": [
+          12.5,
+          10.5,
+          66
+        ],
+        "target": [
+          -3,
+          10,
+          -58
+        ],
+        "drawCalls": 193,
+        "triangles": 111382,
+        "points": 3140,
+        "textures": 52,
+        "geometries": 147,
+        "resolution": {
+          "pixelRatio": 1,
+          "width": 1280,
+          "height": 800,
+          "composerWidth": 1280,
+          "composerHeight": 800
+        },
+        "population": {
+          "actors": 80,
+          "travelers": 56,
+          "seated": 8,
+          "social": 12,
+          "serviceUnits": 4,
+          "pathRoutes": 10,
+          "upperDeckTravelers": 8,
+          "drawCalls": 7,
+          "triangles": 18912,
+          "updateHz": 20,
+          "textures": 0,
+          "lights": 0,
+          "humanStyle": "tailored adult proportions / understated faces",
+          "humanHeadHeight": 0.26,
+          "visibleActors": 64,
+          "submittedTriangles": 14386,
+          "detailedActors": 18
+        },
+        "modelErrors": [],
+        "calls": {
+          "min": 193,
+          "median": 193,
+          "p95": 193,
+          "max": 193
+        },
+        "submittedTriangles": {
+          "min": 111382,
+          "median": 111382,
+          "p95": 111382,
+          "max": 111382
+        },
+        "cpuMs": {
+          "min": 2.0999999940395355,
+          "median": 2.600000023841858,
+          "p95": 3.4000000059604645,
+          "max": 3.4000000059604645
+        },
+        "samples": 16
+      },
+      {
+        "device": "desktop",
+        "pose": "concourse",
+        "position": [
+          0,
+          1.75,
+          48
+        ],
+        "target": [
+          0,
+          1.75,
+          -58
+        ],
+        "drawCalls": 179,
+        "triangles": 110482,
+        "points": 3140,
+        "textures": 52,
+        "geometries": 147,
+        "resolution": {
+          "pixelRatio": 1,
+          "width": 1280,
+          "height": 800,
+          "composerWidth": 1280,
+          "composerHeight": 800
+        },
+        "population": {
+          "actors": 80,
+          "travelers": 56,
+          "seated": 8,
+          "social": 12,
+          "serviceUnits": 4,
+          "pathRoutes": 10,
+          "upperDeckTravelers": 8,
+          "drawCalls": 7,
+          "triangles": 18912,
+          "updateHz": 20,
+          "textures": 0,
+          "lights": 0,
+          "humanStyle": "tailored adult proportions / understated faces",
+          "humanHeadHeight": 0.26,
+          "visibleActors": 68,
+          "submittedTriangles": 15506,
+          "detailedActors": 27
+        },
+        "modelErrors": [],
+        "calls": {
+          "min": 179,
+          "median": 179,
+          "p95": 179,
+          "max": 179
+        },
+        "submittedTriangles": {
+          "min": 110482,
+          "median": 110482,
+          "p95": 110482,
+          "max": 110482
+        },
+        "cpuMs": {
+          "min": 1.7999999821186066,
+          "median": 2.199999988079071,
+          "p95": 2.5,
+          "max": 2.5
+        },
+        "samples": 16
+      },
+      {
+        "device": "desktop",
+        "pose": "observation",
+        "position": [
+          75,
+          3.675,
+          -20
+        ],
+        "target": [
+          140,
+          3.675,
+          -20
+        ],
+        "drawCalls": 68,
+        "triangles": 73715,
+        "points": 3140,
+        "textures": 53,
+        "geometries": 150,
+        "resolution": {
+          "pixelRatio": 1,
+          "width": 1280,
+          "height": 800,
+          "composerWidth": 1280,
+          "composerHeight": 800
+        },
+        "population": {
+          "actors": 80,
+          "travelers": 56,
+          "seated": 8,
+          "social": 12,
+          "serviceUnits": 4,
+          "pathRoutes": 10,
+          "upperDeckTravelers": 8,
+          "drawCalls": 7,
+          "triangles": 18912,
+          "updateHz": 20,
+          "textures": 0,
+          "lights": 0,
+          "humanStyle": "tailored adult proportions / understated faces",
+          "humanHeadHeight": 0.26,
+          "visibleActors": 45,
+          "submittedTriangles": 10176,
+          "detailedActors": 17
+        },
+        "modelErrors": [],
+        "calls": {
+          "min": 68,
+          "median": 68,
+          "p95": 68,
+          "max": 68
+        },
+        "submittedTriangles": {
+          "min": 73715,
+          "median": 73715,
+          "p95": 73715,
+          "max": 73715
+        },
+        "cpuMs": {
+          "min": 0.800000011920929,
+          "median": 1,
+          "p95": 1.4000000059604645,
+          "max": 1.4000000059604645
+        },
+        "samples": 16
+      },
+      {
+        "device": "desktop",
+        "pose": "market",
+        "position": [
+          -38,
+          1.75,
+          30
+        ],
+        "target": [
+          -90,
+          1.75,
+          30
+        ],
+        "drawCalls": 90,
+        "triangles": 73730,
+        "points": 2440,
+        "textures": 60,
+        "geometries": 160,
+        "resolution": {
+          "pixelRatio": 1,
+          "width": 1280,
+          "height": 800,
+          "composerWidth": 1280,
+          "composerHeight": 800
+        },
+        "population": {
+          "actors": 80,
+          "travelers": 56,
+          "seated": 8,
+          "social": 12,
+          "serviceUnits": 4,
+          "pathRoutes": 10,
+          "upperDeckTravelers": 8,
+          "drawCalls": 7,
+          "triangles": 18912,
+          "updateHz": 20,
+          "textures": 0,
+          "lights": 0,
+          "humanStyle": "tailored adult proportions / understated faces",
+          "humanHeadHeight": 0.26,
+          "visibleActors": 63,
+          "submittedTriangles": 14402,
+          "detailedActors": 38
+        },
+        "modelErrors": [],
+        "calls": {
+          "min": 90,
+          "median": 90,
+          "p95": 90,
+          "max": 90
+        },
+        "submittedTriangles": {
+          "min": 73730,
+          "median": 73730,
+          "p95": 73730,
+          "max": 73730
+        },
+        "cpuMs": {
+          "min": 1,
+          "median": 1.4000000059604645,
+          "p95": 1.9000000059604645,
+          "max": 1.9000000059604645
+        },
+        "samples": 16
+      },
+      {
+        "device": "desktop",
+        "pose": "docks",
+        "position": [
+          0,
+          1.75,
+          -150
+        ],
+        "target": [
+          0,
+          1.75,
+          -204
+        ],
+        "drawCalls": 66,
+        "triangles": 70102,
+        "points": 3140,
+        "textures": 60,
+        "geometries": 160,
+        "resolution": {
+          "pixelRatio": 1,
+          "width": 1280,
+          "height": 800,
+          "composerWidth": 1280,
+          "composerHeight": 800
+        },
+        "population": {
+          "actors": 80,
+          "travelers": 56,
+          "seated": 8,
+          "social": 12,
+          "serviceUnits": 4,
+          "pathRoutes": 10,
+          "upperDeckTravelers": 8,
+          "drawCalls": 7,
+          "triangles": 18912,
+          "updateHz": 20,
+          "textures": 0,
+          "lights": 0,
+          "humanStyle": "tailored adult proportions / understated faces",
+          "humanHeadHeight": 0.26,
+          "visibleActors": 53,
+          "submittedTriangles": 12074,
+          "detailedActors": 14
+        },
+        "modelErrors": [],
+        "calls": {
+          "min": 66,
+          "median": 66,
+          "p95": 66,
+          "max": 66
+        },
+        "submittedTriangles": {
+          "min": 70102,
+          "median": 70102,
+          "p95": 70102,
+          "max": 70102
+        },
+        "cpuMs": {
+          "min": 0.800000011920929,
+          "median": 1,
+          "p95": 1.4000000059604645,
+          "max": 1.4000000059604645
+        },
+        "samples": 16
+      },
+      {
+        "device": "desktop",
+        "pose": "promenade",
+        "position": [
+          -24,
+          9.375,
+          48
+        ],
+        "target": [
+          5,
+          12,
+          -25
+        ],
+        "drawCalls": 190,
+        "triangles": 115100,
+        "points": 3140,
+        "textures": 60,
+        "geometries": 160,
+        "resolution": {
+          "pixelRatio": 1,
+          "width": 1280,
+          "height": 800,
+          "composerWidth": 1280,
+          "composerHeight": 800
+        },
+        "population": {
+          "actors": 80,
+          "travelers": 56,
+          "seated": 8,
+          "social": 12,
+          "serviceUnits": 4,
+          "pathRoutes": 10,
+          "upperDeckTravelers": 8,
+          "drawCalls": 7,
+          "triangles": 18912,
+          "updateHz": 20,
+          "textures": 0,
+          "lights": 0,
+          "humanStyle": "tailored adult proportions / understated faces",
+          "humanHeadHeight": 0.26,
+          "visibleActors": 70,
+          "submittedTriangles": 15868,
+          "detailedActors": 32
+        },
+        "modelErrors": [],
+        "calls": {
+          "min": 189,
+          "median": 189,
+          "p95": 190,
+          "max": 190
+        },
+        "submittedTriangles": {
+          "min": 115088,
+          "median": 115088,
+          "p95": 115100,
+          "max": 115100
+        },
+        "cpuMs": {
+          "min": 1.7000000178813934,
+          "median": 2.199999988079071,
+          "p95": 2.5999999940395355,
+          "max": 2.5999999940395355
+        },
+        "samples": 16
+      },
+      {
+        "device": "mobile",
+        "pose": "arrival",
+        "position": [
+          12.5,
+          10.5,
+          66
+        ],
+        "target": [
+          -3,
+          10,
+          -58
+        ],
+        "drawCalls": 154,
+        "triangles": 97666,
+        "points": 3140,
+        "textures": 39,
+        "geometries": 116,
+        "resolution": {
+          "pixelRatio": 1,
+          "width": 390,
+          "height": 844,
+          "composerWidth": 390,
+          "composerHeight": 844
+        },
+        "population": {
+          "actors": 80,
+          "travelers": 56,
+          "seated": 8,
+          "social": 12,
+          "serviceUnits": 4,
+          "pathRoutes": 10,
+          "upperDeckTravelers": 8,
+          "drawCalls": 7,
+          "triangles": 18912,
+          "updateHz": 20,
+          "textures": 0,
+          "lights": 0,
+          "humanStyle": "tailored adult proportions / understated faces",
+          "humanHeadHeight": 0.26,
+          "visibleActors": 64,
+          "submittedTriangles": 14386,
+          "detailedActors": 18
+        },
+        "modelErrors": [],
+        "calls": {
+          "min": 154,
+          "median": 154,
+          "p95": 154,
+          "max": 154
+        },
+        "submittedTriangles": {
+          "min": 97666,
+          "median": 97666,
+          "p95": 97666,
+          "max": 97666
+        },
+        "cpuMs": {
+          "min": 1.5999999940395355,
+          "median": 2.100000023841858,
+          "p95": 2.5,
+          "max": 2.5
+        },
+        "samples": 16
+      },
+      {
+        "device": "mobile",
+        "pose": "concourse",
+        "position": [
+          0,
+          1.75,
+          48
+        ],
+        "target": [
+          0,
+          1.75,
+          -58
+        ],
+        "drawCalls": 151,
+        "triangles": 98750,
+        "points": 3140,
+        "textures": 39,
+        "geometries": 116,
+        "resolution": {
+          "pixelRatio": 1,
+          "width": 390,
+          "height": 844,
+          "composerWidth": 390,
+          "composerHeight": 844
+        },
+        "population": {
+          "actors": 80,
+          "travelers": 56,
+          "seated": 8,
+          "social": 12,
+          "serviceUnits": 4,
+          "pathRoutes": 10,
+          "upperDeckTravelers": 8,
+          "drawCalls": 7,
+          "triangles": 18912,
+          "updateHz": 20,
+          "textures": 0,
+          "lights": 0,
+          "humanStyle": "tailored adult proportions / understated faces",
+          "humanHeadHeight": 0.26,
+          "visibleActors": 68,
+          "submittedTriangles": 15506,
+          "detailedActors": 27
+        },
+        "modelErrors": [],
+        "calls": {
+          "min": 151,
+          "median": 151,
+          "p95": 151,
+          "max": 151
+        },
+        "submittedTriangles": {
+          "min": 98750,
+          "median": 98750,
+          "p95": 98750,
+          "max": 98750
+        },
+        "cpuMs": {
+          "min": 1.300000011920929,
+          "median": 2.0999999940395355,
+          "p95": 2.4000000059604645,
+          "max": 2.4000000059604645
+        },
+        "samples": 16
+      },
+      {
+        "device": "mobile",
+        "pose": "observation",
+        "position": [
+          75,
+          3.675,
+          -20
+        ],
+        "target": [
+          140,
+          3.675,
+          -20
+        ],
+        "drawCalls": 68,
+        "triangles": 73715,
+        "points": 3140,
+        "textures": 40,
+        "geometries": 126,
+        "resolution": {
+          "pixelRatio": 1,
+          "width": 390,
+          "height": 844,
+          "composerWidth": 390,
+          "composerHeight": 844
+        },
+        "population": {
+          "actors": 80,
+          "travelers": 56,
+          "seated": 8,
+          "social": 12,
+          "serviceUnits": 4,
+          "pathRoutes": 10,
+          "upperDeckTravelers": 8,
+          "drawCalls": 7,
+          "triangles": 18912,
+          "updateHz": 20,
+          "textures": 0,
+          "lights": 0,
+          "humanStyle": "tailored adult proportions / understated faces",
+          "humanHeadHeight": 0.26,
+          "visibleActors": 45,
+          "submittedTriangles": 10176,
+          "detailedActors": 17
+        },
+        "modelErrors": [],
+        "calls": {
+          "min": 68,
+          "median": 68,
+          "p95": 68,
+          "max": 68
+        },
+        "submittedTriangles": {
+          "min": 73715,
+          "median": 73715,
+          "p95": 73715,
+          "max": 73715
+        },
+        "cpuMs": {
+          "min": 0.7999999821186066,
+          "median": 1.0999999940395355,
+          "p95": 1.5999999940395355,
+          "max": 1.5999999940395355
+        },
+        "samples": 16
+      },
+      {
+        "device": "mobile",
+        "pose": "market",
+        "position": [
+          -38,
+          1.75,
+          30
+        ],
+        "target": [
+          -90,
+          1.75,
+          30
+        ],
+        "drawCalls": 82,
+        "triangles": 73254,
+        "points": 2440,
+        "textures": 47,
+        "geometries": 143,
+        "resolution": {
+          "pixelRatio": 1,
+          "width": 390,
+          "height": 844,
+          "composerWidth": 390,
+          "composerHeight": 844
+        },
+        "population": {
+          "actors": 80,
+          "travelers": 56,
+          "seated": 8,
+          "social": 12,
+          "serviceUnits": 4,
+          "pathRoutes": 10,
+          "upperDeckTravelers": 8,
+          "drawCalls": 7,
+          "triangles": 18912,
+          "updateHz": 20,
+          "textures": 0,
+          "lights": 0,
+          "humanStyle": "tailored adult proportions / understated faces",
+          "humanHeadHeight": 0.26,
+          "visibleActors": 63,
+          "submittedTriangles": 14402,
+          "detailedActors": 38
+        },
+        "modelErrors": [],
+        "calls": {
+          "min": 82,
+          "median": 82,
+          "p95": 82,
+          "max": 82
+        },
+        "submittedTriangles": {
+          "min": 73254,
+          "median": 73254,
+          "p95": 73254,
+          "max": 73254
+        },
+        "cpuMs": {
+          "min": 0.9000000059604645,
+          "median": 1.4000000059604645,
+          "p95": 1.7000000178813934,
+          "max": 1.7000000178813934
+        },
+        "samples": 16
+      },
+      {
+        "device": "mobile",
+        "pose": "docks",
+        "position": [
+          0,
+          1.75,
+          -150
+        ],
+        "target": [
+          0,
+          1.75,
+          -204
+        ],
+        "drawCalls": 61,
+        "triangles": 70094,
+        "points": 2440,
+        "textures": 47,
+        "geometries": 143,
+        "resolution": {
+          "pixelRatio": 1,
+          "width": 390,
+          "height": 844,
+          "composerWidth": 390,
+          "composerHeight": 844
+        },
+        "population": {
+          "actors": 80,
+          "travelers": 56,
+          "seated": 8,
+          "social": 12,
+          "serviceUnits": 4,
+          "pathRoutes": 10,
+          "upperDeckTravelers": 8,
+          "drawCalls": 7,
+          "triangles": 18912,
+          "updateHz": 20,
+          "textures": 0,
+          "lights": 0,
+          "humanStyle": "tailored adult proportions / understated faces",
+          "humanHeadHeight": 0.26,
+          "visibleActors": 53,
+          "submittedTriangles": 12074,
+          "detailedActors": 14
+        },
+        "modelErrors": [],
+        "calls": {
+          "min": 61,
+          "median": 61,
+          "p95": 61,
+          "max": 61
+        },
+        "submittedTriangles": {
+          "min": 70094,
+          "median": 70094,
+          "p95": 70094,
+          "max": 70094
+        },
+        "cpuMs": {
+          "min": 0.699999988079071,
+          "median": 1,
+          "p95": 1.5999999940395355,
+          "max": 1.5999999940395355
+        },
+        "samples": 16
+      },
+      {
+        "device": "mobile",
+        "pose": "promenade",
+        "position": [
+          -24,
+          9.375,
+          48
+        ],
+        "target": [
+          5,
+          12,
+          -25
+        ],
+        "drawCalls": 166,
+        "triangles": 107772,
+        "points": 3140,
+        "textures": 56,
+        "geometries": 154,
+        "resolution": {
+          "pixelRatio": 1,
+          "width": 390,
+          "height": 844,
+          "composerWidth": 390,
+          "composerHeight": 844
+        },
+        "population": {
+          "actors": 80,
+          "travelers": 56,
+          "seated": 8,
+          "social": 12,
+          "serviceUnits": 4,
+          "pathRoutes": 10,
+          "upperDeckTravelers": 8,
+          "drawCalls": 7,
+          "triangles": 18912,
+          "updateHz": 20,
+          "textures": 0,
+          "lights": 0,
+          "humanStyle": "tailored adult proportions / understated faces",
+          "humanHeadHeight": 0.26,
+          "visibleActors": 70,
+          "submittedTriangles": 15868,
+          "detailedActors": 32
+        },
+        "modelErrors": [],
+        "calls": {
+          "min": 166,
+          "median": 166,
+          "p95": 166,
+          "max": 166
+        },
+        "submittedTriangles": {
+          "min": 107772,
+          "median": 107772,
+          "p95": 107772,
+          "max": 107772
+        },
+        "cpuMs": {
+          "min": 1.699999988079071,
+          "median": 2.0999999940395355,
+          "p95": 2.5999999940395355,
+          "max": 2.5999999940395355
+        },
+        "samples": 16
+      }
+    ],
+    "errors": []
+  },
+  "worldChecks": {
+    "date": "2026-11-03",
+    "floorSurfaces": 23,
+    "districtColliders": 103,
+    "walkProbes": 71269,
+    "walkableProbes": 17481,
+    "unchangedFloorMetadata": true,
+    "unchangedDistrictColliders": true,
+    "unchangedWalkMask": true,
+    "before": {
+      "legacy": [
+        {
+          "name": "",
+          "instances": 20,
+          "triangles": 560
+        },
+        {
+          "name": "",
+          "instances": 20,
+          "triangles": 1400
+        },
+        {
+          "name": "",
+          "instances": 80,
+          "triangles": 1600
+        },
+        {
+          "name": "",
+          "instances": 7,
+          "triangles": 84
+        }
+      ],
+      "population": {
+        "actors": 80,
+        "travelers": 56,
+        "seated": 8,
+        "social": 12,
+        "serviceUnits": 4,
+        "pathRoutes": 10,
+        "upperDeckTravelers": 8,
+        "drawCalls": 7,
+        "triangles": 17944,
+        "updateHz": 20,
+        "textures": 0,
+        "lights": 0,
+        "visibleActors": 64,
+        "submittedTriangles": 9612,
+        "detailedActors": 18
+      },
+      "populationBufferBytes": 106944,
+      "legacyBufferBytes": 14508,
+      "programs": 44
+    },
+    "after": {
+      "legacy": [
+        {
+          "name": "Commuters / tailored jackets",
+          "instances": 20,
+          "triangles": 400
+        },
+        {
+          "name": "Commuters / oval heads",
+          "instances": 20,
+          "triangles": 1240
+        },
+        {
+          "name": "Commuters / jointed sleeves and trousers",
+          "instances": 160,
+          "triangles": 1280
+        },
+        {
+          "name": "Commuters / hands boots and luggage",
+          "instances": 107,
+          "triangles": 1284
+        }
+      ],
+      "population": {
+        "actors": 80,
+        "travelers": 56,
+        "seated": 8,
+        "social": 12,
+        "serviceUnits": 4,
+        "pathRoutes": 10,
+        "upperDeckTravelers": 8,
+        "drawCalls": 7,
+        "triangles": 18912,
+        "updateHz": 20,
+        "textures": 0,
+        "lights": 0,
+        "humanStyle": "tailored adult proportions / understated faces",
+        "humanHeadHeight": 0.26,
+        "visibleActors": 64,
+        "submittedTriangles": 14386,
+        "detailedActors": 18
+      },
+      "populationBufferBytes": 119788,
+      "legacyBufferBytes": 31516,
+      "programs": 45
+    },
+    "assetsLoaded": 4,
+    "trafficPreserved": {
+      "ships": 9,
+      "expressCabins": 2,
+      "serviceLifts": 2
+    }
+  },
+  "geometryChecks": {
+    "date": "2026-11-03",
+    "humans": 76,
+    "actors": 80,
+    "drawCalls": 7,
+    "stats": {
+      "actors": 80,
+      "travelers": 56,
+      "seated": 8,
+      "social": 12,
+      "serviceUnits": 4,
+      "pathRoutes": 4,
+      "upperDeckTravelers": 8,
+      "drawCalls": 7,
+      "triangles": 18912,
+      "updateHz": 20,
+      "textures": 0,
+      "lights": 0,
+      "humanStyle": "tailored adult proportions / understated faces",
+      "humanHeadHeight": 0.26,
+      "visibleActors": 80,
+      "submittedTriangles": 18912,
+      "detailedActors": 80
+    },
+    "jointProbes": 97280,
+    "maximumJointError": 0,
+    "maximumShellOverlap": 0.035000000000000225,
+    "minimumFootAboveFloor": -6.938893903907228e-18,
+    "maximumStanceGap": 0.007282860643037736,
+    "reducedMotionSteps": 1000,
+    "resourcesDisposedExactlyOnce": 11,
+    "testScope": "Isolated procedural character factory with synthetic routes and stable floors; skeletal/contact/lifecycle checks. Actual station floor/collider/walk behavior is verified separately in world-check."
+  },
+  "poseCacheChecks": {
+    "comparedFloatValues": 3681104,
+    "bitExactMatricesAndColors": true,
+    "cachedStaticHumans": 14,
+    "staticFKBuildsBefore": 1192,
+    "staticFKBuildsAfter": 14,
+    "animatedWalkers": 56,
+    "animatedTalkers": 6,
+    "invalidations": [
+      "seatOffset",
+      "yaw",
+      "scale",
+      "height",
+      "seatHeight",
+      "x",
+      "z",
+      "floor"
+    ],
+    "triangles": 18912,
+    "drawCalls": 7
+  },
+  "captureDates": {
+    "baselineLocal": "2026-11-03",
+    "finalLocal": "2026-11-04",
+    "timezone": "America/Chicago"
+  },
+  "captureNotes": [
+    "SwiftShader software-rendered callbacks are not hardware FPS or physical-device performance guarantees.",
+    "World floor/collider checks use the refined geometry, unchanged by the final byte-equivalent static-pose cache.",
+    "Inspected refined screenshots remain visually representative; cache byte-equivalence covers matrices and LOD.",
+    "Raw inherited harness records use a fixed2026-11-03 label; final optimized measurements completed after localmidnight on2026-11-04."
+  ],
+  "productionSmoke": {
+    "target": "Final Node 24 character production build; local Vite preview",
+    "fonts": "Google Fonts CSS replaced with empty CSS to verify local fallbacks",
+    "devices": [
+      {
+        "device": "desktop 1280x800",
+        "ready": true,
+        "loadedModels": 4,
+        "modelErrors": [],
+        "inhabitants": 80,
+        "exteriorVessels": 9,
+        "expressCabins": 2,
+        "serviceLifts": 2,
+        "slidingDoorLeaves": 4,
+        "populationTriangles": 18912,
+        "populationBatches": 7,
+        "headHeight": 0.26,
+        "stallkeepers": 4,
+        "models": [
+          {
+            "file": "animated-robot.glb",
+            "status": 200
+          },
+          {
+            "file": "scifi-computer.glb",
+            "status": 200
+          },
+          {
+            "file": "tree-spiral.glb",
+            "status": 200
+          },
+          {
+            "file": "cooking-pot.glb",
+            "status": 200
+          }
+        ],
+        "sectors": [
+          {
+            "target": "observation",
+            "sector": "observation",
+            "floorHeight": 1.9249999999999998
+          },
+          {
+            "target": "market",
+            "sector": "market",
+            "floorHeight": 0
+          },
+          {
+            "target": "docks",
+            "sector": "docks",
+            "floorHeight": 0
+          },
+          {
+            "target": "promenade",
+            "sector": "concourse",
+            "floorHeight": 7.625
+          }
+        ],
+        "creditsStatus": 200,
+        "javascriptErrors": [],
+        "localHttpFailures": [],
+        "devServerRequests": false
+      },
+      {
+        "device": "mobile 390x844 touch",
+        "ready": true,
+        "loadedModels": 4,
+        "modelErrors": [],
+        "inhabitants": 80,
+        "exteriorVessels": 9,
+        "expressCabins": 2,
+        "serviceLifts": 2,
+        "slidingDoorLeaves": 4,
+        "populationTriangles": 18912,
+        "populationBatches": 7,
+        "headHeight": 0.26,
+        "stallkeepers": 4,
+        "models": [
+          {
+            "file": "scifi-computer.glb",
+            "status": 200
+          },
+          {
+            "file": "animated-robot.glb",
+            "status": 200
+          },
+          {
+            "file": "tree-spiral.glb",
+            "status": 200
+          },
+          {
+            "file": "cooking-pot.glb",
+            "status": 200
+          }
+        ],
+        "sectors": [
+          {
+            "target": "observation",
+            "sector": "observation",
+            "floorHeight": 1.9249999999999998
+          },
+          {
+            "target": "market",
+            "sector": "market",
+            "floorHeight": 0
+          },
+          {
+            "target": "docks",
+            "sector": "docks",
+            "floorHeight": 0
+          },
+          {
+            "target": "promenade",
+            "sector": "concourse",
+            "floorHeight": 7.625
+          }
+        ],
+        "creditsStatus": 200,
+        "javascriptErrors": [],
+        "localHttpFailures": [],
+        "devServerRequests": false
+      }
+    ]
+  },
+  "productionBuild": {
+    "node": "24.22.1",
+    "vite": "7.3.7",
+    "javascriptKB": 860.32,
+    "javascriptGzipKB": 242.17,
+    "baselineJavascriptKB": 850.55,
+    "baselineJavascriptGzipKB": 238.47,
+    "compiledAssets": 2,
+    "packagedGLBs": 4,
+    "byteIdenticalPublicFiles": 5
+  }
+}

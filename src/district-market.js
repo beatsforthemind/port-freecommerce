@@ -1,12 +1,13 @@
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+import { createHumanHeadGeometry, createHumanTorsoGeometry, createHumanLimbGeometry, HUMAN_PALETTE, HUMAN_PROFILE } from './humanoid.js';
 
 /**
  * The Exchange is an accreted neighbourhood rather than a shopping corridor.
  * Alternating islands turn the public street twice before it reaches the
  * common table; its two loops also give the population a useful place to go.
  */
-export function buildMarketDistrict({box, solid, sign, mesh, decal, m}) {
+export function buildMarketDistrict({box, solid, footprint:registerFootprint, sign, mesh, decal, m}) {
   const footprint = [
     [-32,18],[-43,18],[-43,12],[-65,12],[-65,10],[-91,10],
     [-91,14],[-99,14],[-99,36],[-94,36],[-94,49],[-69,49],
@@ -66,6 +67,49 @@ export function buildMarketDistrict({box, solid, sign, mesh, decal, m}) {
     geometryBatches.get(material).push(baked);
   }
   const canopies = [];
+  // The existing matte, vertex-coloured fabric batch also carries the four
+  // stationary stallkeepers. Skin stays nonmetallic without another draw.
+  const personGeometry={head:createHumanHeadGeometry(),torso:createHumanTorsoGeometry(),limb:createHumanLimbGeometry(),box:new THREE.BoxGeometry(1,1,1)};
+  const personRoot=new THREE.Object3D(),personPart=new THREE.Object3D();
+  const personStart=new THREE.Vector3(),personEnd=new THREE.Vector3(),personDirection=new THREE.Vector3(),personUp=new THREE.Vector3(0,1,0),personRotation=new THREE.Quaternion(),personTint=new THREE.Color();
+  let vendorCount=0;
+  function personPiece(type,tint,x,y,z,sx,sy,sz,rx=0,ry=0,rz=0,quaternion) {
+    const source=personGeometry[type].clone();
+    const geometry=source.index?source.toNonIndexed():source;
+    if(geometry!==source)source.dispose();
+    for(const name of Object.keys(geometry.attributes))if(!['position','normal','color'].includes(name))geometry.deleteAttribute(name);
+    const count=geometry.attributes.position.count;
+    let colors=geometry.attributes.color;
+    if(!colors){colors=new THREE.BufferAttribute(new Float32Array(count*3).fill(1),3);geometry.setAttribute('color',colors);}
+    personTint.set(tint);
+    for(let i=0;i<count;i++)colors.setXYZ(i,colors.getX(i)*personTint.r,colors.getY(i)*personTint.g,colors.getZ(i)*personTint.b);
+    personPart.position.set(x,y,z);personPart.rotation.set(rx,ry,rz);if(quaternion)personPart.quaternion.copy(quaternion);personPart.scale.set(sx,sy,sz);personPart.updateMatrix();
+    geometry.applyMatrix4(personPart.matrix);geometry.applyMatrix4(personRoot.matrix);canopies.push(geometry);
+  }
+  function personSegment(tint,a,b,width,depth) {
+    personStart.set(...a);personEnd.set(...b);personDirection.subVectors(personStart,personEnd);
+    const length=personDirection.length();personRotation.setFromUnitVectors(personUp,personDirection.normalize());
+    personPiece('limb',tint,(a[0]+b[0])/2,(a[1]+b[1])/2,(a[2]+b[2])/2,width,length+.025,depth,0,0,0,personRotation);
+  }
+  function stallkeeper(x,z,yaw) {
+    const index=vendorCount++,coat=HUMAN_PALETTE.coats[(index*2+1)%HUMAN_PALETTE.coats.length];
+    const skin=HUMAN_PALETTE.skin[(index*2+1)%HUMAN_PALETTE.skin.length],trousers=HUMAN_PALETTE.trousers[index%HUMAN_PALETTE.trousers.length];
+    personRoot.position.set(x,0,z);personRoot.rotation.set(0,yaw,0);personRoot.scale.set(1,1,1);personRoot.updateMatrix();
+    personPiece('torso',coat,0,HUMAN_PROFILE.torsoY,0,...HUMAN_PROFILE.torsoScale);
+    personPiece('head',skin,0,HUMAN_PROFILE.headY,0,...HUMAN_PROFILE.headScale,0,index%2?.09:-.06);
+    personPiece('box',skin,0,1.49,.005,.105,.1,.1);
+    personPiece('box',HUMAN_PALETTE.trim[index%HUMAN_PALETTE.trim.length],0,.99,.15,.31,.40,.025);
+    for(const side of [-1,1]) {
+      personSegment(trousers,[side*.112,.88,0],[side*.12,.48,.015],.135,.15);
+      personSegment(trousers,[side*.12,.48,.015],[side*.13,.105,0],.105,.12);
+      personPiece('box','#293338',side*.13,.055,.065,.14,.11,.26);
+      const working=side>0||index%2===0;
+      const shoulder=[side*.272,HUMAN_PROFILE.shoulderY,0],elbow=[side*.29,1.10,working?.17:.025],wrist=[side*(working?.20:.29),working?1.04:.84,working?.38:.045];
+      personSegment(coat,shoulder,elbow,.125,.14);personSegment(coat,elbow,wrist,.095,.11);
+      personPiece('box',skin,wrist[0],working?1.02:.79,working?.44:.045,.08,working?.06:.115,working?.14:.075);
+    }
+  }
+
   function canopy(x,z,w,d,y,tint,tilt=.3){
     const geometry=new THREE.BufferGeometry();
     const points=[
@@ -87,16 +131,20 @@ export function buildMarketDistrict({box, solid, sign, mesh, decal, m}) {
 
   function stall({x,z,w,d,face,tint,name,kind}){
     const east=face==='east', faceX=east?x+w/2+.1:x, faceZ=east?z:z+d/2+.1;
-    S(tint,x,.58,z,w,1.16,d);
+    // Preserve the original private stall collider, while leaving actual floor
+    // inside the counter recess for an adult rather than a floating bust.
+    registerFootprint(x,.58,z,w,1.16,d);solids++;
     if(east){
       B(m.dark,x-w/2,2.45,z,.22,4.9,d);
       for(const side of [-1,1]) B(tint,x,1.8,z+side*d/2,w,3.6,.22);
-      B(m.cream,faceX,1.35,z,.72,.18,d-.35);
+      B(tint,faceX+.26,.43,z,.12,.86,d-.35);
+      B(m.cream,faceX,.90,z,.72,.18,d-.35);
       L(name,faceX+.09,3.55,z,d-.5,.86,Math.PI/2,'#eed0a0','#392f2b');
     }else{
       B(m.dark,x,2.45,z-d/2,w,4.9,.22);
       for(const side of [-1,1]) B(tint,x+side*w/2,1.8,z,.22,3.6,d);
-      B(m.cream,x,1.35,faceZ,w-.35,.18,.72);
+      B(tint,x,.43,faceZ+.26,w-.35,.86,.12);
+      B(m.cream,x,.90,faceZ,w-.35,.18,.72);
       L(name,x,3.65,faceZ+.08,w-.5,.86,0,'#eed0a0','#392f2b');
     }
     for(let row=0;row<3;row++){
@@ -108,28 +156,25 @@ export function buildMarketDistrict({box, solid, sign, mesh, decal, m}) {
         B(i%3?m.sage:m.cream,east?x-w/2+.45:x+along,y+.24,east?z+along:z-d/2+.45,east?.46:.6,.4,east?.6:.46);
       }
     }
-    const vendorX=east?faceX-1.5:x-1.1, vendorZ=east?z+1:faceZ-1.5;
-    B(m.sage,vendorX,1.96,vendorZ,.54,.85,.42);
-    B(m.cream,vendorX,2.57,vendorZ,.33,.36,.33);
-    B(m.dark,vendorX,2.8,vendorZ,.43,.12,.4);
-    for(const side of [-1,1]) B(m.sage,vendorX+side*.35,1.97,vendorZ,.16,.67,.17);
+    const vendorX=east?faceX-.75:x-1.1,vendorZ=east?z+1:faceZ-.75;
+    stallkeeper(vendorX,vendorZ,east?Math.PI/2:0);
     for(let i=0;i<6;i++){
       const along=(i-2.5)*(east?d:w)/7;
       const px=east?faceX+.04:x+along, pz=east?z+along:faceZ+.03;
-      B(m.dark,px,1.5,pz,east?.57:1,.1,east?1:.57);
+      B(m.dark,px,1.05,pz,east?.57:1,.1,east?1:.57);
       if(kind==='produce'){
         for(let j=0;j<4;j++){
           const px2=px+(east?(j%2)*.14-.07:(j%2)*.28-.14), pz2=pz+(east?Math.floor(j/2)*.28-.14:Math.floor(j/2)*.14-.07);
-          piece(new THREE.OctahedronGeometry(.19+(i%2)*.035),i%2?m.sage:m.red,px2,1.75,pz2,0,j*.6,.2);
-          piece(new THREE.ConeGeometry(.045,.22,4),m.sage,px2,1.99,pz2,.2,0,.25);
+          piece(new THREE.OctahedronGeometry(.19+(i%2)*.035),i%2?m.sage:m.red,px2,1.30,pz2,0,j*.6,.2);
+          piece(new THREE.ConeGeometry(.045,.22,4),m.sage,px2,1.54,pz2,.2,0,.25);
         }
       }else if(kind==='food'){
-        piece(new THREE.CylinderGeometry(.23,.15,.18,8),m.cream,px,1.67,pz);
-        piece(new THREE.CylinderGeometry(.195,.195,.035,8),m.rust,px,1.77,pz);
-        for(const side of [-1,1]) B(m.dark,px+side*.08,1.85,pz,.025,.3,.025);
+        piece(new THREE.CylinderGeometry(.23,.15,.18,8),m.cream,px,1.22,pz);
+        piece(new THREE.CylinderGeometry(.195,.195,.035,8),m.rust,px,1.32,pz);
+        for(const side of [-1,1]) B(m.dark,px+side*.08,1.40,pz,.025,.3,.025);
       }else{
-        B(i%2?m.steel:m.rust,px,1.78,pz,east?.35:.67,.42,east?.67:.35,.1*i);
-        B(m.warm,east?px+.185:px,1.85,east?pz:pz+.185,east?.025:.36,.04,east?.36:.025);
+        B(i%2?m.steel:m.rust,px,1.33,pz,east?.35:.67,.42,east?.67:.35,.1*i);
+        B(m.warm,east?px+.185:px,1.40,east?pz:pz+.185,east?.025:.36,.04,east?.36:.025);
       }
     }
     decal(kind==='food'?1:12,east?faceX+.13:x+w*.32,2.42,east?z-d*.32:faceZ+.13,east?1:1.3,1.3,east?Math.PI/2:0);
@@ -212,6 +257,7 @@ export function buildMarketDistrict({box, solid, sign, mesh, decal, m}) {
     const merged=mergeGeometries(geometries);geometries.forEach(g=>g.dispose());
     G(merged,material,0,0,0);
   }
+  Object.values(personGeometry).forEach(geometry=>geometry.dispose());
   const sails=mergeGeometries(canopies);canopies.forEach(g=>g.dispose());
   G(sails,fabric,0,0,0);
 
@@ -223,6 +269,6 @@ export function buildMarketDistrict({box, solid, sign, mesh, decal, m}) {
       {title:'The Common Table',x:-90.7,z:30.6,radius:5,text:'No minimum purchase. No assigned seats. A thousand arguments have ended here over someone else’s soup.'},
       {title:'Salt + Static',x:-41.5,z:27,radius:3,text:'Preserved fruit, transit salt, and a green ingredient whose customs classification changes every week.'},
     ],
-    stats:{boxInstances:boxes,solidFootprints:solids,labels,customDrawCalls,triangles:boxes*12+customTriangles+labels*2,closedRoutes:routes.length},
+    stats:{boxInstances:boxes,solidFootprints:solids,labels,customDrawCalls,triangles:boxes*12+customTriangles+labels*2,closedRoutes:routes.length,stallkeepers:vendorCount},
   };
 }

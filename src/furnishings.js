@@ -115,12 +115,12 @@ export function createFurnishings({importedTrees = false} = {}) {
     const x = side * 21.7;
     for (const z of [62, 12, -51, -97]) {
       shadow(x, z, 5, 9);
-      box(materials.dark, x, .33, z, 2.1, .66, 6.5);
-      box(materials.metal, x, .68, z, 2.4, .1, 6.9);
+      box(materials.dark, x, .2, z, 2.1, .4, 6.5);
+      box(materials.metal, x, .43, z, 2.4, .06, 6.9);
       for (let i = -1; i <= 1; i++) {
-        box(materials.sage, x, .8, z + i * 2.1, 2.15, .19, 1.95);
-        box(materials.sage, x + side * .9, 1.36, z + i * 2.1, .2, 1.05, 1.95);
-        box(materials.metal, x - side * .25, 1.1, z + i * 2.1 + 1, 1.7, .11, .1);
+        box(materials.sage, x, .49, z + i * 2.1, 2.15, .12, 1.95);
+        box(materials.sage, x + side * .9, .92, z + i * 2.1, .2, .75, 1.95);
+        box(materials.metal, x - side * .25, .79, z + i * 2.1 + 1, 1.7, .11, .1);
       }
       box(materials.warm, x - side * 1.06, .5, z, .035, .055, 5.9);
       colliders.push({minX: x - 1.25, maxX: x + 1.25, minZ: z - 3.6, maxZ: z + 3.6});
