@@ -102,10 +102,38 @@ let chatterUntil = 0;
 let chatterTick = 0;
 let chatterSector = '';
 let shownConversations = 0;
+let audioToggleRequest = 0;
+let audioVolume = .55;
+let footstepsEnabled = true;
+try {
+  const storedVolume = localStorage.getItem('pfc-audio-volume');
+  if (storedVolume !== null && Number.isFinite(Number(storedVolume))) audioVolume = Math.max(0,Math.min(1,Number(storedVolume)));
+  footstepsEnabled = localStorage.getItem('pfc-audio-footsteps') !== 'false';
+} catch { /* Settings remain available when browser storage is unavailable. */ }
 const chatter = $('#station-chatter');
 const chatterSpeaker = $('#chatter-speaker');
 const chatterLine = $('#chatter-line');
 const interactionLabel = $('#interaction-label');
+
+function syncAudioControls() {
+  const enabled = audio?.enabled ?? false;
+  document.body.classList.toggle('sound-enabled',enabled);
+  $('#sound-button').setAttribute('aria-label',enabled ? 'Mute station sound' : 'Enable station sound');
+  $('#sound-button').setAttribute('aria-pressed',String(enabled));
+  $('#audio-enabled-setting').checked = enabled;
+  $('#audio-volume').value = String(Math.round(audioVolume*100));
+  $('#audio-volume-value').textContent = `${Math.round(audioVolume*100)}%`;
+  $('#footsteps-setting').checked = footstepsEnabled;
+}
+
+async function toggleAudio(enabled) {
+  if (!audio) return;
+  const request = ++audioToggleRequest;
+  const started = await audio.setEnabled(enabled);
+  if (request !== audioToggleRequest || disposed) return;
+  syncAudioControls();
+  toast(enabled && !started && !audio.enabled ? 'Sound could not start. Tap the sound control to try again.' : audio.enabled ? 'STATION SOUNDS / On' : 'STATION SOUNDS / Off');
+}
 
 function updateConversations(dt) {
   chatterTick += dt;
@@ -386,7 +414,8 @@ async function init() {
   population = createPopulation({districtLayouts:districts.layouts,promenadeRoutes:station.routes,navigation});
   scene.add(population.group);
   stationPlan=createStationPlan(navigation);
-  audio = createAmbientAudio();
+  audio = createAmbientAudio({volume:audioVolume,footstepsEnabled,onStateChange:syncAudioControls});
+  syncAudioControls();
   controls = createFirstPersonControls(camera, canvas, {
     canWalk,
     heightAt:navigation.heightAt,
@@ -438,6 +467,9 @@ async function init() {
     importedModels.update(dt, elapsed, effectContext);
     atmosphere.update(dt, elapsed, effectContext);
     updateConversations(dt);
+    effectContext.mode = mode;
+    effectContext.yaw = mode === 'arrival' ? camera.rotation.y : controls.yaw;
+    effectContext.serviceTime = stationLife.serviceTime;
     audio.update(camera.position, elapsed, effectContext);
     const room=roomAtmospheres[mode==='arrival'?'concourse':activeSector]||roomAtmospheres.concourse;
     const blend=1-Math.exp(-dt*1.8);
@@ -466,7 +498,7 @@ async function init() {
 
   // A small read-only bridge makes local smoke tests and future development easy.
   window.stationExperience = {
-    get state() { return {ready, mode, sector: activeSector, visited: [...visited], position: camera.position.toArray(), yaw: controls.yaw, floorHeight:navigation.heightAt(camera.position.x,camera.position.z,camera.position.y-1.75), drawCalls: renderer.info.render.calls, triangles: renderer.info.render.triangles, points: renderer.info.render.points, textures: renderer.info.memory.textures, geometries: renderer.info.memory.geometries, resolution:{pixelRatio:renderer.getPixelRatio(),width:canvas.width,height:canvas.height,composerWidth:composer.renderTarget1.width,composerHeight:composer.renderTarget1.height}, atmosphere: atmosphere.stats, furnishings: furnishings.stats, population: population.stats, commerce: commerce.stats, stationLife: stationLife.stats, importedModels: importedModels.stats, architecture:districts.layouts.map(({id,stats})=>({id,...stats})), concourse:station.stats, conversations: shownConversations, sound: audio.enabled}; },
+    get state() { return {ready, mode, sector: activeSector, visited: [...visited], position: camera.position.toArray(), yaw: controls.yaw, floorHeight:navigation.heightAt(camera.position.x,camera.position.z,camera.position.y-1.75), drawCalls: renderer.info.render.calls, triangles: renderer.info.render.triangles, points: renderer.info.render.points, textures: renderer.info.memory.textures, geometries: renderer.info.memory.geometries, resolution:{pixelRatio:renderer.getPixelRatio(),width:canvas.width,height:canvas.height,composerWidth:composer.renderTarget1.width,composerHeight:composer.renderTarget1.height}, atmosphere: atmosphere.stats, furnishings: furnishings.stats, population: population.stats, commerce: commerce.stats, stationLife: stationLife.stats, importedModels: importedModels.stats, architecture:districts.layouts.map(({id,stats})=>({id,...stats})), concourse:station.stats, conversations: shownConversations, sound: audio.enabled, audio:audio.stats}; },
     get places() { return interactables.map(item => ({name: item.title || item.code, x: item.x, z: item.z, radius: item.radius || 3.8})); },
     canWalk,
     heightAt:navigation.heightAt,
@@ -515,13 +547,18 @@ document.querySelectorAll('[data-sector]').forEach(button => button.addEventList
   }, reducedMotion ? 20 : 380);
 }));
 
-$('#sound-button').addEventListener('click', async () => {
-  if (!audio) return;
-  const enabled = await audio.setEnabled(!audio.enabled);
-  document.body.classList.toggle('sound-enabled', enabled);
-  $('#sound-button').setAttribute('aria-label', enabled ? 'Mute ambient sound' : 'Enable ambient sound');
-  $('#sound-button').setAttribute('aria-pressed', String(enabled));
-  toast(enabled ? 'STATION AMBIENCE / Sound on' : 'STATION AMBIENCE / Sound off');
+$('#sound-button').addEventListener('click', () => toggleAudio(!audio?.enabled));
+$('#audio-enabled-setting').addEventListener('change', event => toggleAudio(event.target.checked));
+$('#audio-volume').addEventListener('input', event => {
+  audioVolume = Number(event.target.value)/100;
+  audio?.setVolume(audioVolume);
+  syncAudioControls();
+  try { localStorage.setItem('pfc-audio-volume',String(audioVolume)); } catch { /* Keep the current setting in memory. */ }
+});
+$('#footsteps-setting').addEventListener('change', event => {
+  footstepsEnabled = event.target.checked;
+  audio?.setFootstepsEnabled(footstepsEnabled);
+  try { localStorage.setItem('pfc-audio-footsteps',String(footstepsEnabled)); } catch { /* Keep the current setting in memory. */ }
 });
 $('#fullscreen-button').addEventListener('click', async () => {
   try {

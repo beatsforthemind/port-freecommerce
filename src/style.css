@@ -19,3 +19,13 @@
 .touch-device .close-button{min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center}
 .touch-device .navigation-buttons .text-button{min-width:44px;min-height:44px;padding-block:8px}
 .touch-device .motion-setting{min-height:44px}
+
+.audio-settings{min-width:0;margin:24px 0 22px;padding:16px 0 0;border:0;border-top:1px solid var(--line)}
+.audio-settings legend{padding:0 12px 0 0;font-size:10px;letter-spacing:1px;color:#d9c5a4}
+.help-dialog .audio-settings .motion-setting{margin:6px 0 8px}
+.audio-volume-label{display:flex;justify-content:space-between;align-items:center;margin-top:14px;font-size:11px;color:#cbd4c6}
+.audio-volume-label output{font-variant-numeric:tabular-nums;color:#dfc49d}
+.audio-volume{display:block;width:100%;height:34px;margin:2px 0 8px;accent-color:var(--amber);cursor:pointer}
+.audio-volume:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
+.audio-note{margin:6px 0 0;font-size:10px;line-height:1.7;color:#aebfaf}
+.touch-device .audio-volume{height:44px}

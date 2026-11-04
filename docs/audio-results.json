@@ -1,0 +1,1153 @@
+{
+  "passed": true,
+  "capturedAt": "2026-11-04T14:54:18.185Z",
+  "sourceHashes": {
+    "src/audio.js": "e01935000541ac4ca047d62101cb468e483ce44ff902cd6698eaff489bffe623",
+    "src/audio-sources.js": "81df027e596c388179d0f5aad8247cfa772526430c9a80dcd3fcb474ce662731",
+    "src/main.js": "a61ee4abd004c2b197d7fd3c1c6becff6a053295ba14d5cbfcfe1eaf1d0512f4",
+    "src/station-life.js": "cec2805ea1e5b74099992db91fd6ecf5a6803ee7b50750c4a734fc8c3c97b01b",
+    "src/style.css": "f75ae918b74d1f71ffe4c0e772428f165ce073085324acdd69610be03f4e18a0",
+    "index.html": "960d65dd3448c29b3ebc4d68543866449eaed83d426d4812f72b71eb1592d68c"
+  },
+  "native": {
+    "lazyInitialization": {
+      "contextsBeforeOptIn": 0,
+      "nodesBeforeOptIn": 0,
+      "buffersBeforeOptIn": 0,
+      "preferencesSetWhileOff": true
+    },
+    "baselineContinuousNodes": 28,
+    "baselineBuffersBytes": 1536000,
+    "enabledContinuousNodes": 66,
+    "buffersBytes": 2023680,
+    "stress": {
+      "logicalSeconds": 7200,
+      "peak": 118,
+      "peakVoices": 12,
+      "milliseconds": 377.40000000596046
+    },
+    "mute": {
+      "enabled": false,
+      "contextState": "suspended",
+      "nodes": 66,
+      "activeVoices": 0
+    },
+    "dispose": {
+      "contextState": "closed",
+      "nodes": 0,
+      "connectedNodes": 0,
+      "buffers": 0
+    },
+    "rapidToggles": {
+      "finalEnabled": true,
+      "contextsCreated": 1
+    },
+    "hiddenRetainsPreference": true,
+    "hiddenSuspendsContext": true,
+    "hiddenUpdates": 0,
+    "mutedVisibilityRestoreStayedSuspended": true,
+    "pendingDisposeCancelled": true,
+    "unsupportedContextHandled": true,
+    "partialInitializationCleanedAndRetried": true,
+    "resumeWithoutRunningHandled": true
+  },
+  "renders": [
+    {
+      "name": "concourse",
+      "rate": 48000,
+      "seconds": 6,
+      "finite": true,
+      "peak": 0.0663432702422142,
+      "rms": 0.018882401337250287,
+      "rmsChannels": [
+        0.017931839156299652,
+        0.019787352147130153
+      ],
+      "dc": [
+        7.821121261927368e-06,
+        9.329937774247714e-06
+      ],
+      "peakNodes": 72,
+      "peakVoices": 2,
+      "maxBuffer": 2023680,
+      "controlCpu": {
+        "calls": 180,
+        "totalMs": 2.5,
+        "p95Ms": 0.09999999403953552,
+        "maxMs": 0.30000001192092896
+      },
+      "file": "/tmp/pfc-audio-final-concourse.wav",
+      "mp3": "/tmp/pfc-audio-final-concourse.mp3",
+      "muteWindow": null,
+      "endNodes": 66,
+      "footsteps": 0,
+      "cues": 0,
+      "teleportsSuppressed": 0
+    },
+    {
+      "name": "market",
+      "rate": 48000,
+      "seconds": 6,
+      "finite": true,
+      "peak": 0.06473039835691452,
+      "rms": 0.012192613422860642,
+      "rmsChannels": [
+        0.011883443834368393,
+        0.012494134895784088
+      ],
+      "dc": [
+        4.565849084905414e-06,
+        5.014888796562379e-06
+      ],
+      "peakNodes": 75,
+      "peakVoices": 3,
+      "maxBuffer": 2023680,
+      "controlCpu": {
+        "calls": 180,
+        "totalMs": 2.1999999582767487,
+        "p95Ms": 0.09999999403953552,
+        "maxMs": 0.30000001192092896
+      },
+      "file": "/tmp/pfc-audio-final-market.wav",
+      "mp3": "/tmp/pfc-audio-final-market.mp3",
+      "muteWindow": null,
+      "endNodes": 66,
+      "footsteps": 0,
+      "cues": 0,
+      "teleportsSuppressed": 0
+    },
+    {
+      "name": "observation",
+      "rate": 48000,
+      "seconds": 6,
+      "finite": true,
+      "peak": 0.03777366504073143,
+      "rms": 0.007205855333478982,
+      "rmsChannels": [
+        0.007070794075077295,
+        0.007338431257557579
+      ],
+      "dc": [
+        2.4666814844790757e-06,
+        2.8713444457673467e-06
+      ],
+      "peakNodes": 66,
+      "peakVoices": 0,
+      "maxBuffer": 2023680,
+      "controlCpu": {
+        "calls": 180,
+        "totalMs": 1.9999999403953552,
+        "p95Ms": 0.09999999403953552,
+        "maxMs": 0.10000002384185791
+      },
+      "file": "/tmp/pfc-audio-final-observation.wav",
+      "mp3": "/tmp/pfc-audio-final-observation.mp3",
+      "muteWindow": null,
+      "endNodes": 66,
+      "footsteps": 0,
+      "cues": 0,
+      "teleportsSuppressed": 0
+    },
+    {
+      "name": "docks",
+      "rate": 48000,
+      "seconds": 6,
+      "finite": true,
+      "peak": 0.08304581791162491,
+      "rms": 0.024143474239275535,
+      "rmsChannels": [
+        0.022406376411161742,
+        0.025763714654652718
+      ],
+      "dc": [
+        1.1056787902600821e-05,
+        1.2221902270001077e-05
+      ],
+      "peakNodes": 72,
+      "peakVoices": 2,
+      "maxBuffer": 2023680,
+      "controlCpu": {
+        "calls": 180,
+        "totalMs": 2.4000000655651093,
+        "p95Ms": 0.09999999403953552,
+        "maxMs": 0.10000002384185791
+      },
+      "file": "/tmp/pfc-audio-final-docks.wav",
+      "mp3": "/tmp/pfc-audio-final-docks.mp3",
+      "muteWindow": null,
+      "endNodes": 66,
+      "footsteps": 0,
+      "cues": 0,
+      "teleportsSuppressed": 0
+    },
+    {
+      "name": "docks-44100-full-volume",
+      "rate": 44100,
+      "seconds": 6,
+      "finite": true,
+      "peak": 0.15089036524295807,
+      "rms": 0.04258223353293194,
+      "rmsChannels": [
+        0.03993058710815612,
+        0.04507817031007482
+      ],
+      "dc": [
+        1.727202574794328e-05,
+        1.9485972259794776e-05
+      ],
+      "peakNodes": 72,
+      "peakVoices": 2,
+      "maxBuffer": 1935696,
+      "controlCpu": {
+        "calls": 180,
+        "totalMs": 2.300000011920929,
+        "p95Ms": 0.09999999403953552,
+        "maxMs": 0.19999998807907104
+      },
+      "file": "/tmp/pfc-audio-final-docks-44100-full-volume.wav",
+      "mp3": null,
+      "muteWindow": null,
+      "endNodes": 66,
+      "footsteps": 0,
+      "cues": 0,
+      "teleportsSuppressed": 0
+    },
+    {
+      "name": "walking",
+      "rate": 48000,
+      "seconds": 8,
+      "finite": true,
+      "peak": 0.07220879942178726,
+      "rms": 0.020453562556115093,
+      "rmsChannels": [
+        0.01913614804272087,
+        0.021691110634564213
+      ],
+      "dc": [
+        5.459514233906254e-06,
+        7.465588615349627e-06
+      ],
+      "peakNodes": 77,
+      "peakVoices": 3,
+      "maxBuffer": 2023680,
+      "controlCpu": {
+        "calls": 240,
+        "totalMs": 5.299999892711639,
+        "p95Ms": 0.19999998807907104,
+        "maxMs": 0.29999998211860657
+      },
+      "file": "/tmp/pfc-audio-final-walking.wav",
+      "mp3": "/tmp/pfc-audio-final-walking.mp3",
+      "muteWindow": null,
+      "endNodes": 71,
+      "footsteps": 28,
+      "cues": 0,
+      "teleportsSuppressed": 0
+    },
+    {
+      "name": "walking-footsteps-off",
+      "rate": 48000,
+      "seconds": 8,
+      "finite": true,
+      "peak": 0.0721985399723053,
+      "rms": 0.02044703675532293,
+      "rmsChannels": [
+        0.019130123781528622,
+        0.021684118341551747
+      ],
+      "dc": [
+        5.4545174464846e-06,
+        7.457440878287457e-06
+      ],
+      "peakNodes": 72,
+      "peakVoices": 2,
+      "maxBuffer": 2023680,
+      "controlCpu": {
+        "calls": 240,
+        "totalMs": 3.199999988079071,
+        "p95Ms": 0.09999999403953552,
+        "maxMs": 0.10000002384185791
+      },
+      "file": "/tmp/pfc-audio-final-walking-footsteps-off.wav",
+      "mp3": null,
+      "muteWindow": null,
+      "endNodes": 66,
+      "footsteps": 0,
+      "cues": 0,
+      "teleportsSuppressed": 0
+    },
+    {
+      "name": "teleport-pause",
+      "rate": 48000,
+      "seconds": 8,
+      "finite": true,
+      "peak": 0.05904875695705414,
+      "rms": 0.013439212040283092,
+      "rmsChannels": [
+        0.013096349633464361,
+        0.013773542275152309
+      ],
+      "dc": [
+        1.8255946979842303e-06,
+        2.8243845569501057e-06
+      ],
+      "peakNodes": 71,
+      "peakVoices": 1,
+      "maxBuffer": 2023680,
+      "controlCpu": {
+        "calls": 240,
+        "totalMs": 6.3000001311302185,
+        "p95Ms": 0.19999998807907104,
+        "maxMs": 0.30000001192092896
+      },
+      "file": "/tmp/pfc-audio-final-teleport-pause.wav",
+      "mp3": null,
+      "muteWindow": null,
+      "endNodes": 66,
+      "footsteps": 13,
+      "cues": 0,
+      "teleportsSuppressed": 1
+    },
+    {
+      "name": "upper-mechanism",
+      "rate": 48000,
+      "seconds": 8,
+      "finite": true,
+      "peak": 0.053578343242406845,
+      "rms": 0.01511829869757387,
+      "rmsChannels": [
+        0.014193234727640081,
+        0.015989934302060395
+      ],
+      "dc": [
+        4.406044958988437e-06,
+        5.932924920043187e-06
+      ],
+      "peakNodes": 81,
+      "peakVoices": 3,
+      "maxBuffer": 2023680,
+      "controlCpu": {
+        "calls": 240,
+        "totalMs": 3.5000000596046448,
+        "p95Ms": 0.09999999403953552,
+        "maxMs": 0.30000001192092896
+      },
+      "file": "/tmp/pfc-audio-final-upper-mechanism.wav",
+      "mp3": "/tmp/pfc-audio-final-upper-mechanism.mp3",
+      "muteWindow": null,
+      "endNodes": 66,
+      "footsteps": 0,
+      "cues": 3,
+      "teleportsSuppressed": 0
+    },
+    {
+      "name": "room-transitions",
+      "rate": 48000,
+      "seconds": 8,
+      "finite": true,
+      "peak": 0.07097606360912323,
+      "rms": 0.01852335399313658,
+      "rmsChannels": [
+        0.017549854483175482,
+        0.019448184849220024
+      ],
+      "dc": [
+        1.6890827127798251e-06,
+        2.2276010962749975e-06
+      ],
+      "peakNodes": 66,
+      "peakVoices": 0,
+      "maxBuffer": 2023680,
+      "controlCpu": {
+        "calls": 240,
+        "totalMs": 2.9999999403953552,
+        "p95Ms": 0.09999999403953552,
+        "maxMs": 0.10000002384185791
+      },
+      "file": "/tmp/pfc-audio-final-room-transitions.wav",
+      "mp3": "/tmp/pfc-audio-final-room-transitions.mp3",
+      "muteWindow": null,
+      "endNodes": 66,
+      "footsteps": 0,
+      "cues": 0,
+      "teleportsSuppressed": 3
+    },
+    {
+      "name": "mute-resume",
+      "rate": 48000,
+      "seconds": 8,
+      "finite": true,
+      "peak": 0.07236847281455994,
+      "rms": 0.017672258462105274,
+      "rmsChannels": [
+        0.016592697283734144,
+        0.0186895648732986
+      ],
+      "dc": [
+        5.259184989650242e-06,
+        7.273215545770623e-06
+      ],
+      "peakNodes": 66,
+      "peakVoices": 0,
+      "maxBuffer": 2023680,
+      "controlCpu": {
+        "calls": 240,
+        "totalMs": 2,
+        "p95Ms": 0.09999999403953552,
+        "maxMs": 0.19999998807907104
+      },
+      "file": "/tmp/pfc-audio-final-mute-resume.wav",
+      "mp3": null,
+      "muteWindow": {
+        "rms": 0,
+        "peak": 0
+      },
+      "endNodes": 66,
+      "footsteps": 0,
+      "cues": 0,
+      "teleportsSuppressed": 0
+    },
+    {
+      "name": "volume-zero",
+      "rate": 48000,
+      "seconds": 4,
+      "finite": true,
+      "peak": 0,
+      "rms": 0,
+      "rmsChannels": [
+        0,
+        0
+      ],
+      "dc": [
+        0,
+        0
+      ],
+      "peakNodes": 66,
+      "peakVoices": 0,
+      "maxBuffer": 2023680,
+      "controlCpu": {
+        "calls": 120,
+        "totalMs": 1.4000000059604645,
+        "p95Ms": 0.09999999403953552,
+        "maxMs": 0.10000002384185791
+      },
+      "file": "/tmp/pfc-audio-final-volume-zero.wav",
+      "mp3": null,
+      "muteWindow": null,
+      "endNodes": 66,
+      "footsteps": 0,
+      "cues": 0,
+      "teleportsSuppressed": 0
+    },
+    {
+      "name": "long-stress",
+      "rate": 24000,
+      "seconds": 120,
+      "finite": true,
+      "peak": 0.09590517729520798,
+      "rms": 0.01956232313919107,
+      "rmsChannels": [
+        0.01896960943116499,
+        0.020137598944094212
+      ],
+      "dc": [
+        -5.29768859155085e-10,
+        -5.304183532216387e-10
+      ],
+      "peakNodes": 83,
+      "peakVoices": 5,
+      "maxBuffer": 1482240,
+      "controlCpu": {
+        "calls": 3600,
+        "totalMs": 79.50000035762787,
+        "p95Ms": 0.10000002384185791,
+        "maxMs": 0.30000001192092896
+      },
+      "muteWindow": null,
+      "endNodes": 66,
+      "footsteps": 304,
+      "cues": 0,
+      "teleportsSuppressed": 3
+    },
+    {
+      "name": "pan-right",
+      "rate": 48000,
+      "seconds": 3,
+      "finite": true,
+      "peak": 0.0030270598363131285,
+      "rms": 0.00047130171925038926,
+      "rmsChannels": [
+        4.644387584991149e-05,
+        0.0006649011862922052
+      ],
+      "dc": [
+        -2.93255269877159e-09,
+        -7.896338736702174e-08
+      ],
+      "peakNodes": 25,
+      "peakVoices": 0,
+      "maxBuffer": 476160,
+      "controlCpu": {
+        "calls": 90,
+        "totalMs": 0.09999999403953552,
+        "p95Ms": 0,
+        "maxMs": 0.09999999403953552
+      },
+      "file": "/tmp/pfc-audio-final-pan-right.wav",
+      "mp3": "/tmp/pfc-audio-final-pan-right.mp3",
+      "muteWindow": null,
+      "endNodes": 25,
+      "footsteps": 0,
+      "cues": 0,
+      "teleportsSuppressed": 0
+    },
+    {
+      "name": "pan-left",
+      "rate": 48000,
+      "seconds": 3,
+      "finite": true,
+      "peak": 0.0030270598363131285,
+      "rms": 0.00047130171925038,
+      "rmsChannels": [
+        0.0006649011862922052,
+        4.644387584991149e-05
+      ],
+      "dc": [
+        -7.896338736702174e-08,
+        -2.93255269877159e-09
+      ],
+      "peakNodes": 25,
+      "peakVoices": 0,
+      "maxBuffer": 476160,
+      "controlCpu": {
+        "calls": 90,
+        "totalMs": 0.5000000596046448,
+        "p95Ms": 0.09999999403953552,
+        "maxMs": 0.10000002384185791
+      },
+      "file": "/tmp/pfc-audio-final-pan-left.wav",
+      "mp3": "/tmp/pfc-audio-final-pan-left.mp3",
+      "muteWindow": null,
+      "endNodes": 25,
+      "footsteps": 0,
+      "cues": 0,
+      "teleportsSuppressed": 0
+    }
+  ],
+  "footstepIntervals": {
+    "min": 0.2666666666666666,
+    "max": 0.33333333333333304,
+    "mean": 0.2790123456790123
+  },
+  "stereoFlip": {
+    "right": [
+      3.2739931333883724e-05,
+      0.0006942485393536218
+    ],
+    "left": [
+      0.0006942485393536218,
+      3.2739931333883724e-05
+    ]
+  },
+  "serviceClock": [
+    {
+      "clock": 0,
+      "progress": 0
+    },
+    {
+      "clock": 4,
+      "progress": 0
+    },
+    {
+      "clock": 8,
+      "progress": 0
+    },
+    {
+      "clock": 34,
+      "progress": 0.5
+    },
+    {
+      "clock": 60,
+      "progress": 1
+    },
+    {
+      "clock": 64,
+      "progress": 1
+    },
+    {
+      "clock": 68,
+      "progress": 1
+    },
+    {
+      "clock": 94,
+      "progress": 0.5
+    },
+    {
+      "clock": 120,
+      "progress": 0
+    },
+    {
+      "clock": 124,
+      "progress": 0
+    },
+    {
+      "clock": 128,
+      "progress": 0
+    },
+    {
+      "clock": 154,
+      "progress": 0.5
+    },
+    {
+      "clock": 180,
+      "progress": 1
+    }
+  ],
+  "performanceMethod": {
+    "control": "One warmed live AudioContext per variant in a muted Chromium browser, no Three.js renderer; 1,200 warm-up calls, then 60,000 monotonic 60Hz updates in100 batches, each600 calls; same stationary observation-deck position. Performance.now measures the synchronous update calls, including browser AudioParam scheduling and occasional cue creation. No initialization or rendering time included.",
+    "dsp": "Three static120-second stereo48kHz OfflineAudioContext renders per variant. Graph and buffers created and one observation-room update applied before timing. No suspend/update instrumentation or PCM export during the measured rendering. Wall time from performance.now surrounding await startRendering(). CDP SystemInfo.getProcessInfo sampled immediately before and after rendering; CPU deltas summed for matching existing browser-process IDs, with per-process values retained. Renderer process accounts for nearly all measured CPU. This excludes graph/buffer setup and includes the browser rendering promise/housekeeping.",
+    "limits": "Synthetic desktop Chromium measurements, not an in-scene GPU frame-rate, physical device, battery, audio-driver, or subjective listening test. CPU seconds per audio-second expresses the cost relative to one CPU core; it is not overall multi-core machine utilization."
+  },
+  "performance": {
+    "baseline": {
+      "control": {
+        "offeredCalls": 60000,
+        "logicalSeconds": 1000,
+        "totalMs": 84.59999999403954,
+        "p95BatchMs": 1.5999999940395355
+      },
+      "dsp": {
+        "repeats": 3,
+        "audioSecondsPerRepeat": 120,
+        "sampleRate": 48000,
+        "channels": 2,
+        "wallMilliseconds": [
+          1078,
+          1070.300000011921,
+          1040.199999988079
+        ],
+        "cpuSeconds": [
+          1.0550359999999999,
+          1.0443209999999998,
+          1.0338840000000002
+        ],
+        "medianWallMilliseconds": 1070.300000011921,
+        "medianCpuSeconds": 1.0443209999999998,
+        "medianEquivalentPercentOneCpuCore": 0.8702674999999999
+      }
+    },
+    "final": {
+      "control": {
+        "offeredCalls": 60000,
+        "logicalSeconds": 1000,
+        "controlsBefore": 244,
+        "controlsAfter": 12964,
+        "totalMs": 75.09999999403954,
+        "p95BatchMs": 1
+      },
+      "dsp": {
+        "repeats": 3,
+        "audioSecondsPerRepeat": 120,
+        "sampleRate": 48000,
+        "channels": 2,
+        "wallMilliseconds": [
+          4184.800000011921,
+          4232.799999982119,
+          4225.100000023842
+        ],
+        "cpuSeconds": [
+          4.164169,
+          4.196498,
+          4.187605
+        ],
+        "medianWallMilliseconds": 4225.100000023842,
+        "medianCpuSeconds": 4.187605,
+        "medianEquivalentPercentOneCpuCore": 3.4896708333333333
+      }
+    }
+  },
+  "supplemental": {
+    "isolatedFootsteps": {
+      "rate": 48000,
+      "seconds": 6,
+      "peak": 0.0029901342932134867,
+      "rms": 0.0003112814571435915,
+      "events": [
+        {
+          "t": 0.3,
+          "steps": 1
+        },
+        {
+          "t": 0.5666666666666667,
+          "steps": 2
+        },
+        {
+          "t": 0.8333333333333334,
+          "steps": 3
+        },
+        {
+          "t": 1.1,
+          "steps": 4
+        },
+        {
+          "t": 1.3666666666666667,
+          "steps": 5
+        },
+        {
+          "t": 1.6333333333333333,
+          "steps": 6
+        },
+        {
+          "t": 1.9,
+          "steps": 7
+        },
+        {
+          "t": 2.1666666666666665,
+          "steps": 8
+        },
+        {
+          "t": 2.433333333333333,
+          "steps": 9
+        },
+        {
+          "t": 2.7,
+          "steps": 10
+        },
+        {
+          "t": 2.966666666666667,
+          "steps": 11
+        },
+        {
+          "t": 3.2333333333333334,
+          "steps": 12
+        },
+        {
+          "t": 3.5,
+          "steps": 13
+        },
+        {
+          "t": 3.7666666666666666,
+          "steps": 14
+        },
+        {
+          "t": 4.033333333333333,
+          "steps": 15
+        },
+        {
+          "t": 4.3,
+          "steps": 16
+        },
+        {
+          "t": 4.566666666666666,
+          "steps": 17
+        },
+        {
+          "t": 4.833333333333333,
+          "steps": 18
+        },
+        {
+          "t": 5.1,
+          "steps": 19
+        },
+        {
+          "t": 5.366666666666666,
+          "steps": 20
+        },
+        {
+          "t": 5.633333333333334,
+          "steps": 21
+        },
+        {
+          "t": 5.9,
+          "steps": 22
+        }
+      ],
+      "stats": {
+        "footsteps": 22,
+        "peakVoices": 1,
+        "nodeCount": 30,
+        "createdVoices": 22,
+        "teleportsSuppressed": 0
+      },
+      "sourceHash": "81df027e596c388179d0f5aad8247cfa772526430c9a80dcd3fcb474ce662731"
+    }
+  },
+  "errors": [],
+  "limitations": [
+    "No subjective listening was possible with the tools; clips are supplied for human headphone/speaker review.",
+    "No live microphone, user-media permission, or live audible playback used.",
+    "Raw WAV levels retained without normalization. MP3 previews are lossy encodings of these WAVs.",
+    "Offline tests validate signal and scheduling behavior; mobile Safari/interrupted-device hardware behavior requires physical-device verification."
+  ],
+  "loopEndpoints": {
+    "buffers": [
+      {
+        "index": 0,
+        "channels": 2,
+        "length": 100800,
+        "sampleRate": 48000,
+        "first": -0.024795090779662132,
+        "last": -0.0005099729169160128,
+        "endpointDelta": 0.02428511786274612
+      },
+      {
+        "index": 1,
+        "channels": 2,
+        "length": 23040,
+        "sampleRate": 48000,
+        "first": 0.017535148188471794,
+        "last": -7.228268714243313e-06,
+        "endpointDelta": 0.017542376457186037
+      },
+      {
+        "index": 2,
+        "channels": 1,
+        "length": 98400,
+        "sampleRate": 24000,
+        "first": -0.0550396665930748,
+        "last": -0.0550396665930748,
+        "endpointDelta": 0
+      },
+      {
+        "index": 3,
+        "channels": 1,
+        "length": 136800,
+        "sampleRate": 24000,
+        "first": -0.026504654437303543,
+        "last": -0.026504654437303543,
+        "endpointDelta": 0
+      },
+      {
+        "index": 4,
+        "channels": 1,
+        "length": 9120,
+        "sampleRate": 48000,
+        "first": 0,
+        "last": -0.00012957907165400684,
+        "endpointDelta": 0.00012957907165400684
+      },
+      {
+        "index": 5,
+        "channels": 1,
+        "length": 7680,
+        "sampleRate": 48000,
+        "first": 0,
+        "last": 3.0423188945860602e-05,
+        "endpointDelta": 3.0423188945860602e-05
+      },
+      {
+        "index": 6,
+        "channels": 1,
+        "length": 6240,
+        "sampleRate": 48000,
+        "first": 0,
+        "last": 0.0004288138297852129,
+        "endpointDelta": 0.0004288138297852129
+      }
+    ],
+    "stats": {
+      "nodeCount": 66,
+      "bufferBytes": 2023680
+    },
+    "disposed": {
+      "nodeCount": 0,
+      "bufferBytes": 0
+    }
+  },
+  "loopSeamComparison": {
+    "beforeSourceSha256": "2b3013bd5bf18128c451aca8216c950334ee81972429708b5a4fb1cd13cde3d2",
+    "afterSourceSha256": "e01935000541ac4ca047d62101cb468e483ce44ff902cd6698eaff489bffe623",
+    "rawSeams": {
+      "noise": {
+        "before": 0.0586031973361969,
+        "after": 0,
+        "samplesBefore": 98400,
+        "samplesAfter": 98400
+      },
+      "murmur": {
+        "before": 0.10925475880503654,
+        "after": 0,
+        "samplesBefore": 136800,
+        "samplesAfter": 136800
+      }
+    },
+    "filtered": [
+      {
+        "buffer": "noise",
+        "layer": "filtered",
+        "maxSeamWindowDeltaBefore": 0.00046876445412635803,
+        "maxSeamWindowDeltaAfter": 0.0004681432619690895,
+        "maxGlobalDeltaBefore": 0.0009837551042437553,
+        "maxGlobalDeltaAfter": 0.0009837551042437553
+      },
+      {
+        "buffer": "murmur",
+        "layer": "firstLayer",
+        "maxSeamWindowDeltaBefore": 0.0017398069612681866,
+        "maxSeamWindowDeltaAfter": 0.0014319089241325855,
+        "maxGlobalDeltaBefore": 0.002596478443592787,
+        "maxGlobalDeltaAfter": 0.002596478443592787
+      },
+      {
+        "buffer": "murmur",
+        "layer": "secondLayer",
+        "maxSeamWindowDeltaBefore": 0.0022539845667779446,
+        "maxSeamWindowDeltaAfter": 0.0017210434598382562,
+        "maxGlobalDeltaBefore": 0.003258105192799121,
+        "maxGlobalDeltaAfter": 0.003258105192799121
+      }
+    ]
+  },
+  "assembledAt": "2026-11-04T14:57:32.970448+00:00",
+  "baselineCommit": "7afd637ae2add5c434901252b255f5111f540aaf",
+  "spatialDeterministicChecks": {
+    "stressVoiceCapVerified": true,
+    "serviceClockProbes": 72000,
+    "continuousNodes": 25,
+    "maxTransientVoices": 8,
+    "maxNodes": 65,
+    "ownBufferBytes": 92160,
+    "footstepsOn20mWalk": 12,
+    "yawPanReversal": true,
+    "bulkheadMuffling": true,
+    "teleportAndTransitStepRejection": true,
+    "reducedMotionMotorFreeze": true,
+    "cuesTriggered": 1,
+    "resetReleaseMs": 25,
+    "disposedNodesExactlyOnce": 90
+  },
+  "loopJoinCorrection": {
+    "beforeSourceSha256": "2b3013bd5bf18128c451aca8216c950334ee81972429708b5a4fb1cd13cde3d2",
+    "afterSourceSha256": "e01935000541ac4ca047d62101cb468e483ce44ff902cd6698eaff489bffe623",
+    "rawSeams": {
+      "noise": {
+        "before": 0.0586031973361969,
+        "after": 0,
+        "samplesBefore": 98400,
+        "samplesAfter": 98400
+      },
+      "murmur": {
+        "before": 0.10925475880503654,
+        "after": 0,
+        "samplesBefore": 136800,
+        "samplesAfter": 136800
+      }
+    },
+    "filtered": [
+      {
+        "buffer": "noise",
+        "layer": "filtered",
+        "maxSeamWindowDeltaBefore": 0.00046876445412635803,
+        "maxSeamWindowDeltaAfter": 0.0004681432619690895,
+        "maxGlobalDeltaBefore": 0.0009837551042437553,
+        "maxGlobalDeltaAfter": 0.0009837551042437553
+      },
+      {
+        "buffer": "murmur",
+        "layer": "firstLayer",
+        "maxSeamWindowDeltaBefore": 0.0017398069612681866,
+        "maxSeamWindowDeltaAfter": 0.0014319089241325855,
+        "maxGlobalDeltaBefore": 0.002596478443592787,
+        "maxGlobalDeltaAfter": 0.002596478443592787
+      },
+      {
+        "buffer": "murmur",
+        "layer": "secondLayer",
+        "maxSeamWindowDeltaBefore": 0.0022539845667779446,
+        "maxSeamWindowDeltaAfter": 0.0017210434598382562,
+        "maxGlobalDeltaBefore": 0.003258105192799121,
+        "maxGlobalDeltaAfter": 0.003258105192799121
+      }
+    ]
+  },
+  "browserProduction": {
+    "origin": "http://127.0.0.1:5175",
+    "devices": [
+      {
+        "device": "desktop 1280x800",
+        "lazyStart": true,
+        "preferencesWhileOff": true,
+        "on": {
+          "state": "running",
+          "coreNodes": 41,
+          "spatialNodes": 25,
+          "bufferBytes": 2023680
+        },
+        "muteSuspends": true,
+        "rapidToggleUsesOneContext": true,
+        "keyboardVolume": true,
+        "preferencesRestoredWithoutAutoplay": true,
+        "layout": {
+          "viewport": [
+            1280,
+            800
+          ],
+          "dialog": [
+            395,
+            30,
+            490,
+            740
+          ],
+          "range": [
+            436,
+            705.96875,
+            408,
+            34
+          ],
+          "overflow": false,
+          "scrollable": true
+        },
+        "sectors": [
+          {
+            "target": "observation",
+            "sector": "observation",
+            "audioSector": "observation",
+            "floorHeight": 1.9249999999999998,
+            "transitFootsteps": 0
+          },
+          {
+            "target": "market",
+            "sector": "market",
+            "audioSector": "market",
+            "floorHeight": 0,
+            "transitFootsteps": 0
+          },
+          {
+            "target": "docks",
+            "sector": "docks",
+            "audioSector": "docks",
+            "floorHeight": 0,
+            "transitFootsteps": 0
+          },
+          {
+            "target": "promenade",
+            "sector": "concourse",
+            "audioSector": "concourse",
+            "floorHeight": 7.625,
+            "transitFootsteps": 0
+          }
+        ],
+        "preserved": {
+          "populationActors": 80,
+          "populationTriangles": 18912,
+          "populationBatches": 7,
+          "exteriorShips": 9,
+          "expressCabins": 2,
+          "serviceLifts": 2,
+          "modelAssets": 4
+        },
+        "errors": [],
+        "localFailures": []
+      },
+      {
+        "device": "mobile 390x844 touch",
+        "lazyStart": true,
+        "preferencesWhileOff": true,
+        "on": {
+          "state": "running",
+          "coreNodes": 41,
+          "spatialNodes": 25,
+          "bufferBytes": 2023680
+        },
+        "muteSuspends": true,
+        "rapidToggleUsesOneContext": true,
+        "keyboardVolume": true,
+        "preferencesRestoredWithoutAutoplay": true,
+        "layout": {
+          "viewport": [
+            390,
+            844
+          ],
+          "dialog": [
+            16,
+            15,
+            358,
+            814
+          ],
+          "range": [
+            40,
+            571.5,
+            310,
+            44
+          ],
+          "overflow": false,
+          "scrollable": true
+        },
+        "sectors": [
+          {
+            "target": "observation",
+            "sector": "observation",
+            "audioSector": "observation",
+            "floorHeight": 1.9249999999999998,
+            "transitFootsteps": 0
+          },
+          {
+            "target": "market",
+            "sector": "market",
+            "audioSector": "market",
+            "floorHeight": 0,
+            "transitFootsteps": 0
+          },
+          {
+            "target": "docks",
+            "sector": "docks",
+            "audioSector": "docks",
+            "floorHeight": 0,
+            "transitFootsteps": 0
+          },
+          {
+            "target": "promenade",
+            "sector": "concourse",
+            "audioSector": "concourse",
+            "floorHeight": 7.625,
+            "transitFootsteps": 0
+          }
+        ],
+        "preserved": {
+          "populationActors": 80,
+          "populationTriangles": 18912,
+          "populationBatches": 7,
+          "exteriorShips": 9,
+          "expressCabins": 2,
+          "serviceLifts": 2,
+          "modelAssets": 4
+        },
+        "errors": [],
+        "localFailures": []
+      }
+    ]
+  },
+  "adversarialReview": {
+    "blockers": [],
+    "reviewed": [
+      "lifecycle and failure cleanup",
+      "service clock and heading math",
+      "portal attenuation",
+      "movement guards",
+      "voice and resource caps",
+      "control persistence"
+    ],
+    "minorLimit": "When a browser rejects automatic resume on visibility return, the enabled preference remains on; switching sound off and on supplies a fresh user gesture."
+  },
+  "productionBuild": {
+    "node": "24.22.1",
+    "command": "npm run build",
+    "passed": true,
+    "compiledAssets": 2,
+    "models": 4,
+    "publicFilesByteIdentical": 5,
+    "existingBundleAdvisory": true,
+    "files": {
+      "index-BFcVOavk.css": {
+        "bytes": 17996,
+        "gzipBytesLevel6": 4846,
+        "sha256": "fe4f599c6c29bfb15ada0969c9253eb2734629a2740ad6af634d85d1ad5a8402"
+      },
+      "index-DKdGhXRZ.js": {
+        "bytes": 875789,
+        "gzipBytesLevel6": 246894,
+        "sha256": "9bedb67b92c59e8810e5b407cca080733ce4b3886ab19d4f4b092f9741b51d8c"
+      }
+    }
+  }
+}

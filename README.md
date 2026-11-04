@@ -37,7 +37,7 @@ From this folder, run `vercel` for a preview deployment, then `vercel --prod` wh
 - **H / ?:** controls and reduced camera motion.
 - **Escape:** pause and release the mouse.
 - On touch screens, move with the left joystick and drag the right side to look.
-- Sound and fullscreen can be toggled in the upper right. Sound is off initially.
+- Sound and fullscreen can be toggled in the upper right. Sound is off initially. Controls includes volume and an optional footstep setting; these preferences are remembered locally.
 
 Four physically connected sectors are walkable: the monumental concourse, the planetary observation gallery, the commercial exchange, and transit docks. The sector map provides instant transit. Public terminals contain original station notices and environmental stories. Find all four sectors at your own pace.
 
@@ -72,7 +72,8 @@ Travelers follow each area's real routes; readers sit on both observation levels
 | `src/station-life.js` | Scheduled freight and express services, staff lifts, cleaners, repair cell, dock winch |
 | `src/imported-models.js` | Local GLB loading, scale/origin normalization, static instancing, animated service robot |
 | `src/controls.js` | First-person movement, collision queries, pointer lock, mouse/touch fallback |
-| `src/audio.js` | Optional Web Audio station ambience |
+| `src/audio.js` | Optional room ambience, shared reflections, PA cues, volume, and audio lifecycle |
+| `src/audio-sources.js` | Directional machinery, synchronized transport cues, and movement-paced footsteps |
 | `src/kit.js` | Shared geometry, signs, and material helpers |
 | `src/style.css` | Arrival view, exploration HUD, dialogs, responsive touch interface |
 
@@ -85,6 +86,8 @@ The inhabited-station pass adds 80 more inhabitants in seven instanced batches, 
 The human-model pass gives all 100 human figures a consistent style: adult proportions, shaped jackets, muted travel clothing, natural skin tones, cropped hair, and quiet facial planes. Hands and boots follow connected limb chains; readers sit on benches scaled to their bodies, and stallkeepers stand behind counters at a natural working height. Shared geometry retains seven population and four commuter batches, with no new textures or model downloads. See [human models](docs/human-models.md) for visual choices, measured costs, and close-up verification.
 
 The traffic pass gives the overhead freight train a coupled three-wagon consist and adds a separate two-cabin express service. Both ease into physical berths, wait, and reverse. Express doors open toward the platforms; two guided service lifts connect the express berths to the staff galleries. Nine exterior couriers, freighters, shuttles, and tenders follow separate flight lanes, with clearance holds, turns, departures, drive apertures, and navigation beacons. All movement uses the existing GPU batches, with no new textures, lights, downloads, or per-object CPU simulation. Reduced motion freezes the service clocks. See [traffic performance](docs/traffic-performance.md) for budgets, comparisons, and verification limits.
+
+The audio pass gives the concourse long reflections, the exchange a closer social atmosphere, the gallery a quiet bed, and the docks heavier ventilation and hull texture. Nearby freight, express cabins, service lifts, repair tools, and a market kettle change direction and level as you move. Footsteps follow actual movement and change with the deck surface. Transport cues share the visible service clock; muted and hidden pages suspend audio processing. Sound stays opt-in, with no recordings, network requests, or speech services. See [the audio experience](docs/audio-experience.md) for controls, resource budgets, and validation.
 
 The imported foreground models are **Animated Robot**, **Scifi Computer**, **Tree Spiral**, and **Cooking Pot** by Quaternius, downloaded from Poly Pizza under CC0. The service unit uses its supplied idle animation. Repeated consoles, plants, and pots share geometry and materials. Selected terminal bodies, planter growth, specimen branches, and cookware proxies are omitted only after their replacement asset loads successfully; otherwise the procedural versions remain available. Creator/source links and exact file inspection records are in [model assets](docs/model-assets.md), [machine-readable metadata](docs/model-assets.json), and the in-app Controls credits link. Run `node scripts/inspect-glb.mjs public/models/poly-pizza/*.glb` to inspect the original files again.
 

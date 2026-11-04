@@ -24,7 +24,7 @@
       <span class="topbar-label">AN ORBITAL EXPERIENCE</span>
       <div class="topbar-actions">
         <span class="live-status"><i></i> STATION ONLINE</span>
-        <button class="icon-button" id="sound-button" aria-label="Enable ambient sound" title="Ambient sound">
+        <button class="icon-button" id="sound-button" aria-label="Enable station sound" aria-pressed="false" title="Station sound">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path class="sound-on" d="M15 8c3 2 3 6 0 8m3-11c5 4 5 10 0 14"/><path class="sound-off" d="m16 9 6 6m0-6-6 6"/></svg>
         </button>
         <button class="icon-button" id="fullscreen-button" aria-label="Enter fullscreen" title="Fullscreen">
@@ -84,7 +84,14 @@
       <button class="promenade-transit" data-sector="promenade"><span>DECK 02 / PUBLIC PROMENADE</span><span>TRANSIT UP ↑</span></button>
     </dialog>
 
-    <dialog id="help-dialog" class="station-dialog help-dialog"><div class="dialog-top"><span class="eyebrow">PERSONAL NAVIGATION / QUICK GUIDE</span><button class="close-button" aria-label="Close controls" data-close>×</button></div><h2>Find your own way.</h2><div class="controls-list"><p><span>Move</span><b>W A S D / ARROW KEYS</b></p><p><span>Look around</span><b>MOUSE / DRAG</b></p><p><span>Move faster</span><b>HOLD SHIFT</b></p><p><span>Inspect / read</span><b>E</b></p><p><span>Station transit</span><b>M</b></p><p><span>Pause / release mouse</span><b>ESC</b></p></div><p class="dialog-intro">On touch screens, use the left joystick to move and drag the right side to look around. Amber ramps near Arrivals lead to the upper concourse. The gallery’s broad ramp leads to the viewing terrace. Sound is optional.</p><label class="motion-setting"><input id="motion-setting" type="checkbox"> Reduced camera motion</label><label class="motion-setting"><input id="chatter-setting" type="checkbox" checked> Nearby voices and notices</label><p class="model-credit-note"><a href="/models/poly-pizza/credits.txt" target="_blank" rel="noopener noreferrer">Selected models by Quaternius · credits</a></p><button class="enter-button" data-close>BACK TO THE STATION <span>↗</span></button></dialog>
+    <dialog id="help-dialog" class="station-dialog help-dialog"><div class="dialog-top"><span class="eyebrow">PERSONAL NAVIGATION / QUICK GUIDE</span><button class="close-button" aria-label="Close controls" data-close>×</button></div><h2>Find your own way.</h2><div class="controls-list"><p><span>Move</span><b>W A S D / ARROW KEYS</b></p><p><span>Look around</span><b>MOUSE / DRAG</b></p><p><span>Move faster</span><b>HOLD SHIFT</b></p><p><span>Inspect / read</span><b>E</b></p><p><span>Station transit</span><b>M</b></p><p><span>Pause / release mouse</span><b>ESC</b></p></div><p class="dialog-intro">On touch screens, use the left joystick to move and drag the right side to look around. Amber ramps near Arrivals lead to the upper concourse. The gallery’s broad ramp leads to the viewing terrace. Sound is optional.</p><label class="motion-setting"><input id="motion-setting" type="checkbox"> Reduced camera motion</label><label class="motion-setting"><input id="chatter-setting" type="checkbox" checked> Nearby conversation captions</label>
+      <fieldset class="audio-settings"><legend>Station sound</legend>
+        <label class="motion-setting"><input id="audio-enabled-setting" type="checkbox"> Enable station sound</label>
+        <label class="audio-volume-label" for="audio-volume"><span>Volume</span><output id="audio-volume-value" for="audio-volume">55%</output></label>
+        <input id="audio-volume" class="audio-volume" type="range" min="0" max="100" step="1" value="55" aria-label="Station sound volume">
+        <label class="motion-setting"><input id="footsteps-setting" type="checkbox" checked> Your footsteps</label>
+        <p class="audio-note">Headphones reveal nearby machinery and room reflections.</p>
+      </fieldset><p class="model-credit-note"><a href="/models/poly-pizza/credits.txt" target="_blank" rel="noopener noreferrer">Selected models by Quaternius · credits</a></p><button class="enter-button" data-close>BACK TO THE STATION <span>↗</span></button></dialog>
 
     <dialog id="pause-dialog" class="station-dialog pause-dialog"><div class="dialog-top"><span class="eyebrow">PERSONAL FEED / PAUSED</span><span class="pause-indicator">Ⅱ</span></div><h2>The station carries on.</h2><p class="dialog-intro">Take a moment. There is no schedule to keep.</p><button class="enter-button" id="resume-button">RESUME EXPLORING <span>↗</span></button><button id="return-button" class="return-button">RETURN TO ARRIVAL VIEW</button></dialog>
 

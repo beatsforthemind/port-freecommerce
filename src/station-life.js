@@ -346,6 +346,7 @@ export function createStationLife() {
   ];
   return {
     group,colliders,events,
+    get serviceTime(){return effectTime;},
     stats:Object.freeze({drawCalls:batches.length,triangles:triangleCount,textures:0,lights:0,cargoCars:3,expressCabins:2,serviceBerths:4,serviceLifts:2,slidingDoorLeaves:4,serviceCycleSeconds:120,cleaners:3,repairArms:2,winches:1,
       get visibleDrawCalls(){return visibleDrawCalls;},get submittedTriangles(){return submittedTriangles;}}),
     update(dt,_time,context){
