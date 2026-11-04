@@ -3,6 +3,7 @@ import { sectorAt } from './navigation.js';
 import {createHumanHeadGeometry,createHumanTorsoGeometry,createHumanLimbGeometry,HUMAN_PALETTE,HUMAN_PROFILE} from './humanoid.js';
 import {createJourneyPlanner,sampleJourney} from './population-behavior.js';
 import {applyPopulationTimetable} from './population-timetable.js';
+import {TRAVEL_PACK_PARTS,travelPackPieceColor} from './travel-gear.js';
 
 /**
  * A cross-section of the port: commuters, adapted travelers, readers, traders,
@@ -42,6 +43,7 @@ export function createPopulation({districtLayouts = [], promenadeRoutes = [], na
   const planner=createJourneyPlanner({navigation});
   const journeys=[];
   const invalidJourneys=[];
+  let travelPacks=0;
 
   function actor(x, z, options = {}) {
     // Standing visitors belong in public aisles, seated readers in their seats.
@@ -112,10 +114,14 @@ export function createPopulation({districtLayouts = [], promenadeRoutes = [], na
       }
     }
     if(seated)part(a,'gear','#7f8b81',0,1.08+shift,.415,.37,.027,.265,-.13);
-    else if(index%3===0) {
-      part(a,'gear',index%2?'#89694f':'#68786b',.365,1.02,-.10,.235,.29,.17,0,0,-.05,'',true);
-      part(a,'robe','#393d3b',.115,1.195,.164,.035,.49,.014,0,0,-.46,'',true);
-    } else if(index%4===2)part(a,'gear','#58685f',0,1.17,-.20,.32,.42,.16,0,0,0,'',true);
+    else if(index%3===0||index%4===2) {
+      travelPacks++;
+      for(const piece of TRAVEL_PACK_PARTS){
+        const type=piece.type==='box'?'gear':piece.type==='limb'?'robe':'torso';
+        const p=part(a,type,travelPackPieceColor(piece,index),piece.x,piece.y,piece.z,piece.sx,piece.sy,piece.sz,piece.rx,piece.ry,piece.rz,'',true);
+        p.accessory='travel-pack';p.accessoryPiece=piece.role;
+      }
+    }
     // A few collars and practical credentials, rather than glowing chest LEDs
     // and identical staring eyes, establish role without caricature.
     if(workwear)part(a,'gear','#424b49',0,1.46,.045,.31,.075,.18,0,0,0,'',true);
@@ -510,7 +516,7 @@ export function createPopulation({districtLayouts = [], promenadeRoutes = [], na
     }
   }
   update(0,0);
-  const stats = Object.freeze({actors:actors.length, travelers:56, seated:8, social:12, serviceUnits:4,pathRoutes,upperDeckTravelers:10, drawCalls:batches.size, triangles:triangleCount, updateHz:20, textures:0, lights:0, humanStyle:'tailored adult proportions / understated faces', humanHeadHeight:.26,
+  const stats = Object.freeze({actors:actors.length, travelers:56, seated:8, social:12, serviceUnits:4,pathRoutes,upperDeckTravelers:10, drawCalls:batches.size, triangles:triangleCount, updateHz:20, textures:0, lights:0, humanStyle:'tailored adult proportions / understated faces', humanHeadHeight:.26,travelPacks,accessoryStyle:'fitted upper-back packs / connected shoulder straps',
     get behavior(){const states={};for(const a of actors){const state=a.state||a.pose||'standing';states[state]=(states[state]||0)+1;}return{scheduledResidents:journeys.length,crossSectorJourneys:14,crossDeckJourneys:2,destinationStops:journeys.reduce((n,p)=>n+p.stops.length,0),invalidRoutes:[...invalidJourneys],states,planner:planner.stats,timetable};},
     get visibleActors(){return visibleActors;}, get submittedTriangles(){return submittedTriangles;}, get detailedActors(){return detailedActors;}});
   group.userData.population = stats;

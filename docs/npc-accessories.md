@@ -1,0 +1,13 @@
+# NPC travel accessories
+
+The reported sage block beside the orange-coated promenade character was an intended satchel. The screenshot matches `resident-30 / promenade-local-4`: its coat and bag palette, floor, and accessory variant agree with the image. The original bag was a rigid box fixed beside the torso, close enough to overlap the swinging forearm. Its strap lay on the front of the chest, so the rear view hid the attachment and made the bag resemble an arm block.
+
+The fix replaces these side-mounted proxies with compact travel packs worn against the back, away from the arm swing. Shaped bodies, restrained flaps/fasteners, and continuous shoulder straps make their attachment readable. The older commuter figures receive the same correction for their wrist-mounted luggage proxies. Only people who already carried bags receive the replacement accessories.
+
+The existing humanoid proportions, hand/arm poses, character counts, route goals, timings, and wardrobe palettes are retained. Equipment shares the existing population and commuter batches; no model downloads, textures, or lights are introduced. Focused review covers the screenshot-matching character, gait extrema, front/rear/side views, arm clearance, and complete near/far accessory visibility.
+
+Final checks preserve all sixty plan/timing hashes and the initial main/commuter snapshots. The existing 34 main-population bag wearers and seven commuter bag wearers receive fitted packs. A sweep of all 34 main carriers across 41 gait values performs 75,276 arm/accessory AABB comparisons with zero intersections; the original proxies overlapped by up to 0.111 m. All nine pack parts change LOD together, including return from the far view. Seated readers and unladen figures retain their original arm/hand models.
+
+Rendering retains seven population batches and four commuter batches. The new fittings add 3,096 triangles in total (2,536 main, 560 commuters), with no new materials, textures, lights, or model downloads. Existing update caps remain 20/30 Hz. The Node 24 production build and model/credit verification pass: JavaScript is 956.91 kB (281.99 kB gzip), approximately 0.73 kB more compressed code than before this correction. The existing nonfatal Vite chunk-size advisory remains. Focused verification is retained in [npc-accessory-results.json](npc-accessory-results.json).
+
+The seven commuter carriers also pass 15,498 arm/accessory comparisons across 41 gait values, with no intersections. All eight seated readers retain their complete original part transforms, tints, and geometry types. Final production boots pass desktop and touch layouts with all models, shops, escalators, and promenade transit intact.

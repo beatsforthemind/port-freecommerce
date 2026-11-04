@@ -1,0 +1,240 @@
+{
+  "status": "PASS",
+  "baselineCommit": "a7b379e9b3cae8b29d4b536dae77ffc3d39865e4",
+  "summary": "Replace arm-overlapping satchel and wrist luggage proxies with fitted, torso-mounted travel packs and readable shoulder straps.",
+  "independentCharacterQA": {
+    "status": "PASS",
+    "baselineCommit": "a7b379e9b3cae8b29d4b536dae77ffc3d39865e4",
+    "reviewScope": "Independent character accessory QA; no production edits. Actual station navigation and actor constructors for behavior equivalence; isolated copies for close-up rendering and gait override instrumentation.",
+    "baselineCopy": "/tmp/pfc-accessory-before-ypqxs2d4",
+    "afterCopy": "/tmp/pfc-accessory-after-y6j73sb4",
+    "sourceHashes": {
+      "travel-gear.js": "9ed723e5726dc789e62865781af549e353dd1366428852d0ef46e6c16486a10e",
+      "population.js": "25cbc182f587ab82c4aa9f1a4aa66f2c1aeccac8b249980da4368d8c730f88c5",
+      "districts.js": "5e7acb5f6a69901740055abe81875b286279988eb22c4d97d68d2f626daf496b"
+    },
+    "screenshotDiagnosis": {
+      "matchingActor": "resident-30",
+      "route": "promenade-local-4",
+      "floor": 7.625,
+      "oldAccessory": "Sage cuboid local position (.365,1.02,-.10), scale (.235,.29,.17). Rear view puts this on the viewer-left; walking arm overlaps it while its front diagonal strap is hidden.",
+      "resolution": "A shallow shaped upper-back pack with six connected strap segments, flap and fastener; static relative to torso rather than wrist."
+    },
+    "behavior": {
+      "mainActorsBefore": 80,
+      "mainActorsAfter": 80,
+      "legacyActorsBefore": 20,
+      "legacyActorsAfter": 20,
+      "planCount": 60,
+      "plansUnchanged": true,
+      "plansHash": "262c5dae413effb22dd6a261a8f68ebda6b7248465ab57a5c42e0bf9a15b682f",
+      "initialMainUnchanged": true,
+      "initialMainHash": "7cd4f4843efe4ee66f0b2590b7ed1c6d1f607500299e3227ee3bfdc11c535530",
+      "initialLegacyUnchanged": true,
+      "initialLegacyHash": "4bc24aaa31be481fe16ad9d0fed4bf4fd2a72688981c27556ed4074ace189461",
+      "seatedReaders": {
+        "actors": 8,
+        "frames": 4,
+        "hash": "13d40acc14c4fa039bfd40bea70c9128b5fd358bb91f3398c631965bdb11bbc7"
+      },
+      "seatedReaderPartsAndTransformsUnchanged": true
+    },
+    "performance": {
+      "mainDrawCalls": {
+        "before": 7,
+        "after": 7
+      },
+      "legacyDrawCalls": {
+        "before": 4,
+        "after": 4
+      },
+      "mainTriangles": {
+        "before": 18912,
+        "after": 21448,
+        "added": 2536
+      },
+      "legacyTriangles": {
+        "before": 4204,
+        "after": 4764,
+        "added": 560
+      },
+      "mainUpdateHz": 20,
+      "legacyUpdateHz": 30,
+      "addedTextures": 0,
+      "addedLights": 0,
+      "methodNote": "Structural budget proof; no FPS claim from isolated software-rendered screenshots."
+    },
+    "mainGaitClearance": {
+      "carriers": 34,
+      "samples": 41,
+      "pairChecks": 75276,
+      "intersections": 0,
+      "finiteAccessoryTransforms": 12546,
+      "baselineMaxArmIntersectionDepthMetres": 0.1111301997366061,
+      "method": "Conservative axis-aligned geometry bounds in actor local space, all upper/lower arms and hands, 1 mm contact threshold."
+    },
+    "legacyGaitClearance": {
+      "carriers": 7,
+      "gaitSamples": 41,
+      "accessoryArmPairChecks": 15498,
+      "contacts": 0,
+      "finiteAccessoryTransforms": 2583,
+      "minPackBodyTorsoGapMetres": 0.029996683359630794,
+      "maxNormalizedAccessoryMatrixDrift": 0.000004015470821627787
+    },
+    "mainAccessoryLOD": {
+      "piecesPerPack": 9,
+      "allTaggedDetail": true,
+      "checks": [
+        {
+          "distanceMetres": 0,
+          "detailed": true,
+          "visibleAccessoryPieces": 9
+        },
+        {
+          "distanceMetres": 80,
+          "detailed": false,
+          "visibleAccessoryPieces": 0
+        },
+        {
+          "distanceMetres": 65,
+          "detailed": false,
+          "visibleAccessoryPieces": 0
+        },
+        {
+          "distanceMetres": 55,
+          "detailed": true,
+          "visibleAccessoryPieces": 9
+        },
+        {
+          "distanceMetres": 80,
+          "detailed": false,
+          "visibleAccessoryPieces": 0
+        },
+        {
+          "distanceMetres": 0,
+          "detailed": true,
+          "visibleAccessoryPieces": 9
+        }
+      ],
+      "noOrphanStraps": true,
+      "nearReentryPreservesPieceIdentity": true
+    },
+    "visualVerification": {
+      "browserErrorsBefore": [],
+      "browserErrorsAfter": [],
+      "views": "Resident 30 rear/front, gait -1 and idle; resident 30 side at gait +1; legacy commuter 6 rear/side gait +1. Shoulder loops clear the neck; pack body and straps clear the arms.",
+      "images": [
+        "/tmp/pfc-accessory-before-rear.png",
+        "/tmp/pfc-accessory-after-rear.png",
+        "/tmp/pfc-accessory-before-front.png",
+        "/tmp/pfc-accessory-after-front.png"
+      ]
+    },
+    "scripts": [
+      "/tmp/pfc-accessory-native.mjs",
+      "/tmp/pfc-accessory-pose-check.mjs",
+      "/tmp/pfc-accessory-extra-check.mjs",
+      "/tmp/pfc-accessory-viewer-prepare.py",
+      "/tmp/pfc-accessory-capture.cjs"
+    ]
+  },
+  "productionSmoke": {
+    "origin": "http://127.0.0.1:5175",
+    "devices": [
+      {
+        "device": "desktop960x600",
+        "actors": 80,
+        "commuters": 20,
+        "travelPacks": 34,
+        "batches": 7,
+        "calibratedJourneys": 60,
+        "loadedModels": 4,
+        "promenadeTransit": true,
+        "shops": 32,
+        "escalators": 6,
+        "errors": [],
+        "assetErrors": []
+      },
+      {
+        "device": "touch390x844",
+        "actors": 80,
+        "commuters": 20,
+        "travelPacks": 34,
+        "batches": 7,
+        "calibratedJourneys": 60,
+        "loadedModels": 4,
+        "promenadeTransit": true,
+        "shops": 32,
+        "escalators": 6,
+        "errors": [],
+        "assetErrors": []
+      }
+    ]
+  },
+  "build": {
+    "node": "v24.22.1",
+    "command": "npm run build",
+    "passed": true,
+    "compiledAssets": [
+      {
+        "file": "dist/assets/index-BjHEwyXs.js",
+        "bytes": 956909,
+        "gzipBytes": 281994,
+        "sha256": "f5d374d79de1d9d15cec8a3cc8c3b346be00b91e4498319446bedf3c8504dffb"
+      },
+      {
+        "file": "dist/assets/index-DhQ6S7wL.css",
+        "bytes": 20461,
+        "gzipBytes": 5331,
+        "sha256": "4a3eb24a8db6adfc8ce8cb23918e4e4893e5103aba9ac4aee44c6e8bd1243fce"
+      }
+    ],
+    "publicFiles": [
+      {
+        "file": "models/poly-pizza/animated-robot.glb",
+        "bytes": 401024,
+        "sha256": "54f1a6999cca701cdc2f8fb67bcd9a283e1154cb80cac356f031bed7c2e74cbe",
+        "builtCopyIdentical": true
+      },
+      {
+        "file": "models/poly-pizza/cooking-pot.glb",
+        "bytes": 15016,
+        "sha256": "3836f63ea0a1135d1dbb6f8a942af6a1bc27912c21d5112c1820e88c64779995",
+        "builtCopyIdentical": true
+      },
+      {
+        "file": "models/poly-pizza/credits.txt",
+        "bytes": 952,
+        "sha256": "e1877b031ff883f06c7ccf7727d526af404e437d2372c0eac960e2fc6ff05f61",
+        "builtCopyIdentical": true
+      },
+      {
+        "file": "models/poly-pizza/scifi-computer.glb",
+        "bytes": 41964,
+        "sha256": "2462a9e43d8ef20636a5be154cb092c17548b9baac2e3538fde7319e9928b923",
+        "builtCopyIdentical": true
+      },
+      {
+        "file": "models/poly-pizza/tree-spiral.glb",
+        "bytes": 35944,
+        "sha256": "16b571e404dff48380d8289a92596d41a5b49e75fae9e0151d1a3fc1fc0a4e86",
+        "builtCopyIdentical": true
+      }
+    ],
+    "verification": "Production build and model/credit verification passed; existing Vite chunk-size advisory remains."
+  },
+  "renderingBudget": {
+    "additionalTriangles": 3096,
+    "additionalDrawCalls": 0,
+    "additionalMaterials": 0,
+    "additionalTextures": 0,
+    "additionalLights": 0,
+    "newDependencies": 0
+  },
+  "limits": [
+    "Clearance checks use conservative actor-local geometry bounds with a 1 mm contact threshold.",
+    "Touch verification uses browser emulation. This report makes no device FPS claim."
+  ],
+  "cleanup": "Temporary production and QA preview servers stopped; existing development server retained."
+}

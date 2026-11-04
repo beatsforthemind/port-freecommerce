@@ -81,6 +81,7 @@ Travelers follow each area's real routes; readers sit on both observation levels
 | `src/population-timetable.js` | Coordinated periods and prevalidated journey departure phases |
 | `src/commuter-behavior.js` | Concourse transfer, arrival, shopping, and messenger itineraries |
 | `src/humanoid.js` | Shared adult proportions, restrained head shapes, tailored torsos, tapered limbs, and wardrobe palettes |
+| `src/travel-gear.js` | Shared fitted travel packs and connected shoulder straps, clear of arm movement |
 | `src/commerce.js` | Tea caravan, specimen broker, salvage workshop, suspended seed library |
 | `src/station-life.js` | Scheduled freight and express services, staff lifts, cleaners, repair cell, dock winch |
 | `src/imported-models.js` | Local GLB loading, scale/origin normalization, static instancing, animated service robot |
@@ -97,6 +98,8 @@ The detail pass adds worn metal panels, grilles, surface relief, service equipme
 The inhabited-station pass adds 80 more inhabitants in seven instanced batches, with varied travel clothing, respirators, augmentations, bags, seated readers, and social groups. Doorway visibility culls people hidden by sector walls, and distant accessories use simpler detail; uploads cap at 20 Hz. Four independent traders create new places to visit and inspect. A cargo tram, cleaners, repair manipulators, and a dock winch keep the station working around its passengers. Optional nearby voices and notices reveal short original stories; disable them from Controls. When sound is enabled, the synthetic soundscape changes between the market, observation gallery, concourse, and docks. It uses no recorded dialogue, downloads, or speech services.
 
 The human-model pass gives all 100 human figures a consistent style: adult proportions, shaped jackets, muted travel clothing, natural skin tones, cropped hair, and quiet facial planes. Hands and boots follow connected limb chains; readers sit on benches scaled to their bodies, and stallkeepers stand behind counters at a natural working height. Shared geometry retains seven population and four commuter batches, with no new textures or model downloads. See [human models](docs/human-models.md) for visual choices, measured costs, and close-up verification.
+
+The accessory correction replaces side-mounted satchel blocks and wrist luggage proxies with shallow, visibly strapped travel packs. The packs sit clear of the animated arms and share the existing character batches. See [NPC accessories](docs/npc-accessories.md) for the screenshot diagnosis and focused verification.
 
 The traffic pass gives the overhead freight train a coupled three-wagon consist and adds a separate two-cabin express service. Both ease into physical berths, wait, and reverse. Express doors open toward the platforms; two guided service lifts connect the express berths to the staff galleries. Nine exterior couriers, freighters, shuttles, and tenders follow separate flight lanes, with clearance holds, turns, departures, drive apertures, and navigation beacons. All movement uses the existing GPU batches, with no new textures, lights, downloads, or per-object CPU simulation. Reduced motion freezes the service clocks. See [traffic performance](docs/traffic-performance.md) for budgets, comparisons, and verification limits.
 
