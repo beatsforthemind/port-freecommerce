@@ -32,7 +32,7 @@ const sectors = {
   observation: { name: 'Observation gallery', description: 'Take the long ramp toward infinity.', position: [75, 1.75, -20], yaw: -Math.PI / 2 },
   market: { name: 'The exchange', description: 'Follow the cloth roofs. Find something strange.', position: [-62, 1.75, 30], yaw: Math.PI / 2 },
   docks: { name: 'Transit docks', description: 'Clear customs. Find your next world.', position: [0, 1.75, -154], yaw: 0 },
-  promenade: {name:'Public promenade',description:'Concourse / Deck 02',position:[-24,9.375,48],yaw:-Math.PI/2},
+  promenade: {name:'Public promenade',description:'Concourse / Deck 02 trade walks',position:[-24,9.375,48],yaw:.2},
   galleries: {name:'Lantern galleries',description:'Concourse / Deck 03',position:[-24,19.375,-52],yaw:-Math.PI/2},
   express: {name:'Express overlook',description:'Concourse / Deck 04',position:[-27,25.11,-58],yaw:-Math.PI/2},
 };
@@ -195,8 +195,17 @@ function showError(error) {
 function canWalk(x, z, feet) {return navigation?.canWalk(x,z,feet) ?? false;}
 
 function updateNearbyInteractable() {
-  const next=mode==='exploring'&&!publicLifts?.riding
-    ?publicLifts?.getInteraction(camera.position)||interactables.find(t=>(t.x-camera.position.x)**2+(t.z-camera.position.z)**2+((t.y||0)-(camera.position.y-1.75))**2<(t.radius??3.8)**2)||null:null;
+  let next=null;
+  if(mode==='exploring'&&!publicLifts?.riding){
+    next=publicLifts?.getInteraction(camera.position)||null;
+    if(!next){
+      let nearest=Infinity;
+      for(const terminal of interactables){
+        const distance=(terminal.x-camera.position.x)**2+(terminal.z-camera.position.z)**2+((terminal.y||0)-(camera.position.y-1.75))**2;
+        if(distance<(terminal.radius??3.8)**2&&distance<nearest){next=terminal;nearest=distance;}
+      }
+    }
+  }
   const hint=next?.hint||'Read terminal';
   if(currentTerminal===next&&lastInteractionLabel===hint)return;
   currentTerminal=next;
@@ -462,7 +471,7 @@ async function init() {
   buildTerminals({importedComputer: importedModels.loaded.computer});
   population = createPopulation({districtLayouts:districts.layouts,promenadeRoutes:station.routes,navigation:journeyNavigation});
   scene.add(population.group);
-  stationPlan=createStationPlan(navigation);
+  stationPlan=createStationPlan(navigation,{shops:station.shops});
   audio = createAmbientAudio({volume:audioVolume,footstepsEnabled,onStateChange:syncAudioControls});
   syncAudioControls();
   controls = createFirstPersonControls(camera, canvas, {
@@ -555,6 +564,7 @@ async function init() {
     get lifts() { return publicLifts.snapshot; },
     get publicLiftStats() { return publicLifts.stats; },
     get concourseLevels() { return CONCOURSE_LEVELS.map(level=>({...level})); },
+    get promenade() { return {stats:structuredClone(station.promenadeStats),shops:station.shops.map(({id,name,type,side,z,width})=>({id,name,type,side,x:side*26.1,y:CONCOURSE_LEVELS[1].height,z,width}))}; },
     canWalk,
     heightAt:navigation.heightAt,
     get floors(){return navigation.surfaces.map(s=>({...s}));},

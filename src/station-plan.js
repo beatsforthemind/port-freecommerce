@@ -1,7 +1,7 @@
 import {CONCOURSE_LEVELS,PUBLIC_LIFT_SHAFTS,concourseLevelAt} from './concourse-levels.js';
 
 /** Public floor plans share their geometry with walking, including lift landings. */
-export function createStationPlan(navigation) {
+export function createStationPlan(navigation,{shops=[]}={}) {
   const ns='http://www.w3.org/2000/svg',svg=document.querySelector('.station-map svg');
   svg.replaceChildren();svg.setAttribute('viewBox','-113 -214 226 322');svg.classList.add('station-plan-live');
   const colors={concourse:'#d5ad83',observation:'#adc6bc',market:'#d1956d',docks:'#91a9ba'},paths=[],listeners=[];
@@ -20,12 +20,18 @@ export function createStationPlan(navigation) {
     add('rect',{x:shaft.x-1.8,y:shaft.z-2,width:3.6,height:4,fill:'#efc18c',stroke:'#f0cf9f','stroke-width':.6});
     const label=add('text',{x:shaft.side<0?shaft.x-8:shaft.x+4,y:shaft.z+1.6,fill:'#efc18c','font-size':4,'font-family':'sans-serif'},'L');label.classList.add('plan-lift-label');
   }
+  const shopMarkers=shops.map(shop=>{
+    const node=add('rect',{x:shop.side<0?-31.4:27.1,y:shop.z-shop.width/2,width:4.3,height:shop.width,fill:'#a7bc98','fill-opacity':.7});
+    const title=document.createElementNS(ns,'title');title.textContent=`Deck 02 / ${shop.name}`;node.append(title);
+    return node;
+  });
   const marker=add('circle',{r:2.4,fill:'#f2c98c',stroke:'#182b30','stroke-width':1});
-  const caption=add('text',{x:-104,y:101,fill:'#b8c6b8','font-size':3.6,'font-family':'sans-serif'},'AMBER SQUARES / LANTERN LIFTS');caption.classList.add('plan-legend');
+  const caption=add('text',{x:-104,y:101,fill:'#b8c6b8','font-size':3.6,'font-family':'sans-serif'},'AMBER / LIFTS    SAGE / DECK 02 TRADERS');caption.classList.add('plan-legend');
   function refresh(){
     const level=CONCOURSE_LEVELS.find(item=>item.id===selected);
     document.querySelector('#map-deck-label').textContent=level?`DECK ${String(level.number).padStart(2,'0')} / ${level.short}`:'ALL PUBLIC DECKS';
     for(const button of document.querySelectorAll('[data-map-deck]'))button.setAttribute('aria-pressed',String(button.dataset.mapDeck===selected));
+    for(const node of shopMarkers)node.style.display=selected==='promenade'||selected==='all'?'':'none';
     for(const item of paths){
       const visible=item.sector!=='concourse'||selected==='all'||item.deck===selected||(item.deck==='ramp'&&(selected==='concourse'||selected==='promenade'));
       item.path.style.display=visible?'':'none';

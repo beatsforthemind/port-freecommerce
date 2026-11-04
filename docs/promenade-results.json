@@ -1,0 +1,2376 @@
+{
+  "result": "pass; thirty-two original shops and stalls on both Deck 02 walls",
+  "verifiedAtUTC": "2026-11-04T18:20:53.450653+00:00",
+  "baselineCommit": "0f82639410cbad7f4093b801c6b6c46c1c387957",
+  "workflow": {
+    "freshAgents": 6,
+    "roles": [
+      "Business directory and sign atlas",
+      "Physical shop geometry",
+      "Sixteen humanoid keepers",
+      "Independent access and rendering QA",
+      "Adversarial art review",
+      "Resource lifecycle review"
+    ]
+  },
+  "independentQA": {
+    "result": "pass; no reproduced remaining blockers",
+    "dateUTC": "2026-11-04T18:16:44.589320+00:00",
+    "baselineCommit": "0f82639410cbad7f4093b801c6b6c46c1c387957",
+    "ownership": "Independent QA. Only temporary scripts, copied-source instrumentation, screenshots and JSON. No production edits or commits.",
+    "method": "Archived exact prior commit; matched copied final source. Static body navigation and exact calibrated NPC plan hashes. Actual first-person controls for all shop visits, bridge/sunwalk/ramp walks and lift boarding. Native browser carry/guard tests use actual station/shop colliders plus deliberately overlapping shaft floors. Software WebGL matched frozen QA poses compare rendering submission callback time, not hardware frame rate. QA pose mode excludes normal interactive update work, so callback deltas do not measure the added interaction-selection loop.",
+    "static": {
+      "result": "pass",
+      "idleNoBufferOrTextureUpdates": true,
+      "shops": 32,
+      "shopTypes": [
+        "food",
+        "botany",
+        "charts",
+        "tailoring",
+        "sensory",
+        "repair",
+        "curios",
+        "habitat",
+        "pharmacy",
+        "luggage",
+        "exchange"
+      ],
+      "anchors": [
+        {
+          "id": "promenade-west-01",
+          "name": "Six Moons Noodle Bureau",
+          "side": -1,
+          "z": -119.1,
+          "width": 5.4,
+          "type": "food",
+          "anchor": [
+            -26.1,
+            7.625,
+            -119.1
+          ],
+          "walkable": true,
+          "correctHeight": true,
+          "shaftClear": true
+        },
+        {
+          "id": "promenade-west-02",
+          "name": "Parcel of Rain",
+          "side": -1,
+          "z": -112.9,
+          "width": 5.4,
+          "type": "botany",
+          "anchor": [
+            -26.1,
+            7.625,
+            -112.9
+          ],
+          "walkable": true,
+          "correctHeight": true,
+          "shaftClear": true
+        },
+        {
+          "id": "promenade-west-03",
+          "name": "Foldline Cartography",
+          "side": -1,
+          "z": -100,
+          "width": 11.2,
+          "type": "charts",
+          "anchor": [
+            -26.1,
+            7.625,
+            -100
+          ],
+          "walkable": true,
+          "correctHeight": true,
+          "shaftClear": true
+        },
+        {
+          "id": "promenade-west-04",
+          "name": "Other Sleeves Atelier",
+          "side": -1,
+          "z": -87.1,
+          "width": 5.4,
+          "type": "tailoring",
+          "anchor": [
+            -26.1,
+            7.625,
+            -87.1
+          ],
+          "walkable": true,
+          "correctHeight": true,
+          "shaftClear": true
+        },
+        {
+          "id": "promenade-west-05",
+          "name": "Breath Exchange",
+          "side": -1,
+          "z": -80.9,
+          "width": 5.4,
+          "type": "sensory",
+          "anchor": [
+            -26.1,
+            7.625,
+            -80.9
+          ],
+          "walkable": true,
+          "correctHeight": true,
+          "shaftClear": true
+        },
+        {
+          "id": "promenade-west-06",
+          "name": "Second Self Drone Works",
+          "side": -1,
+          "z": -68,
+          "width": 11.2,
+          "type": "repair",
+          "anchor": [
+            -26.1,
+            7.625,
+            -68
+          ],
+          "walkable": true,
+          "correctHeight": true,
+          "shaftClear": true
+        },
+        {
+          "id": "promenade-west-07",
+          "name": "Red Shift Spice Office",
+          "side": -1,
+          "z": -39.1,
+          "width": 5.4,
+          "type": "food",
+          "anchor": [
+            -26.1,
+            7.625,
+            -39.1
+          ],
+          "walkable": true,
+          "correctHeight": true,
+          "shaftClear": true
+        },
+        {
+          "id": "promenade-west-08",
+          "name": "Afterimage Memory Jewels",
+          "side": -1,
+          "z": -32.9,
+          "width": 5.4,
+          "type": "curios",
+          "anchor": [
+            -26.1,
+            7.625,
+            -32.9
+          ],
+          "walkable": true,
+          "correctHeight": true,
+          "shaftClear": true
+        },
+        {
+          "id": "promenade-west-09",
+          "name": "Small Gravities Habitat Office",
+          "side": -1,
+          "z": -20,
+          "width": 11.2,
+          "type": "habitat",
+          "anchor": [
+            -26.1,
+            7.625,
+            -20
+          ],
+          "walkable": true,
+          "correctHeight": true,
+          "shaftClear": true
+        },
+        {
+          "id": "promenade-west-10",
+          "name": "Slowlight Apothecary",
+          "side": -1,
+          "z": -7.1,
+          "width": 5.4,
+          "type": "pharmacy",
+          "anchor": [
+            -26.1,
+            7.625,
+            -7.1
+          ],
+          "walkable": true,
+          "correctHeight": true,
+          "shaftClear": true
+        },
+        {
+          "id": "promenade-west-11",
+          "name": "The Lost Constellation",
+          "side": -1,
+          "z": -0.8999999999999999,
+          "width": 5.4,
+          "type": "curios",
+          "anchor": [
+            -26.1,
+            7.625,
+            -0.8999999999999999
+          ],
+          "walkable": true,
+          "correctHeight": true,
+          "shaftClear": true
+        },
+        {
+          "id": "promenade-west-12",
+          "name": "Soft Landing Cargo Atelier",
+          "side": -1,
+          "z": 8.9,
+          "width": 5.4,
+          "type": "luggage",
+          "anchor": [
+            -26.1,
+            7.625,
+            8.9
+          ],
+          "walkable": true,
+          "correctHeight": true,
+          "shaftClear": true
+        },
+        {
+          "id": "promenade-west-13",
+          "name": "Midnight Ferment Cooperative",
+          "side": -1,
+          "z": 15.1,
+          "width": 5.4,
+          "type": "food",
+          "anchor": [
+            -26.1,
+            7.625,
+            15.1
+          ],
+          "walkable": true,
+          "correctHeight": true,
+          "shaftClear": true
+        },
+        {
+          "id": "promenade-west-14",
+          "name": "Quiet on Credit",
+          "side": -1,
+          "z": 24.9,
+          "width": 5.4,
+          "type": "sensory",
+          "anchor": [
+            -26.1,
+            7.625,
+            24.9
+          ],
+          "walkable": true,
+          "correctHeight": true,
+          "shaftClear": true
+        },
+        {
+          "id": "promenade-west-15",
+          "name": "Odd Tender Clearing House",
+          "side": -1,
+          "z": 31.1,
+          "width": 5.4,
+          "type": "exchange",
+          "anchor": [
+            -26.1,
+            7.625,
+            31.1
+          ],
+          "walkable": true,
+          "correctHeight": true,
+          "shaftClear": true
+        },
+        {
+          "id": "promenade-west-16",
+          "name": "Aphelion Tea Room",
+          "side": -1,
+          "z": 44,
+          "width": 11.2,
+          "type": "food",
+          "anchor": [
+            -26.1,
+            7.625,
+            44
+          ],
+          "walkable": true,
+          "correctHeight": true,
+          "shaftClear": true
+        },
+        {
+          "id": "promenade-east-01",
+          "name": "Orbit & Anchor Outfitters",
+          "side": 1,
+          "z": -119.1,
+          "width": 5.4,
+          "type": "luggage",
+          "anchor": [
+            26.1,
+            7.625,
+            -119.1
+          ],
+          "walkable": true,
+          "correctHeight": true,
+          "shaftClear": true
+        },
+        {
+          "id": "promenade-east-02",
+          "name": "Manybody Transit Clinic",
+          "side": 1,
+          "z": -112.9,
+          "width": 5.4,
+          "type": "pharmacy",
+          "anchor": [
+            26.1,
+            7.625,
+            -112.9
+          ],
+          "walkable": true,
+          "correctHeight": true,
+          "shaftClear": true
+        },
+        {
+          "id": "promenade-east-03",
+          "name": "Pocket Biospheres",
+          "side": 1,
+          "z": -100,
+          "width": 11.2,
+          "type": "botany",
+          "anchor": [
+            26.1,
+            7.625,
+            -100
+          ],
+          "walkable": true,
+          "correctHeight": true,
+          "shaftClear": true
+        },
+        {
+          "id": "promenade-east-04",
+          "name": "Twelve Tides Protein Kitchen",
+          "side": 1,
+          "z": -87.1,
+          "width": 5.4,
+          "type": "food",
+          "anchor": [
+            26.1,
+            7.625,
+            -87.1
+          ],
+          "walkable": true,
+          "correctHeight": true,
+          "shaftClear": true
+        },
+        {
+          "id": "promenade-east-05",
+          "name": "Patchwork Suit Service",
+          "side": 1,
+          "z": -80.9,
+          "width": 5.4,
+          "type": "repair",
+          "anchor": [
+            26.1,
+            7.625,
+            -80.9
+          ],
+          "walkable": true,
+          "correctHeight": true,
+          "shaftClear": true
+        },
+        {
+          "id": "promenade-east-06",
+          "name": "Elsewhere Navigation Cabinet",
+          "side": 1,
+          "z": -68,
+          "width": 11.2,
+          "type": "charts",
+          "anchor": [
+            26.1,
+            7.625,
+            -68
+          ],
+          "walkable": true,
+          "correctHeight": true,
+          "shaftClear": true
+        },
+        {
+          "id": "promenade-east-07",
+          "name": "Rootless Nursery",
+          "side": 1,
+          "z": -39.1,
+          "width": 5.4,
+          "type": "botany",
+          "anchor": [
+            26.1,
+            7.625,
+            -39.1
+          ],
+          "walkable": true,
+          "correctHeight": true,
+          "shaftClear": true
+        },
+        {
+          "id": "promenade-east-08",
+          "name": "The Useful Minute",
+          "side": 1,
+          "z": -32.9,
+          "width": 5.4,
+          "type": "exchange",
+          "anchor": [
+            26.1,
+            7.625,
+            -32.9
+          ],
+          "walkable": true,
+          "correctHeight": true,
+          "shaftClear": true
+        },
+        {
+          "id": "promenade-east-09",
+          "name": "Silhouette Transit Wear",
+          "side": 1,
+          "z": -20,
+          "width": 11.2,
+          "type": "tailoring",
+          "anchor": [
+            26.1,
+            7.625,
+            -20
+          ],
+          "walkable": true,
+          "correctHeight": true,
+          "shaftClear": true
+        },
+        {
+          "id": "promenade-east-10",
+          "name": "The Unfamiliar Instrument",
+          "side": 1,
+          "z": -7.1,
+          "width": 5.4,
+          "type": "curios",
+          "anchor": [
+            26.1,
+            7.625,
+            -7.1
+          ],
+          "walkable": true,
+          "correctHeight": true,
+          "shaftClear": true
+        },
+        {
+          "id": "promenade-east-11",
+          "name": "Comet Crumb Bakery",
+          "side": 1,
+          "z": -0.8999999999999999,
+          "width": 5.4,
+          "type": "food",
+          "anchor": [
+            26.1,
+            7.625,
+            -0.8999999999999999
+          ],
+          "walkable": true,
+          "correctHeight": true,
+          "shaftClear": true
+        },
+        {
+          "id": "promenade-east-12",
+          "name": "Borrowed Horizon",
+          "side": 1,
+          "z": 8.9,
+          "width": 5.4,
+          "type": "sensory",
+          "anchor": [
+            26.1,
+            7.625,
+            8.9
+          ],
+          "walkable": true,
+          "correctHeight": true,
+          "shaftClear": true
+        },
+        {
+          "id": "promenade-east-13",
+          "name": "Lumen Lens Exchange",
+          "side": 1,
+          "z": 15.1,
+          "width": 5.4,
+          "type": "pharmacy",
+          "anchor": [
+            26.1,
+            7.625,
+            15.1
+          ],
+          "walkable": true,
+          "correctHeight": true,
+          "shaftClear": true
+        },
+        {
+          "id": "promenade-east-14",
+          "name": "Pollen Post",
+          "side": 1,
+          "z": 24.9,
+          "width": 5.4,
+          "type": "botany",
+          "anchor": [
+            26.1,
+            7.625,
+            24.9
+          ],
+          "walkable": true,
+          "correctHeight": true,
+          "shaftClear": true
+        },
+        {
+          "id": "promenade-east-15",
+          "name": "Little Courier Assembly",
+          "side": 1,
+          "z": 31.1,
+          "width": 5.4,
+          "type": "repair",
+          "anchor": [
+            26.1,
+            7.625,
+            31.1
+          ],
+          "walkable": true,
+          "correctHeight": true,
+          "shaftClear": true
+        },
+        {
+          "id": "promenade-east-16",
+          "name": "Dust Archive & Salvage",
+          "side": 1,
+          "z": 44,
+          "width": 11.2,
+          "type": "curios",
+          "anchor": [
+            26.1,
+            7.625,
+            44
+          ],
+          "walkable": true,
+          "correctHeight": true,
+          "shaftClear": true
+        }
+      ],
+      "samples": {
+        "lane": 7220,
+        "ground": 14364,
+        "galleries": 14364,
+        "express": 14364
+      },
+      "walkabilityChanges": {
+        "lane": [],
+        "ground": [],
+        "galleries": [],
+        "express": []
+      },
+      "sourceHashes": {
+        "src/atmosphere.js": "411c580987d91fbda822e6512515a5d9539e5605ae0d1008c1814997cb23ac80",
+        "src/audio-sources.js": "81df027e596c388179d0f5aad8247cfa772526430c9a80dcd3fcb474ce662731",
+        "src/audio.js": "e01935000541ac4ca047d62101cb468e483ce44ff902cd6698eaff489bffe623",
+        "src/commerce.js": "64ba68926300deb423c93080d819865634f0e4d7b930197e6ec1f97af6a6463c",
+        "src/commuter-behavior.js": "889fdf925619c2ff68f4335c5717c2dfe2d6b8878dc629f536eefe1cd6f07ba7",
+        "src/concourse-access.js": "25826f33548195925038abde3c4308cfd26586cfb00365a52d973fb121671e10",
+        "src/concourse-levels.js": "e1360f152272859bf076a1ba6337a7a31d623291e6968e7c1ed1cc6e93ddadba",
+        "src/concourse-upper.js": "a70a08073c860b44e9d69eb2c55461a8928ff9f6ded6296b2b352ba6cc68a978",
+        "src/controls.js": "d7cd3120b16aafad71ee3f39423ec6440faeb7112e5aacc2de105db01f2bca98",
+        "src/district-docks.js": "cc661a127637530dd24d6f8d78b692011920d93657e95ec1cf5afe11a27d3cb2",
+        "src/district-market.js": "ea5f43f766c9e00b2eb9b86b1bda6faadce52c521cf374cc5231a033f031527a",
+        "src/district-observation.js": "28c8276774b57671a578ed6c1607213c9046d5a2a2b320fbcc91e3a2f24299e0",
+        "src/districts.js": "2ff77b89a40465ddd4edff35216b5ae579c233ed81b13249218e727382a10229",
+        "src/furnishings.js": "bffe3b934a9384c1c39a927b93fdde10fefd0e5bc39546334ec96e09b0f9e7e0",
+        "src/humanoid.js": "f210a30947f7af82b9842bc6b93c06cb96fbffec042c1b17ec58b9008313ddb7",
+        "src/imported-models.js": "2b3d3e434d054d801c62990eef1093afb764d09df5e395fc0f5feb123ad0c0fd",
+        "src/kit.js": "c9dab8e517106ae5f2b2f2ea1e08161666dc669cf503098637afcbf3a914004e",
+        "src/main.js": "b9a948bb6a9e8218a26ee95ce131a51bb309794e827a91b40c660b3086961df6",
+        "src/navigation.js": "855f7f9098ed9b33cfc552f0b707a81b807de014e6584686a21812c78a0735a7",
+        "src/population-behavior.js": "8c40b0a93813a3d8237a8ac0e56ebea862270c30b7c137fddb9a44c22ffaa70d",
+        "src/population-timetable.js": "338c5ca902162e4ba38d17279ef8c3b73b9b15132baf1bbfb38b4f1910cae371",
+        "src/population.js": "b8cb7d302bc2cde8f6a4d97e5c30da76ac78a14d173e7881ce27e37dbd13a131",
+        "src/promenade-directory.js": "57a862f098c523ec8510f9fa27e9b284d535b213cce775281f6f792b17af1cfc",
+        "src/promenade-keepers.js": "8ff3efc32961da94364df651d488d30555724251067b23b6125911d457a0f219",
+        "src/promenade-shops.js": "72b0a9a60e5a94418b18ec753b9e6291286cc1ef3082e1ccbe1ef72fd402237b",
+        "src/public-lifts.js": "5fa591062fff5fb958715c91cc991684ac630a0447741296dfff2d666f407ba3",
+        "src/station-life.js": "cec2805ea1e5b74099992db91fd6ecf5a6803ee7b50750c4a734fc8c3c97b01b",
+        "src/station-plan.js": "9fb5806df13f2f325835b3f258350e6bb728537b5b488c7dba05ee48d2943f10",
+        "src/surfaces.js": "eabbd7e5f442e1f2bdaa28765e44c7b7b41281e17b89921d663e0fbeb20cb34b",
+        "src/world.js": "7587e5298b3659468b9158c5fa38a119a5cdb6c9519c241cf229d353d5550fe2"
+      },
+      "geometry": {
+        "meshes": 72,
+        "draws": 71,
+        "triangles": 73806,
+        "instancedBoxes": 4171,
+        "textures": 29,
+        "geometries": 72
+      },
+      "colliders": {
+        "before": 268,
+        "after": 300,
+        "newColliderCount": 32
+      },
+      "npc": {
+        "count": 60,
+        "beforeHash": "262c5dae413effb22dd6a261a8f68ebda6b7248465ab57a5c42e0bf9a15b682f",
+        "afterHash": "262c5dae413effb22dd6a261a8f68ebda6b7248465ab57a5c42e0bf9a15b682f",
+        "plansIdentical": true,
+        "initialSnapshotIdentical": true,
+        "legacySnapshotIdentical": true,
+        "invalid": []
+      },
+      "problems": []
+    },
+    "walkthrough": {
+      "devices": [
+        {
+          "mobile": false,
+          "walkingLegs": 70,
+          "visitedShops": 32,
+          "allTitlesMatch": true,
+          "allDialogsFit": true,
+          "liftStops": [
+            {
+              "level": "galleries",
+              "height": 17.625
+            },
+            {
+              "level": "express",
+              "height": 23.36
+            },
+            {
+              "level": "promenade",
+              "height": 7.625
+            },
+            {
+              "level": "concourse",
+              "height": 0
+            }
+          ],
+          "mapFilters": [
+            {
+              "deck": "promenade",
+              "visible": 32
+            },
+            {
+              "deck": "concourse",
+              "visible": 0
+            },
+            {
+              "deck": "galleries",
+              "visible": 0
+            },
+            {
+              "deck": "express",
+              "visible": 0
+            },
+            {
+              "deck": "all",
+              "visible": 32
+            }
+          ],
+          "models": 4,
+          "npcCalibrated": 60,
+          "errors": [],
+          "assetErrors": []
+        },
+        {
+          "mobile": true,
+          "walkingLegs": 70,
+          "visitedShops": 32,
+          "allTitlesMatch": true,
+          "allDialogsFit": true,
+          "liftStops": [
+            {
+              "level": "galleries",
+              "height": 17.625
+            },
+            {
+              "level": "express",
+              "height": 23.36
+            },
+            {
+              "level": "promenade",
+              "height": 7.625
+            },
+            {
+              "level": "concourse",
+              "height": 0
+            }
+          ],
+          "mapFilters": [
+            {
+              "deck": "promenade",
+              "visible": 32
+            },
+            {
+              "deck": "concourse",
+              "visible": 0
+            },
+            {
+              "deck": "galleries",
+              "visible": 0
+            },
+            {
+              "deck": "express",
+              "visible": 0
+            },
+            {
+              "deck": "all",
+              "visible": 32
+            }
+          ],
+          "models": 4,
+          "npcCalibrated": 60,
+          "errors": [],
+          "assetErrors": []
+        }
+      ],
+      "totalWalkingLegs": 140,
+      "totalShopVisits": 64
+    },
+    "nativeLift": {
+      "actualStationColliders": true,
+      "cases": 24,
+      "trips": [
+        {
+          "shaft": "west",
+          "from": "concourse",
+          "to": "promenade",
+          "steps": 118,
+          "arrived": true
+        },
+        {
+          "shaft": "west",
+          "from": "concourse",
+          "to": "galleries",
+          "steps": 238,
+          "arrived": true
+        },
+        {
+          "shaft": "west",
+          "from": "concourse",
+          "to": "express",
+          "steps": 307,
+          "arrived": true
+        },
+        {
+          "shaft": "west",
+          "from": "promenade",
+          "to": "concourse",
+          "steps": 118,
+          "arrived": true
+        },
+        {
+          "shaft": "west",
+          "from": "promenade",
+          "to": "galleries",
+          "steps": 147,
+          "arrived": true
+        },
+        {
+          "shaft": "west",
+          "from": "promenade",
+          "to": "express",
+          "steps": 215,
+          "arrived": true
+        },
+        {
+          "shaft": "west",
+          "from": "galleries",
+          "to": "concourse",
+          "steps": 238,
+          "arrived": true
+        },
+        {
+          "shaft": "west",
+          "from": "galleries",
+          "to": "promenade",
+          "steps": 147,
+          "arrived": true
+        },
+        {
+          "shaft": "west",
+          "from": "galleries",
+          "to": "express",
+          "steps": 95,
+          "arrived": true
+        },
+        {
+          "shaft": "west",
+          "from": "express",
+          "to": "concourse",
+          "steps": 307,
+          "arrived": true
+        },
+        {
+          "shaft": "west",
+          "from": "express",
+          "to": "promenade",
+          "steps": 215,
+          "arrived": true
+        },
+        {
+          "shaft": "west",
+          "from": "express",
+          "to": "galleries",
+          "steps": 95,
+          "arrived": true
+        },
+        {
+          "shaft": "east",
+          "from": "concourse",
+          "to": "promenade",
+          "steps": 118,
+          "arrived": true
+        },
+        {
+          "shaft": "east",
+          "from": "concourse",
+          "to": "galleries",
+          "steps": 238,
+          "arrived": true
+        },
+        {
+          "shaft": "east",
+          "from": "concourse",
+          "to": "express",
+          "steps": 307,
+          "arrived": true
+        },
+        {
+          "shaft": "east",
+          "from": "promenade",
+          "to": "concourse",
+          "steps": 118,
+          "arrived": true
+        },
+        {
+          "shaft": "east",
+          "from": "promenade",
+          "to": "galleries",
+          "steps": 147,
+          "arrived": true
+        },
+        {
+          "shaft": "east",
+          "from": "promenade",
+          "to": "express",
+          "steps": 215,
+          "arrived": true
+        },
+        {
+          "shaft": "east",
+          "from": "galleries",
+          "to": "concourse",
+          "steps": 238,
+          "arrived": true
+        },
+        {
+          "shaft": "east",
+          "from": "galleries",
+          "to": "promenade",
+          "steps": 147,
+          "arrived": true
+        },
+        {
+          "shaft": "east",
+          "from": "galleries",
+          "to": "express",
+          "steps": 95,
+          "arrived": true
+        },
+        {
+          "shaft": "east",
+          "from": "express",
+          "to": "concourse",
+          "steps": 307,
+          "arrived": true
+        },
+        {
+          "shaft": "east",
+          "from": "express",
+          "to": "promenade",
+          "steps": 215,
+          "arrived": true
+        },
+        {
+          "shaft": "east",
+          "from": "express",
+          "to": "galleries",
+          "steps": 95,
+          "arrived": true
+        }
+      ],
+      "maximumCarryError": 1.7763568394002505e-15,
+      "maximumTravelStep": 0.1562468355025146,
+      "pausedFrozen": true,
+      "hiddenFrozen": true,
+      "freeLook": true,
+      "reducedMotionImmediate": true,
+      "absentShaftBlocked": true,
+      "exitSeamsClear": true,
+      "idleUploads": 0,
+      "stats": {
+        "carCount": 2,
+        "stops": 4,
+        "drawCalls": 8,
+        "triangles": 1512,
+        "textures": 0,
+        "lights": 0,
+        "matrixUploads": 4589,
+        "rides": 26,
+        "calls": 21,
+        "disposed": false,
+        "riding": null,
+        "cars": [
+          {
+            "id": "west",
+            "height": 17.625,
+            "levelId": "galleries",
+            "targetId": null,
+            "state": "idle",
+            "doors": 1,
+            "occupied": false
+          },
+          {
+            "id": "east",
+            "height": 23.36,
+            "levelId": "express",
+            "targetId": null,
+            "state": "idle",
+            "doors": 1,
+            "occupied": true
+          }
+        ]
+      },
+      "disposed": true,
+      "errors": []
+    },
+    "performance": {
+      "measurements": 24,
+      "comparison": [
+        {
+          "device": "desktop",
+          "view": "arrival",
+          "drawCalls": 5,
+          "submittedTriangles": 16288,
+          "cpuCallbackMs": 0.1,
+          "residentTextures": 1,
+          "residentGeometries": 5
+        },
+        {
+          "device": "desktop",
+          "view": "concourse",
+          "drawCalls": 5,
+          "submittedTriangles": 16288,
+          "cpuCallbackMs": -0.1,
+          "residentTextures": 1,
+          "residentGeometries": 5
+        },
+        {
+          "device": "desktop",
+          "view": "observation",
+          "drawCalls": 5,
+          "submittedTriangles": 16288,
+          "cpuCallbackMs": 0.0,
+          "residentTextures": 1,
+          "residentGeometries": 5
+        },
+        {
+          "device": "desktop",
+          "view": "market",
+          "drawCalls": 4,
+          "submittedTriangles": 15880,
+          "cpuCallbackMs": 0.0,
+          "residentTextures": 1,
+          "residentGeometries": 5
+        },
+        {
+          "device": "desktop",
+          "view": "docks",
+          "drawCalls": 0,
+          "submittedTriangles": 5520,
+          "cpuCallbackMs": 0.0,
+          "residentTextures": 1,
+          "residentGeometries": 5
+        },
+        {
+          "device": "desktop",
+          "view": "promenade-west-south",
+          "drawCalls": 5,
+          "submittedTriangles": 16288,
+          "cpuCallbackMs": 0.1,
+          "residentTextures": 1,
+          "residentGeometries": 5
+        },
+        {
+          "device": "desktop",
+          "view": "promenade-east-south",
+          "drawCalls": 5,
+          "submittedTriangles": 16288,
+          "cpuCallbackMs": 0.1,
+          "residentTextures": 1,
+          "residentGeometries": 5
+        },
+        {
+          "device": "desktop",
+          "view": "promenade-west-north",
+          "drawCalls": 5,
+          "submittedTriangles": 16288,
+          "cpuCallbackMs": 0.1,
+          "residentTextures": 1,
+          "residentGeometries": 5
+        },
+        {
+          "device": "desktop",
+          "view": "promenade-east-north",
+          "drawCalls": 5,
+          "submittedTriangles": 16288,
+          "cpuCallbackMs": 0.1,
+          "residentTextures": 1,
+          "residentGeometries": 5
+        },
+        {
+          "device": "desktop",
+          "view": "upper-west",
+          "drawCalls": 5,
+          "submittedTriangles": 16288,
+          "cpuCallbackMs": 0.0,
+          "residentTextures": 1,
+          "residentGeometries": 5
+        },
+        {
+          "device": "desktop",
+          "view": "upper-east",
+          "drawCalls": 5,
+          "submittedTriangles": 16288,
+          "cpuCallbackMs": -0.0,
+          "residentTextures": 1,
+          "residentGeometries": 5
+        },
+        {
+          "device": "desktop",
+          "view": "express-overlook",
+          "drawCalls": 5,
+          "submittedTriangles": 16288,
+          "cpuCallbackMs": 0.0,
+          "residentTextures": 1,
+          "residentGeometries": 5
+        },
+        {
+          "device": "mobile",
+          "view": "arrival",
+          "drawCalls": 5,
+          "submittedTriangles": 16288,
+          "cpuCallbackMs": 0,
+          "residentTextures": 1,
+          "residentGeometries": 5
+        },
+        {
+          "device": "mobile",
+          "view": "concourse",
+          "drawCalls": 5,
+          "submittedTriangles": 16288,
+          "cpuCallbackMs": -0.1,
+          "residentTextures": 1,
+          "residentGeometries": 5
+        },
+        {
+          "device": "mobile",
+          "view": "observation",
+          "drawCalls": 5,
+          "submittedTriangles": 16288,
+          "cpuCallbackMs": 0.0,
+          "residentTextures": 1,
+          "residentGeometries": 5
+        },
+        {
+          "device": "mobile",
+          "view": "market",
+          "drawCalls": 4,
+          "submittedTriangles": 15880,
+          "cpuCallbackMs": -0.0,
+          "residentTextures": 1,
+          "residentGeometries": 5
+        },
+        {
+          "device": "mobile",
+          "view": "docks",
+          "drawCalls": 0,
+          "submittedTriangles": 5520,
+          "cpuCallbackMs": 0,
+          "residentTextures": 1,
+          "residentGeometries": 5
+        },
+        {
+          "device": "mobile",
+          "view": "promenade-west-south",
+          "drawCalls": 5,
+          "submittedTriangles": 16288,
+          "cpuCallbackMs": 0.2,
+          "residentTextures": 1,
+          "residentGeometries": 5
+        },
+        {
+          "device": "mobile",
+          "view": "promenade-east-south",
+          "drawCalls": 5,
+          "submittedTriangles": 16288,
+          "cpuCallbackMs": 0.2,
+          "residentTextures": 1,
+          "residentGeometries": 5
+        },
+        {
+          "device": "mobile",
+          "view": "promenade-west-north",
+          "drawCalls": 5,
+          "submittedTriangles": 16288,
+          "cpuCallbackMs": 0.0,
+          "residentTextures": 1,
+          "residentGeometries": 5
+        },
+        {
+          "device": "mobile",
+          "view": "promenade-east-north",
+          "drawCalls": 5,
+          "submittedTriangles": 16288,
+          "cpuCallbackMs": 0.1,
+          "residentTextures": 1,
+          "residentGeometries": 5
+        },
+        {
+          "device": "mobile",
+          "view": "upper-west",
+          "drawCalls": 5,
+          "submittedTriangles": 16288,
+          "cpuCallbackMs": 0.0,
+          "residentTextures": 1,
+          "residentGeometries": 5
+        },
+        {
+          "device": "mobile",
+          "view": "upper-east",
+          "drawCalls": 5,
+          "submittedTriangles": 16288,
+          "cpuCallbackMs": -0.1,
+          "residentTextures": 1,
+          "residentGeometries": 5
+        },
+        {
+          "device": "mobile",
+          "view": "express-overlook",
+          "drawCalls": 5,
+          "submittedTriangles": 16288,
+          "cpuCallbackMs": 0.0,
+          "residentTextures": 1,
+          "residentGeometries": 5
+        }
+      ],
+      "cpuCallbackDeltaRangeMs": [
+        -0.1,
+        0.2
+      ],
+      "errors": [],
+      "limitation": "Software WebGL callback timing does not establish physical GPU or phone frame rate."
+    },
+    "sourceHashes": {
+      "testedSnapshot": {
+        "src/population.js": "b8cb7d302bc2cde8f6a4d97e5c30da76ac78a14d173e7881ce27e37dbd13a131",
+        "src/concourse-upper.js": "a70a08073c860b44e9d69eb2c55461a8928ff9f6ded6296b2b352ba6cc68a978",
+        "src/district-docks.js": "cc661a127637530dd24d6f8d78b692011920d93657e95ec1cf5afe11a27d3cb2",
+        "src/commuter-behavior.js": "889fdf925619c2ff68f4335c5717c2dfe2d6b8878dc629f536eefe1cd6f07ba7",
+        "src/surfaces.js": "eabbd7e5f442e1f2bdaa28765e44c7b7b41281e17b89921d663e0fbeb20cb34b",
+        "src/promenade-keepers.js": "8ff3efc32961da94364df651d488d30555724251067b23b6125911d457a0f219",
+        "src/public-lifts.js": "5fa591062fff5fb958715c91cc991684ac630a0447741296dfff2d666f407ba3",
+        "src/district-observation.js": "28c8276774b57671a578ed6c1607213c9046d5a2a2b320fbcc91e3a2f24299e0",
+        "src/audio-sources.js": "81df027e596c388179d0f5aad8247cfa772526430c9a80dcd3fcb474ce662731",
+        "src/controls.js": "d7cd3120b16aafad71ee3f39423ec6440faeb7112e5aacc2de105db01f2bca98",
+        "src/world.js": "7587e5298b3659468b9158c5fa38a119a5cdb6c9519c241cf229d353d5550fe2",
+        "src/commerce.js": "64ba68926300deb423c93080d819865634f0e4d7b930197e6ec1f97af6a6463c",
+        "src/kit.js": "c9dab8e517106ae5f2b2f2ea1e08161666dc669cf503098637afcbf3a914004e",
+        "src/station-life.js": "cec2805ea1e5b74099992db91fd6ecf5a6803ee7b50750c4a734fc8c3c97b01b",
+        "src/concourse-levels.js": "e1360f152272859bf076a1ba6337a7a31d623291e6968e7c1ed1cc6e93ddadba",
+        "src/district-market.js": "ea5f43f766c9e00b2eb9b86b1bda6faadce52c521cf374cc5231a033f031527a",
+        "src/humanoid.js": "f210a30947f7af82b9842bc6b93c06cb96fbffec042c1b17ec58b9008313ddb7",
+        "src/population-behavior.js": "8c40b0a93813a3d8237a8ac0e56ebea862270c30b7c137fddb9a44c22ffaa70d",
+        "src/main.js": "b9a948bb6a9e8218a26ee95ce131a51bb309794e827a91b40c660b3086961df6",
+        "src/furnishings.js": "bffe3b934a9384c1c39a927b93fdde10fefd0e5bc39546334ec96e09b0f9e7e0",
+        "src/promenade-shops.js": "72b0a9a60e5a94418b18ec753b9e6291286cc1ef3082e1ccbe1ef72fd402237b",
+        "src/navigation.js": "855f7f9098ed9b33cfc552f0b707a81b807de014e6584686a21812c78a0735a7",
+        "src/audio.js": "e01935000541ac4ca047d62101cb468e483ce44ff902cd6698eaff489bffe623",
+        "src/atmosphere.js": "411c580987d91fbda822e6512515a5d9539e5605ae0d1008c1814997cb23ac80",
+        "src/concourse-access.js": "25826f33548195925038abde3c4308cfd26586cfb00365a52d973fb121671e10",
+        "src/station-plan.js": "9fb5806df13f2f325835b3f258350e6bb728537b5b488c7dba05ee48d2943f10",
+        "src/districts.js": "2ff77b89a40465ddd4edff35216b5ae579c233ed81b13249218e727382a10229",
+        "src/promenade-directory.js": "57a862f098c523ec8510f9fa27e9b284d535b213cce775281f6f792b17af1cfc",
+        "src/population-timetable.js": "338c5ca902162e4ba38d17279ef8c3b73b9b15132baf1bbfb38b4f1910cae371",
+        "src/imported-models.js": "2b3d3e434d054d801c62990eef1093afb764d09df5e395fc0f5feb123ad0c0fd",
+        "index.html": "c73b369f5911d963333ac8c9163267c029a789e25101e41403cd72346c99e740"
+      },
+      "uiSnapshot": {
+        "src/population.js": "b8cb7d302bc2cde8f6a4d97e5c30da76ac78a14d173e7881ce27e37dbd13a131",
+        "src/concourse-upper.js": "a70a08073c860b44e9d69eb2c55461a8928ff9f6ded6296b2b352ba6cc68a978",
+        "src/district-docks.js": "cc661a127637530dd24d6f8d78b692011920d93657e95ec1cf5afe11a27d3cb2",
+        "src/commuter-behavior.js": "889fdf925619c2ff68f4335c5717c2dfe2d6b8878dc629f536eefe1cd6f07ba7",
+        "src/surfaces.js": "eabbd7e5f442e1f2bdaa28765e44c7b7b41281e17b89921d663e0fbeb20cb34b",
+        "src/promenade-keepers.js": "8ff3efc32961da94364df651d488d30555724251067b23b6125911d457a0f219",
+        "src/public-lifts.js": "5fa591062fff5fb958715c91cc991684ac630a0447741296dfff2d666f407ba3",
+        "src/district-observation.js": "28c8276774b57671a578ed6c1607213c9046d5a2a2b320fbcc91e3a2f24299e0",
+        "src/audio-sources.js": "81df027e596c388179d0f5aad8247cfa772526430c9a80dcd3fcb474ce662731",
+        "src/controls.js": "d7cd3120b16aafad71ee3f39423ec6440faeb7112e5aacc2de105db01f2bca98",
+        "src/world.js": "7587e5298b3659468b9158c5fa38a119a5cdb6c9519c241cf229d353d5550fe2",
+        "src/commerce.js": "64ba68926300deb423c93080d819865634f0e4d7b930197e6ec1f97af6a6463c",
+        "src/kit.js": "c9dab8e517106ae5f2b2f2ea1e08161666dc669cf503098637afcbf3a914004e",
+        "src/station-life.js": "cec2805ea1e5b74099992db91fd6ecf5a6803ee7b50750c4a734fc8c3c97b01b",
+        "src/concourse-levels.js": "e1360f152272859bf076a1ba6337a7a31d623291e6968e7c1ed1cc6e93ddadba",
+        "src/district-market.js": "ea5f43f766c9e00b2eb9b86b1bda6faadce52c521cf374cc5231a033f031527a",
+        "src/humanoid.js": "f210a30947f7af82b9842bc6b93c06cb96fbffec042c1b17ec58b9008313ddb7",
+        "src/population-behavior.js": "8c40b0a93813a3d8237a8ac0e56ebea862270c30b7c137fddb9a44c22ffaa70d",
+        "src/main.js": "b9a948bb6a9e8218a26ee95ce131a51bb309794e827a91b40c660b3086961df6",
+        "src/furnishings.js": "bffe3b934a9384c1c39a927b93fdde10fefd0e5bc39546334ec96e09b0f9e7e0",
+        "src/promenade-shops.js": "72b0a9a60e5a94418b18ec753b9e6291286cc1ef3082e1ccbe1ef72fd402237b",
+        "src/navigation.js": "855f7f9098ed9b33cfc552f0b707a81b807de014e6584686a21812c78a0735a7",
+        "src/audio.js": "e01935000541ac4ca047d62101cb468e483ce44ff902cd6698eaff489bffe623",
+        "src/atmosphere.js": "411c580987d91fbda822e6512515a5d9539e5605ae0d1008c1814997cb23ac80",
+        "src/concourse-access.js": "25826f33548195925038abde3c4308cfd26586cfb00365a52d973fb121671e10",
+        "src/station-plan.js": "9fb5806df13f2f325835b3f258350e6bb728537b5b488c7dba05ee48d2943f10",
+        "src/districts.js": "2ff77b89a40465ddd4edff35216b5ae579c233ed81b13249218e727382a10229",
+        "src/promenade-directory.js": "57a862f098c523ec8510f9fa27e9b284d535b213cce775281f6f792b17af1cfc",
+        "src/population-timetable.js": "338c5ca902162e4ba38d17279ef8c3b73b9b15132baf1bbfb38b4f1910cae371",
+        "src/imported-models.js": "2b3d3e434d054d801c62990eef1093afb764d09df5e395fc0f5feb123ad0c0fd",
+        "index.html": "c73b369f5911d963333ac8c9163267c029a789e25101e41403cd72346c99e740"
+      },
+      "changedAfterSnapshot": []
+    },
+    "localEvidence": [
+      "pfc-promenade-render-baseline.json",
+      "pfc-promenade-render-final.json",
+      "pfc-promenade-static.json",
+      "pfc-promenade-walkthrough.json",
+      "pfc-promenade-lift-native.json"
+    ]
+  },
+  "finalGeometry": {
+    "stats": {
+      "shops": 32,
+      "types": 11,
+      "typeCounts": {
+        "food": 6,
+        "botany": 4,
+        "charts": 2,
+        "tailoring": 2,
+        "sensory": 3,
+        "repair": 3,
+        "curios": 4,
+        "habitat": 1,
+        "pharmacy": 3,
+        "luggage": 2,
+        "exchange": 2
+      },
+      "boxes": 649,
+      "geometryTriangles": 11776,
+      "curvedTriangles": 3988,
+      "geometryDrawCalls": 3,
+      "geometryTextures": 0,
+      "geometryLights": 0,
+      "shopColliders": 32,
+      "perFrameUpdates": 0
+    },
+    "materialMeshes": 3,
+    "vendorAnchors": [
+      {
+        "id": "promenade-west-01",
+        "type": "food",
+        "side": -1,
+        "x": -29.75,
+        "y": 7.625,
+        "z": -118.18199999999999,
+        "face": 1.5707963267948966
+      },
+      {
+        "id": "promenade-west-03",
+        "type": "charts",
+        "side": -1,
+        "x": -29.75,
+        "y": 7.625,
+        "z": -98.096,
+        "face": 1.5707963267948966
+      },
+      {
+        "id": "promenade-west-04",
+        "type": "tailoring",
+        "side": -1,
+        "x": -29.75,
+        "y": 7.625,
+        "z": -86.18199999999999,
+        "face": 1.5707963267948966
+      },
+      {
+        "id": "promenade-west-06",
+        "type": "repair",
+        "side": -1,
+        "x": -29.75,
+        "y": 7.625,
+        "z": -66.096,
+        "face": 1.5707963267948966
+      },
+      {
+        "id": "promenade-west-07",
+        "type": "food",
+        "side": -1,
+        "x": -29.75,
+        "y": 7.625,
+        "z": -38.182,
+        "face": 1.5707963267948966
+      },
+      {
+        "id": "promenade-west-10",
+        "type": "pharmacy",
+        "side": -1,
+        "x": -29.75,
+        "y": 7.625,
+        "z": -6.1819999999999995,
+        "face": 1.5707963267948966
+      },
+      {
+        "id": "promenade-west-12",
+        "type": "luggage",
+        "side": -1,
+        "x": -29.75,
+        "y": 7.625,
+        "z": 9.818000000000001,
+        "face": 1.5707963267948966
+      },
+      {
+        "id": "promenade-west-13",
+        "type": "food",
+        "side": -1,
+        "x": -29.75,
+        "y": 7.625,
+        "z": 16.018,
+        "face": 1.5707963267948966
+      },
+      {
+        "id": "promenade-west-15",
+        "type": "exchange",
+        "side": -1,
+        "x": -29.75,
+        "y": 7.625,
+        "z": 32.018,
+        "face": 1.5707963267948966
+      },
+      {
+        "id": "promenade-west-16",
+        "type": "food",
+        "side": -1,
+        "x": -29.75,
+        "y": 7.625,
+        "z": 45.903999999999996,
+        "face": 1.5707963267948966
+      },
+      {
+        "id": "promenade-east-01",
+        "type": "luggage",
+        "side": 1,
+        "x": 29.75,
+        "y": 7.625,
+        "z": -118.18199999999999,
+        "face": -1.5707963267948966
+      },
+      {
+        "id": "promenade-east-02",
+        "type": "pharmacy",
+        "side": 1,
+        "x": 29.75,
+        "y": 7.625,
+        "z": -111.982,
+        "face": -1.5707963267948966
+      },
+      {
+        "id": "promenade-east-04",
+        "type": "food",
+        "side": 1,
+        "x": 29.75,
+        "y": 7.625,
+        "z": -86.18199999999999,
+        "face": -1.5707963267948966
+      },
+      {
+        "id": "promenade-east-05",
+        "type": "repair",
+        "side": 1,
+        "x": 29.75,
+        "y": 7.625,
+        "z": -79.982,
+        "face": -1.5707963267948966
+      },
+      {
+        "id": "promenade-east-06",
+        "type": "charts",
+        "side": 1,
+        "x": 29.75,
+        "y": 7.625,
+        "z": -66.096,
+        "face": -1.5707963267948966
+      },
+      {
+        "id": "promenade-east-08",
+        "type": "exchange",
+        "side": 1,
+        "x": 29.75,
+        "y": 7.625,
+        "z": -31.982,
+        "face": -1.5707963267948966
+      },
+      {
+        "id": "promenade-east-09",
+        "type": "tailoring",
+        "side": 1,
+        "x": 29.75,
+        "y": 7.625,
+        "z": -18.096,
+        "face": -1.5707963267948966
+      },
+      {
+        "id": "promenade-east-11",
+        "type": "food",
+        "side": 1,
+        "x": 29.75,
+        "y": 7.625,
+        "z": 0.018000000000000238,
+        "face": -1.5707963267948966
+      },
+      {
+        "id": "promenade-east-13",
+        "type": "pharmacy",
+        "side": 1,
+        "x": 29.75,
+        "y": 7.625,
+        "z": 16.018,
+        "face": -1.5707963267948966
+      },
+      {
+        "id": "promenade-east-15",
+        "type": "repair",
+        "side": 1,
+        "x": 29.75,
+        "y": 7.625,
+        "z": 32.018,
+        "face": -1.5707963267948966
+      }
+    ],
+    "boundsViolations": [],
+    "curvedBoundsViolations": [],
+    "sourceSHA256": "72b0a9a60e5a94418b18ec753b9e6291286cc1ef3082e1ccbe1ef72fd402237b",
+    "instrumentShelfClearance": {
+      "shelfMinAbsoluteX": 30.48,
+      "hoopMaxAbsoluteX": 30.335,
+      "stringMaxAbsoluteX": 30.2525,
+      "clear": true
+    }
+  },
+  "resourceReview": {
+    "passed": true,
+    "stationResourceCounts": {
+      "geometries": 72,
+      "materials": 40,
+      "textures": 29
+    },
+    "sharedTextureCount": 2,
+    "finiteGeometryAndAttributeCounts": true,
+    "firstDisposeExactlyOnceForOwnedResources": true,
+    "repeatedDisposeNoExtraEvents": true,
+    "sharedAtlasRetainedUntilLastStation": true,
+    "shopStats": {
+      "shops": 32,
+      "types": 11,
+      "typeCounts": {
+        "food": 6,
+        "botany": 4,
+        "charts": 2,
+        "tailoring": 2,
+        "sensory": 3,
+        "repair": 3,
+        "curios": 4,
+        "habitat": 1,
+        "pharmacy": 3,
+        "luggage": 2,
+        "exchange": 2
+      },
+      "boxes": 649,
+      "geometryTriangles": 11776,
+      "curvedTriangles": 3988,
+      "geometryDrawCalls": 3,
+      "geometryTextures": 0,
+      "geometryLights": 0,
+      "shopColliders": 32,
+      "perFrameUpdates": 0,
+      "signedBusinesses": 32,
+      "signDrawCalls": 1,
+      "signTriangles": 128,
+      "signTextures": 1,
+      "signAtlasWidth": 2048,
+      "signAtlasHeight": 1024,
+      "animatedSignTextures": 0,
+      "keepers": 16,
+      "keeperWest": 8,
+      "keeperEast": 8,
+      "keeperPoseCounts": {
+        "serving": 3,
+        "reading": 8,
+        "folding": 2,
+        "adjusting": 3
+      },
+      "keeperDrawCalls": 1,
+      "keeperTriangles": 4384,
+      "keeperTextures": 0,
+      "keeperLights": 0,
+      "keeperPerFrameUpdates": 0
+    },
+    "newLights": 0,
+    "sourceHashes": {
+      "src/promenade-directory.js": "57a862f098c523ec8510f9fa27e9b284d535b213cce775281f6f792b17af1cfc",
+      "src/promenade-shops.js": "72b0a9a60e5a94418b18ec753b9e6291286cc1ef3082e1ccbe1ef72fd402237b",
+      "src/promenade-keepers.js": "8ff3efc32961da94364df651d488d30555724251067b23b6125911d457a0f219",
+      "src/world.js": "7587e5298b3659468b9158c5fa38a119a5cdb6c9519c241cf229d353d5550fe2",
+      "src/main.js": "b9a948bb6a9e8218a26ee95ce131a51bb309794e827a91b40c660b3086961df6",
+      "src/station-plan.js": "9fb5806df13f2f325835b3f258350e6bb728537b5b488c7dba05ee48d2943f10"
+    },
+    "reviewFinding": "No actionable new correctness or lifecycle issue found; exact final source rerun after instrument shelf clearance and entry-heading changes.",
+    "atlasEstimatedRGBABytes": 8388608,
+    "atlasEstimatedRGBABytesWithMipmaps": 11184811
+  },
+  "merchantVerification": {
+    "passed": true,
+    "stats": {
+      "keepers": 16,
+      "keeperWest": 8,
+      "keeperEast": 8,
+      "keeperPoseCounts": {
+        "serving": 3,
+        "reading": 8,
+        "folding": 2,
+        "adjusting": 3
+      },
+      "keeperDrawCalls": 1,
+      "keeperTriangles": 4384,
+      "keeperTextures": 0,
+      "keeperLights": 0,
+      "keeperPerFrameUpdates": 0
+    },
+    "placements": [
+      {
+        "id": "promenade-west-01",
+        "side": -1,
+        "x": -29.25,
+        "y": 7.755,
+        "z": -118.18199999999999,
+        "height": 1.7266,
+        "pose": "serving"
+      },
+      {
+        "id": "promenade-west-03",
+        "side": -1,
+        "x": -29.25,
+        "y": 7.755,
+        "z": -98.096,
+        "height": 1.7533,
+        "pose": "reading"
+      },
+      {
+        "id": "promenade-west-04",
+        "side": -1,
+        "x": -29.25,
+        "y": 7.755,
+        "z": -86.18199999999999,
+        "height": 1.78,
+        "pose": "folding"
+      },
+      {
+        "id": "promenade-west-06",
+        "side": -1,
+        "x": -29.25,
+        "y": 7.755,
+        "z": -66.096,
+        "height": 1.8066999999999998,
+        "pose": "adjusting"
+      },
+      {
+        "id": "promenade-west-10",
+        "side": -1,
+        "x": -29.25,
+        "y": 7.755,
+        "z": -6.1819999999999995,
+        "height": 1.8334000000000001,
+        "pose": "reading"
+      },
+      {
+        "id": "promenade-west-12",
+        "side": -1,
+        "x": -29.25,
+        "y": 7.755,
+        "z": 9.818000000000001,
+        "height": 1.7266,
+        "pose": "reading"
+      },
+      {
+        "id": "promenade-west-15",
+        "side": -1,
+        "x": -29.25,
+        "y": 7.755,
+        "z": 32.018,
+        "height": 1.7533,
+        "pose": "reading"
+      },
+      {
+        "id": "promenade-west-16",
+        "side": -1,
+        "x": -29.25,
+        "y": 7.755,
+        "z": 45.903999999999996,
+        "height": 1.78,
+        "pose": "serving"
+      },
+      {
+        "id": "promenade-east-01",
+        "side": 1,
+        "x": 29.25,
+        "y": 7.755,
+        "z": -118.18199999999999,
+        "height": 1.8066999999999998,
+        "pose": "reading"
+      },
+      {
+        "id": "promenade-east-02",
+        "side": 1,
+        "x": 29.25,
+        "y": 7.755,
+        "z": -111.982,
+        "height": 1.8334000000000001,
+        "pose": "reading"
+      },
+      {
+        "id": "promenade-east-04",
+        "side": 1,
+        "x": 29.25,
+        "y": 7.755,
+        "z": -86.18199999999999,
+        "height": 1.7266,
+        "pose": "serving"
+      },
+      {
+        "id": "promenade-east-05",
+        "side": 1,
+        "x": 29.25,
+        "y": 7.755,
+        "z": -79.982,
+        "height": 1.7533,
+        "pose": "adjusting"
+      },
+      {
+        "id": "promenade-east-06",
+        "side": 1,
+        "x": 29.25,
+        "y": 7.755,
+        "z": -66.096,
+        "height": 1.78,
+        "pose": "reading"
+      },
+      {
+        "id": "promenade-east-08",
+        "side": 1,
+        "x": 29.25,
+        "y": 7.755,
+        "z": -31.982,
+        "height": 1.8066999999999998,
+        "pose": "reading"
+      },
+      {
+        "id": "promenade-east-09",
+        "side": 1,
+        "x": 29.25,
+        "y": 7.755,
+        "z": -18.096,
+        "height": 1.8334000000000001,
+        "pose": "folding"
+      },
+      {
+        "id": "promenade-east-15",
+        "side": 1,
+        "x": 29.25,
+        "y": 7.755,
+        "z": 32.018,
+        "height": 1.7266,
+        "pose": "adjusting"
+      }
+    ],
+    "bounds": {
+      "min": [
+        -29.39363670349121,
+        7.755000114440918,
+        -118.55899810791016
+      ],
+      "max": [
+        29.39363670349121,
+        9.598615646362305,
+        46.275428771972656
+      ]
+    },
+    "allFinite": true,
+    "oneDraw": true,
+    "textureCount": 0,
+    "newLights": 0,
+    "bodyBand": {
+      "minAbsX": 28.6,
+      "maxAbsX": 29.55
+    },
+    "vertexFixtureContacts": 0
+  },
+  "adversarialArt": {
+    "result": "No remaining functional or circulation blockers found by art review; one optional fixture-depth refinement reported.",
+    "sourceHashes": {
+      "src/promenade-directory.js": "57a862f098c523ec8510f9fa27e9b284d535b213cce775281f6f792b17af1cfc",
+      "src/promenade-shops.js": "cda51254fb4d2cbeed8908e0cd639856e0529008b39e3f26900af472c60700ed",
+      "src/promenade-keepers.js": "8ff3efc32961da94364df651d488d30555724251067b23b6125911d457a0f219"
+    },
+    "resolvedFindings": [
+      {
+        "finding": "Pocket Biospheres used a sleeping capsule silhouette.",
+        "fix": "Changed its type to botany for living ecosystem stock."
+      },
+      {
+        "finding": "Comet Crumb bakery repeated the generic food kettle.",
+        "fix": "Optional display metadata selects radiant oven, scored loaves, tray and ring pastries."
+      },
+      {
+        "finding": "Unfamiliar Instrument repeated crystal merchandise.",
+        "fix": "Optional display metadata selects a flared horn, resonant bowls and a strung hoop."
+      }
+    ],
+    "geometryVerification": {
+      "stats": {
+        "shops": 32,
+        "types": 11,
+        "typeCounts": {
+          "food": 6,
+          "botany": 4,
+          "charts": 2,
+          "tailoring": 2,
+          "sensory": 3,
+          "repair": 3,
+          "curios": 4,
+          "habitat": 1,
+          "pharmacy": 3,
+          "luggage": 2,
+          "exchange": 2
+        },
+        "boxes": 649,
+        "geometryTriangles": 11776,
+        "curvedTriangles": 3988,
+        "geometryDrawCalls": 3,
+        "geometryTextures": 0,
+        "geometryLights": 0,
+        "shopColliders": 32,
+        "perFrameUpdates": 0
+      },
+      "boundsViolations": [],
+      "curvedBoundsViolations": []
+    },
+    "visualVerification": {
+      "captureMethod": "Isolated copied station with camera fixtures; real final shop and keeper geometry. No production camera hooks or source instrumentation added.",
+      "errors": [],
+      "captures": [
+        {
+          "name": "promenade-arrival-current",
+          "artifactName": "pfc-art-promenade-arrival-current.png",
+          "position": [
+            -24,
+            9.375,
+            48
+          ],
+          "target": [
+            20,
+            9.375,
+            48
+          ]
+        },
+        {
+          "name": "promenade-arrival-proposed",
+          "artifactName": "pfc-art-promenade-arrival-proposed.png",
+          "position": [
+            -24,
+            9.375,
+            48
+          ],
+          "target": [
+            -29.5,
+            9.375,
+            42.5
+          ]
+        },
+        {
+          "name": "promenade-street",
+          "artifactName": "pfc-art-promenade-street.png",
+          "position": [
+            -24,
+            9.375,
+            38
+          ],
+          "target": [
+            -29.5,
+            10.05,
+            11
+          ]
+        },
+        {
+          "name": "promenade-cross-concourse",
+          "artifactName": "pfc-art-promenade-cross-concourse.png",
+          "position": [
+            0,
+            9.375,
+            48
+          ],
+          "target": [
+            0,
+            10,
+            -56
+          ]
+        },
+        {
+          "name": "promenade-bakery",
+          "artifactName": "pfc-art-promenade-bakery.png",
+          "position": [
+            24.5,
+            9.375,
+            -0.9
+          ],
+          "target": [
+            29.25,
+            9.65,
+            -0.9
+          ]
+        },
+        {
+          "name": "promenade-instruments",
+          "artifactName": "pfc-art-promenade-instruments.png",
+          "position": [
+            24.5,
+            9.375,
+            -7.1
+          ],
+          "target": [
+            29.25,
+            9.65,
+            -7.1
+          ]
+        }
+      ],
+      "confirmed": [
+        "Signs face the walking lane and are readable at human eye height.",
+        "Physical stock distinguishes eleven retail types.",
+        "Sixteen keepers remain behind counters, using restrained adult proportions.",
+        "Both trading walls remain visible within the monumental concourse.",
+        "Storefront geometry avoids structural columns and the lift reserve."
+      ],
+      "preferredArrival": "A shallow northward heading around0.20rad shows the long trading street; pi/4 is also valid and immediately frames Aphelion tea counter.",
+      "optionalCosmeticNote": "Rear instrument hoop atabsX30.71 crosses an upper shelf; moving hoop/string centers to30.30/30.24 puts them clearly forward of that shelf without changing counts. Reported to root; not a circulation blocker."
+    },
+    "scopeLimits": [
+      "This visual review does not establish hardware FPS.",
+      "Functional shop E/touch interactions and matched rendering measurements are covered by the independent access/performance agent."
+    ],
+    "browserClosed": true
+  },
+  "artFollowup": "The optional instrument hoop/string offset was applied to clear the shelf; final geometry, resource, full independent UI/render, and production checks use the resulting final source. Initial art capture hashes are preserved as historical provenance.",
+  "finalProductionUI": {
+    "origin": "http://127.0.0.1:5175",
+    "devices": [
+      {
+        "promenade": {
+          "shops": 32,
+          "types": 11,
+          "keepers": 16,
+          "mapFiltered": true,
+          "isolatedCopies": true,
+          "walkedToTeaRoom": true,
+          "inspection": "Aphelion Tea Room",
+          "touch": false
+        },
+        "device": "desktop 1280x800",
+        "layout": {
+          "width": 1280,
+          "height": 800,
+          "dialog": [
+            240,
+            30,
+            800,
+            740
+          ],
+          "overflow": false,
+          "filters": [
+            [
+              36,
+              34
+            ],
+            [
+              36,
+              34
+            ],
+            [
+              36,
+              34
+            ],
+            [
+              36,
+              34
+            ],
+            [
+              36,
+              34
+            ]
+          ]
+        },
+        "callFromUpperFloor": true,
+        "walkedIntoCabin": true,
+        "touchJoystick": false,
+        "touchLiftButton": false,
+        "quickRideAndExit": true,
+        "normalRide": {
+          "pausedHeight": 23.36,
+          "arrived": 17.625,
+          "pauseFrozen": true
+        },
+        "floors": [
+          {
+            "id": "concourse",
+            "height": 0,
+            "position": [
+              0,
+              1.75,
+              48
+            ]
+          },
+          {
+            "id": "promenade",
+            "height": 7.625,
+            "position": [
+              -24,
+              9.375,
+              48
+            ]
+          },
+          {
+            "id": "galleries",
+            "height": 17.625,
+            "position": [
+              -24,
+              19.375,
+              -52
+            ]
+          },
+          {
+            "id": "express",
+            "height": 23.36,
+            "position": [
+              -27,
+              25.11,
+              -58
+            ]
+          }
+        ],
+        "preservedModels": 4,
+        "preservedPopulationTriangles": 18912,
+        "preservedShips": 9,
+        "errors": [],
+        "localFailures": []
+      },
+      {
+        "promenade": {
+          "shops": 32,
+          "types": 11,
+          "keepers": 16,
+          "mapFiltered": true,
+          "isolatedCopies": true,
+          "walkedToTeaRoom": true,
+          "inspection": "Aphelion Tea Room",
+          "touch": true
+        },
+        "device": "mobile 390x844 touch",
+        "layout": {
+          "width": 390,
+          "height": 844,
+          "dialog": [
+            16,
+            15,
+            358,
+            814
+          ],
+          "overflow": false,
+          "filters": [
+            [
+              44,
+              44
+            ],
+            [
+              44,
+              44
+            ],
+            [
+              44,
+              44
+            ],
+            [
+              44,
+              44
+            ],
+            [
+              44,
+              44
+            ]
+          ]
+        },
+        "callFromUpperFloor": true,
+        "walkedIntoCabin": true,
+        "touchJoystick": true,
+        "touchLiftButton": true,
+        "quickRideAndExit": true,
+        "normalRide": null,
+        "floors": [
+          {
+            "id": "concourse",
+            "height": 0,
+            "position": [
+              0,
+              1.75,
+              48
+            ]
+          },
+          {
+            "id": "promenade",
+            "height": 7.625,
+            "position": [
+              -24,
+              9.375,
+              48
+            ]
+          },
+          {
+            "id": "galleries",
+            "height": 17.625,
+            "position": [
+              -24,
+              19.375,
+              -52
+            ]
+          },
+          {
+            "id": "express",
+            "height": 23.36,
+            "position": [
+              -27,
+              25.11,
+              -58
+            ]
+          }
+        ],
+        "preservedModels": 4,
+        "preservedPopulationTriangles": 18912,
+        "preservedShips": 9,
+        "errors": [],
+        "localFailures": []
+      }
+    ]
+  },
+  "finalProductionRegression": {
+    "origin": "http://127.0.0.1:5175",
+    "devices": [
+      {
+        "device": "desktop 1280x800",
+        "npc": {
+          "scheduledResidents": 60,
+          "crossSectorJourneys": 14,
+          "crossDeckJourneys": 2,
+          "activityStops": 124,
+          "calibrated": 60,
+          "invalidRoutes": [],
+          "finiteSnapshots": true,
+          "reducedMotionFrozen": true,
+          "isolatedSnapshotCopies": true
+        },
+        "lazyStart": true,
+        "preferencesWhileOff": true,
+        "on": {
+          "state": "running",
+          "coreNodes": 41,
+          "spatialNodes": 25,
+          "bufferBytes": 2023680
+        },
+        "muteSuspends": true,
+        "rapidToggleUsesOneContext": true,
+        "keyboardVolume": true,
+        "preferencesRestoredWithoutAutoplay": true,
+        "layout": {
+          "viewport": [
+            1280,
+            800
+          ],
+          "dialog": [
+            395,
+            30,
+            490,
+            740
+          ],
+          "range": [
+            436,
+            535.859375,
+            408,
+            34
+          ],
+          "overflow": false,
+          "scrollable": true
+        },
+        "sectors": [
+          {
+            "target": "observation",
+            "sector": "observation",
+            "audioSector": "observation",
+            "floorHeight": 1.9249999999999998,
+            "transitFootsteps": 0
+          },
+          {
+            "target": "market",
+            "sector": "market",
+            "audioSector": "market",
+            "floorHeight": 0,
+            "transitFootsteps": 0
+          },
+          {
+            "target": "docks",
+            "sector": "docks",
+            "audioSector": "docks",
+            "floorHeight": 0,
+            "transitFootsteps": 0
+          },
+          {
+            "target": "promenade",
+            "sector": "concourse",
+            "audioSector": "concourse",
+            "floorHeight": 7.625,
+            "transitFootsteps": 0
+          }
+        ],
+        "preserved": {
+          "populationActors": 80,
+          "populationTriangles": 18912,
+          "populationBatches": 7,
+          "exteriorShips": 9,
+          "expressCabins": 2,
+          "serviceLifts": 2,
+          "modelAssets": 4
+        },
+        "errors": [],
+        "localFailures": []
+      },
+      {
+        "device": "mobile 390x844 touch",
+        "npc": {
+          "scheduledResidents": 60,
+          "crossSectorJourneys": 14,
+          "crossDeckJourneys": 2,
+          "activityStops": 124,
+          "calibrated": 60,
+          "invalidRoutes": [],
+          "finiteSnapshots": true,
+          "reducedMotionFrozen": true,
+          "isolatedSnapshotCopies": true
+        },
+        "lazyStart": true,
+        "preferencesWhileOff": true,
+        "on": {
+          "state": "running",
+          "coreNodes": 41,
+          "spatialNodes": 25,
+          "bufferBytes": 2023680
+        },
+        "muteSuspends": true,
+        "rapidToggleUsesOneContext": true,
+        "keyboardVolume": true,
+        "preferencesRestoredWithoutAutoplay": true,
+        "layout": {
+          "viewport": [
+            390,
+            844
+          ],
+          "dialog": [
+            16,
+            15,
+            358,
+            814
+          ],
+          "range": [
+            40,
+            571.5,
+            310,
+            44
+          ],
+          "overflow": false,
+          "scrollable": true
+        },
+        "sectors": [
+          {
+            "target": "observation",
+            "sector": "observation",
+            "audioSector": "observation",
+            "floorHeight": 1.9249999999999998,
+            "transitFootsteps": 0
+          },
+          {
+            "target": "market",
+            "sector": "market",
+            "audioSector": "market",
+            "floorHeight": 0,
+            "transitFootsteps": 0
+          },
+          {
+            "target": "docks",
+            "sector": "docks",
+            "audioSector": "docks",
+            "floorHeight": 0,
+            "transitFootsteps": 0
+          },
+          {
+            "target": "promenade",
+            "sector": "concourse",
+            "audioSector": "concourse",
+            "floorHeight": 7.625,
+            "transitFootsteps": 0
+          }
+        ],
+        "preserved": {
+          "populationActors": 80,
+          "populationTriangles": 18912,
+          "populationBatches": 7,
+          "exteriorShips": 9,
+          "expressCabins": 2,
+          "serviceLifts": 2,
+          "modelAssets": 4
+        },
+        "errors": [],
+        "localFailures": []
+      }
+    ]
+  },
+  "finalSourceHashes": {
+    "src/population.js": "b8cb7d302bc2cde8f6a4d97e5c30da76ac78a14d173e7881ce27e37dbd13a131",
+    "src/concourse-upper.js": "a70a08073c860b44e9d69eb2c55461a8928ff9f6ded6296b2b352ba6cc68a978",
+    "src/district-docks.js": "cc661a127637530dd24d6f8d78b692011920d93657e95ec1cf5afe11a27d3cb2",
+    "src/commuter-behavior.js": "889fdf925619c2ff68f4335c5717c2dfe2d6b8878dc629f536eefe1cd6f07ba7",
+    "src/surfaces.js": "eabbd7e5f442e1f2bdaa28765e44c7b7b41281e17b89921d663e0fbeb20cb34b",
+    "src/promenade-keepers.js": "8ff3efc32961da94364df651d488d30555724251067b23b6125911d457a0f219",
+    "src/public-lifts.js": "5fa591062fff5fb958715c91cc991684ac630a0447741296dfff2d666f407ba3",
+    "src/district-observation.js": "28c8276774b57671a578ed6c1607213c9046d5a2a2b320fbcc91e3a2f24299e0",
+    "src/audio-sources.js": "81df027e596c388179d0f5aad8247cfa772526430c9a80dcd3fcb474ce662731",
+    "src/controls.js": "d7cd3120b16aafad71ee3f39423ec6440faeb7112e5aacc2de105db01f2bca98",
+    "src/world.js": "7587e5298b3659468b9158c5fa38a119a5cdb6c9519c241cf229d353d5550fe2",
+    "src/commerce.js": "64ba68926300deb423c93080d819865634f0e4d7b930197e6ec1f97af6a6463c",
+    "src/kit.js": "c9dab8e517106ae5f2b2f2ea1e08161666dc669cf503098637afcbf3a914004e",
+    "src/station-life.js": "cec2805ea1e5b74099992db91fd6ecf5a6803ee7b50750c4a734fc8c3c97b01b",
+    "src/concourse-levels.js": "e1360f152272859bf076a1ba6337a7a31d623291e6968e7c1ed1cc6e93ddadba",
+    "src/district-market.js": "ea5f43f766c9e00b2eb9b86b1bda6faadce52c521cf374cc5231a033f031527a",
+    "src/humanoid.js": "f210a30947f7af82b9842bc6b93c06cb96fbffec042c1b17ec58b9008313ddb7",
+    "src/population-behavior.js": "8c40b0a93813a3d8237a8ac0e56ebea862270c30b7c137fddb9a44c22ffaa70d",
+    "src/main.js": "b9a948bb6a9e8218a26ee95ce131a51bb309794e827a91b40c660b3086961df6",
+    "src/furnishings.js": "bffe3b934a9384c1c39a927b93fdde10fefd0e5bc39546334ec96e09b0f9e7e0",
+    "src/promenade-shops.js": "72b0a9a60e5a94418b18ec753b9e6291286cc1ef3082e1ccbe1ef72fd402237b",
+    "src/navigation.js": "855f7f9098ed9b33cfc552f0b707a81b807de014e6584686a21812c78a0735a7",
+    "src/audio.js": "e01935000541ac4ca047d62101cb468e483ce44ff902cd6698eaff489bffe623",
+    "src/atmosphere.js": "411c580987d91fbda822e6512515a5d9539e5605ae0d1008c1814997cb23ac80",
+    "src/concourse-access.js": "25826f33548195925038abde3c4308cfd26586cfb00365a52d973fb121671e10",
+    "src/station-plan.js": "9fb5806df13f2f325835b3f258350e6bb728537b5b488c7dba05ee48d2943f10",
+    "src/districts.js": "2ff77b89a40465ddd4edff35216b5ae579c233ed81b13249218e727382a10229",
+    "src/promenade-directory.js": "57a862f098c523ec8510f9fa27e9b284d535b213cce775281f6f792b17af1cfc",
+    "src/population-timetable.js": "338c5ca902162e4ba38d17279ef8c3b73b9b15132baf1bbfb38b4f1910cae371",
+    "src/imported-models.js": "2b3d3e434d054d801c62990eef1093afb764d09df5e395fc0f5feb123ad0c0fd",
+    "index.html": "c73b369f5911d963333ac8c9163267c029a789e25101e41403cd72346c99e740",
+    "src/style.css": "1c862ca961e8d0480d50a68142fd039315eface9ab858761810952e39e3bc265",
+    "package.json": "1b2ccddcde9bc86d4d3ea97ba1c6d7c17f767448de7568ff29cc415e3a795d3d",
+    "package-lock.json": "35f5fae47bf102f6929b8b601eb9fd54e46c26b3cb91315710024d9a02756c63",
+    "vercel.json": "5c77bea581677f3464b8e15099c711365920ae5c5fcb8f0fb0489548ea05f2ae"
+  },
+  "build": {
+    "command": "npm run build",
+    "node": "24.22.1",
+    "result": "passed Vite and verify-build.mjs",
+    "compression": "Node 24 gzipSync default level6, matching Vite reporting",
+    "compiledAssets": [
+      {
+        "path": "assets/index-B8TklSqF.js",
+        "bytes": 945552,
+        "gzipBytes": 277393,
+        "sha256": "5e6a1bb0d927fd18a73fecbb192f2b0744e4e7ac531bf02231334b2ae0c5095c"
+      },
+      {
+        "path": "assets/index-DhQ6S7wL.css",
+        "bytes": 20461,
+        "gzipBytes": 5331,
+        "sha256": "4a3eb24a8db6adfc8ce8cb23918e4e4893e5103aba9ac4aee44c6e8bd1243fce"
+      }
+    ],
+    "publicFilesByteIdentical": [
+      {
+        "path": "models/poly-pizza/animated-robot.glb",
+        "bytes": 401024,
+        "sha256": "54f1a6999cca701cdc2f8fb67bcd9a283e1154cb80cac356f031bed7c2e74cbe"
+      },
+      {
+        "path": "models/poly-pizza/cooking-pot.glb",
+        "bytes": 15016,
+        "sha256": "3836f63ea0a1135d1dbb6f8a942af6a1bc27912c21d5112c1820e88c64779995"
+      },
+      {
+        "path": "models/poly-pizza/credits.txt",
+        "bytes": 952,
+        "sha256": "e1877b031ff883f06c7ccf7727d526af404e437d2372c0eac960e2fc6ff05f61"
+      },
+      {
+        "path": "models/poly-pizza/scifi-computer.glb",
+        "bytes": 41964,
+        "sha256": "2462a9e43d8ef20636a5be154cb092c17548b9baac2e3538fde7319e9928b923"
+      },
+      {
+        "path": "models/poly-pizza/tree-spiral.glb",
+        "bytes": 35944,
+        "sha256": "16b571e404dff48380d8289a92596d41a5b49e75fae9e0151d1a3fc1fc0a4e86"
+      }
+    ],
+    "models": 4,
+    "newDependencies": 0,
+    "newDownloadedAssets": 0,
+    "baselineJavaScriptKB": 915.65,
+    "baselineJavaScriptGzipKB": 264.07,
+    "finalJavaScriptKB": 945.55,
+    "finalJavaScriptGzipKB": 277.39,
+    "gzipDeltaKB": 13.32,
+    "existingAdvisory": "Nonfatal Vite chunk-size warning."
+  },
+  "budgets": {
+    "addedGeometryTriangles": 16288,
+    "addedDraws": 5,
+    "addedGeometries": 5,
+    "addedTextures": 1,
+    "atlasPixels": [
+      2048,
+      1024
+    ],
+    "atlasBaseRGBABytes": 8388608,
+    "atlasApproxBytesWithMipmaps": 11184811,
+    "newLights": 0,
+    "newShadowMaps": 0,
+    "newPostprocessingPasses": 0,
+    "shopPerFrameUpdates": 0
+  },
+  "limitations": [
+    "Software WebGL frozen-view callback timings exclude the normal interaction loop and do not establish hardware GPU or physical phone frame rates.",
+    "Shops are guarded walk-up displays with inspection stories; they are not walk-in interiors or a purchasing simulation.",
+    "Sixteen new shopkeepers have static working poses; existing travelers retain their original moving journeys.",
+    "No Vercel deployment was initiated by this pass."
+  ]
+}

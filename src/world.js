@@ -1,7 +1,10 @@
 import * as THREE from 'three';
 import { applyIndustrialSurface, createSurfaceLibrary } from './surfaces.js';
-import { buildConcourseAccess, RAMP_NORTH, RAMP_SOUTH } from './concourse-access.js';
+import { buildConcourseAccess, RAMP_NORTH, RAMP_SOUTH, PROMENADE_HEIGHT } from './concourse-access.js';
 import { PUBLIC_LIFT_SHAFTS } from './concourse-levels.js';
+import {PROMENADE_SHOPS,createPromenadeSigns} from './promenade-directory.js';
+import {buildPromenadeShops} from './promenade-shops.js';
+import {buildPromenadeKeepers} from './promenade-keepers.js';
 
 // Multiple station instances can share the cached atlas during previews/tests.
 const surfaceUsers = new Map();
@@ -358,6 +361,15 @@ export function createStation() {
   group.add(new THREE.Points(starGeometry,new THREE.PointsMaterial({color:'#c0d0cc',size:1.0,sizeAttenuation:true,transparent:true,opacity:.7,depthWrite:false,fog:false})));
 
   const access = buildConcourseAccess({group,box,beam,text,materials,colliders});
+  const promenade=buildPromenadeShops({group,box,beam,materials,colliders,shops:PROMENADE_SHOPS,height:PROMENADE_HEIGHT});
+  const promenadeSigns=createPromenadeSigns({group,shops:PROMENADE_SHOPS,height:PROMENADE_HEIGHT});
+  const keepers=buildPromenadeKeepers({group,anchors:promenade.vendorAnchors,height:PROMENADE_HEIGHT});
+  const shopLandmarks=PROMENADE_SHOPS.map(shop=>({
+    x:shop.side*26.1,y:PROMENADE_HEIGHT,z:shop.z,radius:2.7,
+    code:`PFC / DECK 02 / ${shop.side<0?'WEST':'EAST'} TRADE WALK`,
+    title:shop.name,hint:`Inspect ${shop.name}`,text:shop.description,
+  }));
+  const promenadeStats={...promenade.stats,...promenadeSigns.stats,...keepers.stats,shops:PROMENADE_SHOPS.length,types:new Set(PROMENADE_SHOPS.map(shop=>shop.type)).size};
   for (const [mat, transforms] of batches) {
     const mesh = new THREE.InstancedMesh(new THREE.BoxGeometry(1,1,1), mat, transforms.length);
     transforms.forEach((matrix, i) => mesh.setMatrixAt(i,matrix));
@@ -370,7 +382,10 @@ export function createStation() {
     const light = new THREE.PointLight(color,power,45,1.3); light.position.set(x,5,z); group.add(light); driftLights.push(light);
   }
   return {
-    group, colliders, surfaces:access.surfaces, journeySurfaces:access.journeySurfaces, landmarks:access.landmarks, routes:access.routes, stats:access.stats,
+    group, colliders, surfaces:access.surfaces, journeySurfaces:access.journeySurfaces,
+    shops:PROMENADE_SHOPS,promenadeStats,
+    landmarks:[...access.landmarks,...shopLandmarks], routes:access.routes,
+    stats:{...access.stats,promenadeShops:PROMENADE_SHOPS.length},
     update(dt,_time,context = {}) {
       if (disposed || context.reducedMotion) return;
       // A local clock pauses motion rather than jumping to wall time on resume.
