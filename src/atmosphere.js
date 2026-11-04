@@ -239,55 +239,117 @@ export function createAtmosphere({ renderer, camera, reducedMotion = false } = {
   arrows.name = 'Traveling deck route chevrons';
   group.add(arrows);
 
-  // Three exterior vessels share one GPU-animated mesh, including their engines.
-  const shipPositions = [], shipColors = [], shipRoutes = [], shipPhases = [];
-  const unitBox = new THREE.BoxGeometry(1, 1, 1).toNonIndexed();
+  // Nine vessels share one opaque GPU batch. Different hulls and real flight
+  // lanes replace repeated box ships; the entire fleet uses fewer triangles.
+  const shipPositions = [], shipColors = [], shipRoutes = [], shipPhases = [], shipSignals = [];
+  const indexedBox = new THREE.BoxGeometry(1, 1, 1);
+  const unitBox = indexedBox.toNonIndexed();
+  indexedBox.dispose();
   const sourcePositions = unitBox.getAttribute('position');
+  const sourceNormals = unitBox.getAttribute('normal');
   const color = new THREE.Color();
-  function shipBox(center, scale, tint, route, phase, yaw) {
+  let vesselCount = 0;
+  function shipVertex(x, y, z, route, phase, signal = 0, shade = 1) {
+    shipPositions.push(x, y, z);
+    shipColors.push(color.r * shade, color.g * shade, color.b * shade);
+    shipRoutes.push(route); shipPhases.push(phase); shipSignals.push(signal);
+  }
+  function hull(center, size, tint, route, phase, taper = 0) {
     color.set(tint);
-    const c = Math.cos(yaw), s = Math.sin(yaw);
     for (let i = 0; i < sourcePositions.count; i++) {
-      const x = sourcePositions.getX(i) * scale[0] + center[0];
-      const y = sourcePositions.getY(i) * scale[1] + center[1];
-      const z = sourcePositions.getZ(i) * scale[2] + center[2];
-      shipPositions.push(x * c + z * s, y, -x * s + z * c);
-      shipColors.push(color.r, color.g, color.b);
-      shipRoutes.push(route);
-      shipPhases.push(phase);
+      const z = sourcePositions.getZ(i);
+      const x = sourcePositions.getX(i) * (1 - (z + .5) * taper);
+      const shade = .64 + .36 * Math.max(0, sourceNormals.getY(i) * .8 - sourceNormals.getX(i) * .3 + sourceNormals.getZ(i) * .25);
+      shipVertex(x * size[0] + center[0], sourcePositions.getY(i) * size[1] + center[1], z * size[2] + center[2], route, phase, 0, shade);
     }
   }
-  for (let i = 0; i < 3; i++) {
-    const route = i === 2 ? 1 : 0;
-    const yaw = route ? Math.PI / 2 : 0;
-    const phase = i * 1.8 + .4;
-    shipBox([0, 0, 0], [2, 1.3, 8], '#4e6566', route, phase, yaw);
-    shipBox([0, .8, 1.6], [1.35, .55, 2.3], '#82918a', route, phase, yaw);
-    shipBox([0, -.2, -1.4], [6.2, .32, 3.3], '#465957', route, phase, yaw);
+  function panel(corners, tint, route, phase, signal = 0) {
+    color.set(tint);
+    for (const i of [0, 1, 2, 0, 2, 3]) shipVertex(...corners[i], route, phase, signal);
+  }
+  function details(width, length, roof, route, phase, twinDrive = false, taper = 0, cockpitOffset = 0) {
+    // The cockpit is on the nose (+Z); warm drive apertures face aft (-Z).
+    panel([[-width * .24, roof, length * .23 + cockpitOffset], [-width * .16, roof, length * .4 + cockpitOffset], [width * .16, roof, length * .4 + cockpitOffset], [width * .24, roof, length * .23 + cockpitOffset]], '#a3beb3', route, phase);
+    const drives = twinDrive ? [-width * .25, width * .25] : [0];
+    for (const x of drives) panel([[x - .28, -.3, -length * .501], [x - .28, .22, -length * .501], [x + .28, .22, -length * .501], [x + .28, -.3, -length * .501]], '#e3bd88', route, phase, 1);
+    // Fixed port/starboard colours and a slow beacon give readable orientation.
     for (const side of [-1, 1]) {
-      shipBox([side * 2.1, -.1, -1.9], [.8, .8, 3.1], '#77583d', route, phase, yaw);
-      shipBox([side * 2.1, -.1, -3.55], [.48, .48, .16], '#d8c098', route, phase, yaw);
+      const sideX = z => side * (width * .5 * (1 - (z / length + .5) * taper) + .018);
+      const corners = [[sideX(.35), -.2, .35], [sideX(.35), .16, .35], [sideX(-.3), .16, -.3], [sideX(-.3), -.2, -.3]];
+      if (side > 0) corners.reverse();
+      panel(corners, side < 0 ? '#c77a61' : '#9dc2a4', route, phase, 2);
     }
   }
+  function vessel(kind, route, phase) {
+    vesselCount++;
+    if (kind === 'freighter') {
+      hull([0, -.45, 0], [4.8, 1.05, 11.4], '#3e5556', route, phase, .17);
+      hull([0, .75, -.4], [4.1, 1.35, 8.8], phase < .5 ? '#997153' : '#829180', route, phase, .07);
+      details(4.8, 11.4, 1.435, route, phase, true, .17, -.7);
+    } else if (kind === 'shuttle') {
+      hull([0, 0, 0], [3.8, 1.5, 9.4], '#a9b1a0', route, phase, .48);
+      for (const side of [-1, 1]) {
+        const wing = [[side * 1.5, -.35, 1.3], [side * 2.9, -.35, -2.7], [side * 2.8, -.35, -3.2], [side * 1.5, -.35, -2.8]];
+        panel(wing, '#556c69', route, phase);
+        panel(wing.reverse(), '#384c4d', route, phase);
+      }
+      details(3.8, 9.4, .765, route, phase, false, .48);
+    } else {
+      const tug = kind === 'tender';
+      hull([0, 0, 0], tug ? [2.2, 1.4, 5.3] : [2.5, 1.1, 7.4], tug ? '#b49c72' : '#748c8a', route, phase, tug ? .15 : .65);
+      details(tug ? 2.2 : 2.5, tug ? 5.3 : 7.4, tug ? .715 : .565, route, phase, false, tug ? .15 : .65);
+    }
+  }
+  for (const phase of [.04, .37, .7]) vessel('courier', 0, phase);
+  for (const phase of [.2, .7]) vessel('freighter', 1, phase);
+  for (const phase of [.12, .62]) vessel('shuttle', 2, phase);
+  vessel('tender', 3, .18);
+  vessel('tender', 4, .66);
   unitBox.dispose();
   const shipGeometry = track(new THREE.BufferGeometry());
   shipGeometry.setAttribute('position', new THREE.Float32BufferAttribute(shipPositions, 3));
   shipGeometry.setAttribute('color', new THREE.Float32BufferAttribute(shipColors, 3));
   shipGeometry.setAttribute('aRoute', new THREE.Float32BufferAttribute(shipRoutes, 1));
   shipGeometry.setAttribute('aPhase', new THREE.Float32BufferAttribute(shipPhases, 1));
+  shipGeometry.setAttribute('aSignal', new THREE.Float32BufferAttribute(shipSignals, 1));
   const shipMaterial = track(new THREE.ShaderMaterial({
     uniforms: { uTime: time },
     vertexShader: `
       uniform float uTime; attribute vec3 color;
-      attribute float aRoute; attribute float aPhase; varying vec3 vColor;
+      attribute float aRoute; attribute float aPhase; attribute float aSignal;
+      varying vec3 vColor;
       void main() {
-        vec3 p = position;
+        float cycle; float yaw; float thrust = 1.; vec3 center;
         if (aRoute < .5) {
-          p += vec3(137. + aPhase * 3., 18. + aPhase * 2., mod(uTime * 1.45 + aPhase * 43., 190.) - 115.);
+          cycle = fract(uTime / 150. + aPhase) * 6.2831853;
+          center = vec3(118. + 6. * cos(cycle), 16. + 2. * sin(cycle), -20. + 130. * sin(cycle));
+          yaw = atan(-6. * sin(cycle), 130. * cos(cycle));
+        } else if (aRoute < 1.5) {
+          cycle = fract(aPhase - uTime / 225.) * 6.2831853;
+          // The outer freight lane passes below the tilted planetary rings.
+          center = vec3(143. + 5. * cos(cycle), 12. + 4. * aPhase, -25. + 145. * sin(cycle));
+          yaw = atan(5. * sin(cycle), -145. * cos(cycle));
+        } else if (aRoute < 2.5) {
+          cycle = fract(uTime / 175. + aPhase) * 6.2831853;
+          center = vec3(125. * cos(cycle), 27. + 2. * cos(cycle), -292. + 36. * sin(cycle));
+          yaw = atan(-125. * sin(cycle), 36. * cos(cycle));
         } else {
-          p += vec3(mod(uTime * 2. + aPhase * 41., 220.) - 110., 24., -245.);
+          // Freight tenders ease into clearance holds beside the outer spine,
+          // turn while stationary, then depart. The two lanes never intersect.
+          cycle = fract(uTime / 100. + aPhase);
+          float inbound = smoothstep(0., .32, cycle);
+          float outbound = smoothstep(.56, .9, cycle);
+          center = vec3(aRoute < 3.5 ? 84. : 92., aRoute < 3.5 ? 11. : 14., -320. + 143. * (inbound - outbound));
+          yaw = 3.14159265 * (smoothstep(.38, .52, cycle) + smoothstep(.92, 1., cycle));
+          thrust = .22 + .78 * max(4. * inbound * (1. - inbound), 4. * outbound * (1. - outbound));
         }
+        float c = cos(yaw), s = sin(yaw);
+        vec3 p = position;
+        p.xz = mat2(c, -s, s, c) * p.xz;
+        p += center;
         vColor = color;
+        if (aSignal > .5 && aSignal < 1.5) vColor *= .55 + .65 * thrust;
+        if (aSignal > 1.5) vColor *= .5 + .7 * smoothstep(.94, .99, sin(uTime * 1.6 + aPhase * 6.2831853));
         gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.);
       }`,
     fragmentShader: `
@@ -298,13 +360,30 @@ export function createAtmosphere({ renderer, camera, reducedMotion = false } = {
       }`,
   }));
   const ships = new THREE.Mesh(shipGeometry, shipMaterial);
-  ships.name = 'Distant orbital shipping';
-  // Vertex motion crosses the full route; no CPU matrix updates are necessary.
+  ships.name = 'Scheduled orbital couriers, shuttles and freight tenders';
+  ships.matrixAutoUpdate = false;
+  // Bound shader-displaced positions, not the tiny source hulls at the origin.
+  // Testing separate route boxes avoids one giant bound enclosing the station.
+  const routeBounds = [
+    new THREE.Box3(new THREE.Vector3(107, 9, -155), new THREE.Vector3(129, 23, 115)),
+    new THREE.Box3(new THREE.Vector3(130, 5, -178), new THREE.Vector3(156, 23, 128)),
+    new THREE.Box3(new THREE.Vector3(-132, 18, -335), new THREE.Vector3(132, 36, -249)),
+    new THREE.Box3(new THREE.Vector3(80, 7, -324), new THREE.Vector3(96, 18, -173)),
+  ];
+  const fleetBounds = new THREE.Box3();
+  for (const bounds of routeBounds) fleetBounds.union(bounds);
+  shipGeometry.boundingBox = fleetBounds;
+  shipGeometry.boundingSphere = fleetBounds.getBoundingSphere(new THREE.Sphere());
   ships.frustumCulled = false;
   group.add(ships);
+  const shippingFrustum = new THREE.Frustum(), shippingProjection = new THREE.Matrix4(), shippingWorldBounds = new THREE.Box3();
 
   const stats = Object.freeze({
     drawCalls: 5,
+    exteriorVessels: vesselCount,
+    shipTriangles: shipPositions.length / 9,
+    shippingBatches: 1,
+    get visibleShippingDrawCalls() { return !disposed && ships.visible ? 1 : 0; },
     particles: dustPositions.length / 3 + steamPositions.length / 3,
     triangles: shaftIndices.length / 3 + arrowGeometry.index.count / 3 * arrowIndex + shipPositions.length / 9,
     textures: 0,
@@ -323,6 +402,17 @@ export function createAtmosphere({ renderer, camera, reducedMotion = false } = {
       const height = renderer?.domElement?.height || 900;
       const fov = camera?.fov || 64;
       projectionScale.value = height * .5 / Math.tan(fov * Math.PI / 360);
+      const viewCamera = context?.camera || camera;
+      if (viewCamera?.projectionMatrix && viewCamera?.matrixWorldInverse) {
+        viewCamera.updateMatrixWorld(); group.updateWorldMatrix(true, false);
+        shippingProjection.multiplyMatrices(viewCamera.projectionMatrix, viewCamera.matrixWorldInverse);
+        shippingFrustum.setFromProjectionMatrix(shippingProjection);
+        ships.visible = false;
+        for (const bounds of routeBounds) {
+          shippingWorldBounds.copy(bounds).applyMatrix4(group.matrixWorld);
+          if (shippingFrustum.intersectsBox(shippingWorldBounds)) { ships.visible = true; break; }
+        }
+      } else ships.visible = true;
     },
     dispose() {
       if (disposed) return;

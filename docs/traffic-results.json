@@ -1,0 +1,1860 @@
+{
+  "date": "2026-11-03",
+  "baselineCommit": "6cf9c5c8b93e8d232f7ddc7e55b2287accdbdf4d",
+  "sourceHashes": {
+    "before": {
+      "src/atmosphere.js": "7137cc54a680e59b7af32ea2ce3f9de02de09097774c71b69d2cb0eb138a627a",
+      "src/station-life.js": "66b841645d165c74e86d1e7c68039cbdeb8e97ea9dd52470386c487dc606764b"
+    },
+    "after": {
+      "src/atmosphere.js": "411c580987d91fbda822e6512515a5d9539e5605ae0d1008c1814997cb23ac80",
+      "src/station-life.js": "1c186bcab3e25b124e11524b7084b927211d0edd50c5d951b28db6f84a4beeaf"
+    }
+  },
+  "before": {
+    "label": "before",
+    "renderer": "Chromium ANGLE/SwiftShader; CPU callback includes submission and may include blocking, not hardware FPS",
+    "date": "2026-11-03",
+    "origin": "http://127.0.0.1:5176",
+    "measurements": [
+      {
+        "device": "desktop",
+        "pose": "arrival",
+        "position": [
+          12.5,
+          10.5,
+          66
+        ],
+        "target": [
+          -3,
+          10,
+          -58
+        ],
+        "drawCalls": 193,
+        "triangles": 105444,
+        "points": 3140,
+        "textures": 52,
+        "geometries": 147,
+        "resolution": {
+          "pixelRatio": 1,
+          "width": 1280,
+          "height": 800,
+          "composerWidth": 1280,
+          "composerHeight": 800
+        },
+        "atmosphere": {
+          "drawCalls": 5,
+          "particles": 1040,
+          "triangles": 420,
+          "textures": 0,
+          "lights": 0
+        },
+        "stationLife": {
+          "drawCalls": 3,
+          "triangles": 3096,
+          "textures": 0,
+          "lights": 0,
+          "cargoCars": 3,
+          "cleaners": 3,
+          "repairArms": 2,
+          "winches": 1,
+          "visibleDrawCalls": 3,
+          "submittedTriangles": 3096
+        },
+        "modelErrors": [],
+        "calls": {
+          "min": 193,
+          "median": 193,
+          "p95": 193,
+          "max": 193
+        },
+        "submittedTriangles": {
+          "min": 105444,
+          "median": 105444,
+          "p95": 105444,
+          "max": 105444
+        },
+        "cpuMs": {
+          "min": 1.9000000059604645,
+          "median": 2.199999988079071,
+          "p95": 2.699999988079071,
+          "max": 2.699999988079071
+        },
+        "samples": 16
+      },
+      {
+        "device": "desktop",
+        "pose": "concourse",
+        "position": [
+          0,
+          1.75,
+          48
+        ],
+        "target": [
+          0,
+          1.75,
+          -58
+        ],
+        "drawCalls": 179,
+        "triangles": 104924,
+        "points": 3140,
+        "textures": 52,
+        "geometries": 147,
+        "resolution": {
+          "pixelRatio": 1,
+          "width": 1280,
+          "height": 800,
+          "composerWidth": 1280,
+          "composerHeight": 800
+        },
+        "atmosphere": {
+          "drawCalls": 5,
+          "particles": 1040,
+          "triangles": 420,
+          "textures": 0,
+          "lights": 0
+        },
+        "stationLife": {
+          "drawCalls": 3,
+          "triangles": 3096,
+          "textures": 0,
+          "lights": 0,
+          "cargoCars": 3,
+          "cleaners": 3,
+          "repairArms": 2,
+          "winches": 1,
+          "visibleDrawCalls": 3,
+          "submittedTriangles": 3096
+        },
+        "modelErrors": [],
+        "calls": {
+          "min": 179,
+          "median": 179,
+          "p95": 179,
+          "max": 179
+        },
+        "submittedTriangles": {
+          "min": 104924,
+          "median": 104924,
+          "p95": 104924,
+          "max": 104924
+        },
+        "cpuMs": {
+          "min": 1.5,
+          "median": 2,
+          "p95": 2.2999999821186066,
+          "max": 2.2999999821186066
+        },
+        "samples": 16
+      },
+      {
+        "device": "desktop",
+        "pose": "observation",
+        "position": [
+          75,
+          3.675,
+          -20
+        ],
+        "target": [
+          140,
+          3.675,
+          -20
+        ],
+        "drawCalls": 68,
+        "triangles": 71019,
+        "points": 3140,
+        "textures": 53,
+        "geometries": 150,
+        "resolution": {
+          "pixelRatio": 1,
+          "width": 1280,
+          "height": 800,
+          "composerWidth": 1280,
+          "composerHeight": 800
+        },
+        "atmosphere": {
+          "drawCalls": 5,
+          "particles": 1040,
+          "triangles": 420,
+          "textures": 0,
+          "lights": 0
+        },
+        "stationLife": {
+          "drawCalls": 3,
+          "triangles": 3096,
+          "textures": 0,
+          "lights": 0,
+          "cargoCars": 3,
+          "cleaners": 3,
+          "repairArms": 2,
+          "winches": 1,
+          "visibleDrawCalls": 0,
+          "submittedTriangles": 0
+        },
+        "modelErrors": [],
+        "calls": {
+          "min": 68,
+          "median": 68,
+          "p95": 68,
+          "max": 68
+        },
+        "submittedTriangles": {
+          "min": 71019,
+          "median": 71019,
+          "p95": 71019,
+          "max": 71019
+        },
+        "cpuMs": {
+          "min": 0.699999988079071,
+          "median": 1,
+          "p95": 1.9000000059604645,
+          "max": 1.9000000059604645
+        },
+        "samples": 16
+      },
+      {
+        "device": "desktop",
+        "pose": "market",
+        "position": [
+          -38,
+          1.75,
+          30
+        ],
+        "target": [
+          -90,
+          1.75,
+          30
+        ],
+        "drawCalls": 91,
+        "triangles": 70352,
+        "points": 2440,
+        "textures": 60,
+        "geometries": 160,
+        "resolution": {
+          "pixelRatio": 1,
+          "width": 1280,
+          "height": 800,
+          "composerWidth": 1280,
+          "composerHeight": 800
+        },
+        "atmosphere": {
+          "drawCalls": 5,
+          "particles": 1040,
+          "triangles": 420,
+          "textures": 0,
+          "lights": 0
+        },
+        "stationLife": {
+          "drawCalls": 3,
+          "triangles": 3096,
+          "textures": 0,
+          "lights": 0,
+          "cargoCars": 3,
+          "cleaners": 3,
+          "repairArms": 2,
+          "winches": 1,
+          "visibleDrawCalls": 0,
+          "submittedTriangles": 0
+        },
+        "modelErrors": [],
+        "calls": {
+          "min": 91,
+          "median": 91,
+          "p95": 91,
+          "max": 91
+        },
+        "submittedTriangles": {
+          "min": 70352,
+          "median": 70352,
+          "p95": 70352,
+          "max": 70352
+        },
+        "cpuMs": {
+          "min": 1,
+          "median": 1.2999999821186066,
+          "p95": 1.800000011920929,
+          "max": 1.800000011920929
+        },
+        "samples": 16
+      },
+      {
+        "device": "desktop",
+        "pose": "docks",
+        "position": [
+          0,
+          1.75,
+          -150
+        ],
+        "target": [
+          0,
+          1.75,
+          -204
+        ],
+        "drawCalls": 66,
+        "triangles": 66356,
+        "points": 3140,
+        "textures": 60,
+        "geometries": 160,
+        "resolution": {
+          "pixelRatio": 1,
+          "width": 1280,
+          "height": 800,
+          "composerWidth": 1280,
+          "composerHeight": 800
+        },
+        "atmosphere": {
+          "drawCalls": 5,
+          "particles": 1040,
+          "triangles": 420,
+          "textures": 0,
+          "lights": 0
+        },
+        "stationLife": {
+          "drawCalls": 3,
+          "triangles": 3096,
+          "textures": 0,
+          "lights": 0,
+          "cargoCars": 3,
+          "cleaners": 3,
+          "repairArms": 2,
+          "winches": 1,
+          "visibleDrawCalls": 3,
+          "submittedTriangles": 3096
+        },
+        "modelErrors": [],
+        "calls": {
+          "min": 66,
+          "median": 66,
+          "p95": 66,
+          "max": 66
+        },
+        "submittedTriangles": {
+          "min": 66356,
+          "median": 66356,
+          "p95": 66356,
+          "max": 66356
+        },
+        "cpuMs": {
+          "min": 0.7000000178813934,
+          "median": 1,
+          "p95": 1.4000000059604645,
+          "max": 1.4000000059604645
+        },
+        "samples": 16
+      },
+      {
+        "device": "desktop",
+        "pose": "promenade",
+        "position": [
+          -24,
+          9.375,
+          48
+        ],
+        "target": [
+          5,
+          12,
+          -25
+        ],
+        "drawCalls": 190,
+        "triangles": 109772,
+        "points": 3140,
+        "textures": 60,
+        "geometries": 160,
+        "resolution": {
+          "pixelRatio": 1,
+          "width": 1280,
+          "height": 800,
+          "composerWidth": 1280,
+          "composerHeight": 800
+        },
+        "atmosphere": {
+          "drawCalls": 5,
+          "particles": 1040,
+          "triangles": 420,
+          "textures": 0,
+          "lights": 0
+        },
+        "stationLife": {
+          "drawCalls": 3,
+          "triangles": 3096,
+          "textures": 0,
+          "lights": 0,
+          "cargoCars": 3,
+          "cleaners": 3,
+          "repairArms": 2,
+          "winches": 1,
+          "visibleDrawCalls": 3,
+          "submittedTriangles": 3096
+        },
+        "modelErrors": [],
+        "calls": {
+          "min": 189,
+          "median": 189,
+          "p95": 190,
+          "max": 190
+        },
+        "submittedTriangles": {
+          "min": 109760,
+          "median": 109760,
+          "p95": 109772,
+          "max": 109772
+        },
+        "cpuMs": {
+          "min": 1.5999999940395355,
+          "median": 2,
+          "p95": 2.399999976158142,
+          "max": 2.399999976158142
+        },
+        "samples": 16
+      },
+      {
+        "device": "mobile",
+        "pose": "arrival",
+        "position": [
+          12.5,
+          10.5,
+          66
+        ],
+        "target": [
+          -3,
+          10,
+          -58
+        ],
+        "drawCalls": 154,
+        "triangles": 92600,
+        "points": 3140,
+        "textures": 39,
+        "geometries": 116,
+        "resolution": {
+          "pixelRatio": 1,
+          "width": 390,
+          "height": 844,
+          "composerWidth": 390,
+          "composerHeight": 844
+        },
+        "atmosphere": {
+          "drawCalls": 5,
+          "particles": 1040,
+          "triangles": 420,
+          "textures": 0,
+          "lights": 0
+        },
+        "stationLife": {
+          "drawCalls": 3,
+          "triangles": 3096,
+          "textures": 0,
+          "lights": 0,
+          "cargoCars": 3,
+          "cleaners": 3,
+          "repairArms": 2,
+          "winches": 1,
+          "visibleDrawCalls": 3,
+          "submittedTriangles": 3096
+        },
+        "modelErrors": [],
+        "calls": {
+          "min": 154,
+          "median": 154,
+          "p95": 154,
+          "max": 154
+        },
+        "submittedTriangles": {
+          "min": 92600,
+          "median": 92600,
+          "p95": 92600,
+          "max": 92600
+        },
+        "cpuMs": {
+          "min": 1.5,
+          "median": 1.699999988079071,
+          "p95": 2.2000000178813934,
+          "max": 2.2000000178813934
+        },
+        "samples": 16
+      },
+      {
+        "device": "mobile",
+        "pose": "concourse",
+        "position": [
+          0,
+          1.75,
+          48
+        ],
+        "target": [
+          0,
+          1.75,
+          -58
+        ],
+        "drawCalls": 151,
+        "triangles": 94064,
+        "points": 3140,
+        "textures": 39,
+        "geometries": 116,
+        "resolution": {
+          "pixelRatio": 1,
+          "width": 390,
+          "height": 844,
+          "composerWidth": 390,
+          "composerHeight": 844
+        },
+        "atmosphere": {
+          "drawCalls": 5,
+          "particles": 1040,
+          "triangles": 420,
+          "textures": 0,
+          "lights": 0
+        },
+        "stationLife": {
+          "drawCalls": 3,
+          "triangles": 3096,
+          "textures": 0,
+          "lights": 0,
+          "cargoCars": 3,
+          "cleaners": 3,
+          "repairArms": 2,
+          "winches": 1,
+          "visibleDrawCalls": 3,
+          "submittedTriangles": 3096
+        },
+        "modelErrors": [],
+        "calls": {
+          "min": 151,
+          "median": 151,
+          "p95": 151,
+          "max": 151
+        },
+        "submittedTriangles": {
+          "min": 94064,
+          "median": 94064,
+          "p95": 94064,
+          "max": 94064
+        },
+        "cpuMs": {
+          "min": 1.2999999821186066,
+          "median": 1.5999999940395355,
+          "p95": 2.0999999940395355,
+          "max": 2.0999999940395355
+        },
+        "samples": 16
+      },
+      {
+        "device": "mobile",
+        "pose": "observation",
+        "position": [
+          75,
+          3.675,
+          -20
+        ],
+        "target": [
+          140,
+          3.675,
+          -20
+        ],
+        "drawCalls": 68,
+        "triangles": 71019,
+        "points": 3140,
+        "textures": 40,
+        "geometries": 126,
+        "resolution": {
+          "pixelRatio": 1,
+          "width": 390,
+          "height": 844,
+          "composerWidth": 390,
+          "composerHeight": 844
+        },
+        "atmosphere": {
+          "drawCalls": 5,
+          "particles": 1040,
+          "triangles": 420,
+          "textures": 0,
+          "lights": 0
+        },
+        "stationLife": {
+          "drawCalls": 3,
+          "triangles": 3096,
+          "textures": 0,
+          "lights": 0,
+          "cargoCars": 3,
+          "cleaners": 3,
+          "repairArms": 2,
+          "winches": 1,
+          "visibleDrawCalls": 0,
+          "submittedTriangles": 0
+        },
+        "modelErrors": [],
+        "calls": {
+          "min": 68,
+          "median": 68,
+          "p95": 68,
+          "max": 68
+        },
+        "submittedTriangles": {
+          "min": 71019,
+          "median": 71019,
+          "p95": 71019,
+          "max": 71019
+        },
+        "cpuMs": {
+          "min": 0.800000011920929,
+          "median": 1.0999999940395355,
+          "p95": 1.399999976158142,
+          "max": 1.399999976158142
+        },
+        "samples": 16
+      },
+      {
+        "device": "mobile",
+        "pose": "market",
+        "position": [
+          -38,
+          1.75,
+          30
+        ],
+        "target": [
+          -90,
+          1.75,
+          30
+        ],
+        "drawCalls": 83,
+        "triangles": 69876,
+        "points": 2440,
+        "textures": 47,
+        "geometries": 143,
+        "resolution": {
+          "pixelRatio": 1,
+          "width": 390,
+          "height": 844,
+          "composerWidth": 390,
+          "composerHeight": 844
+        },
+        "atmosphere": {
+          "drawCalls": 5,
+          "particles": 1040,
+          "triangles": 420,
+          "textures": 0,
+          "lights": 0
+        },
+        "stationLife": {
+          "drawCalls": 3,
+          "triangles": 3096,
+          "textures": 0,
+          "lights": 0,
+          "cargoCars": 3,
+          "cleaners": 3,
+          "repairArms": 2,
+          "winches": 1,
+          "visibleDrawCalls": 0,
+          "submittedTriangles": 0
+        },
+        "modelErrors": [],
+        "calls": {
+          "min": 83,
+          "median": 83,
+          "p95": 83,
+          "max": 83
+        },
+        "submittedTriangles": {
+          "min": 69876,
+          "median": 69876,
+          "p95": 69876,
+          "max": 69876
+        },
+        "cpuMs": {
+          "min": 1,
+          "median": 1.2999999821186066,
+          "p95": 2,
+          "max": 2
+        },
+        "samples": 16
+      },
+      {
+        "device": "mobile",
+        "pose": "docks",
+        "position": [
+          0,
+          1.75,
+          -150
+        ],
+        "target": [
+          0,
+          1.75,
+          -204
+        ],
+        "drawCalls": 61,
+        "triangles": 66348,
+        "points": 2440,
+        "textures": 47,
+        "geometries": 143,
+        "resolution": {
+          "pixelRatio": 1,
+          "width": 390,
+          "height": 844,
+          "composerWidth": 390,
+          "composerHeight": 844
+        },
+        "atmosphere": {
+          "drawCalls": 5,
+          "particles": 1040,
+          "triangles": 420,
+          "textures": 0,
+          "lights": 0
+        },
+        "stationLife": {
+          "drawCalls": 3,
+          "triangles": 3096,
+          "textures": 0,
+          "lights": 0,
+          "cargoCars": 3,
+          "cleaners": 3,
+          "repairArms": 2,
+          "winches": 1,
+          "visibleDrawCalls": 3,
+          "submittedTriangles": 3096
+        },
+        "modelErrors": [],
+        "calls": {
+          "min": 61,
+          "median": 61,
+          "p95": 61,
+          "max": 61
+        },
+        "submittedTriangles": {
+          "min": 66348,
+          "median": 66348,
+          "p95": 66348,
+          "max": 66348
+        },
+        "cpuMs": {
+          "min": 0.7999999821186066,
+          "median": 0.9000000059604645,
+          "p95": 1.5,
+          "max": 1.5
+        },
+        "samples": 16
+      },
+      {
+        "device": "mobile",
+        "pose": "promenade",
+        "position": [
+          -24,
+          9.375,
+          48
+        ],
+        "target": [
+          5,
+          12,
+          -25
+        ],
+        "drawCalls": 166,
+        "triangles": 103316,
+        "points": 3140,
+        "textures": 56,
+        "geometries": 154,
+        "resolution": {
+          "pixelRatio": 1,
+          "width": 390,
+          "height": 844,
+          "composerWidth": 390,
+          "composerHeight": 844
+        },
+        "atmosphere": {
+          "drawCalls": 5,
+          "particles": 1040,
+          "triangles": 420,
+          "textures": 0,
+          "lights": 0
+        },
+        "stationLife": {
+          "drawCalls": 3,
+          "triangles": 3096,
+          "textures": 0,
+          "lights": 0,
+          "cargoCars": 3,
+          "cleaners": 3,
+          "repairArms": 2,
+          "winches": 1,
+          "visibleDrawCalls": 3,
+          "submittedTriangles": 3096
+        },
+        "modelErrors": [],
+        "calls": {
+          "min": 166,
+          "median": 166,
+          "p95": 166,
+          "max": 166
+        },
+        "submittedTriangles": {
+          "min": 103316,
+          "median": 103316,
+          "p95": 103316,
+          "max": 103316
+        },
+        "cpuMs": {
+          "min": 1.5999999940395355,
+          "median": 1.7999999821186066,
+          "p95": 2.300000011920929,
+          "max": 2.300000011920929
+        },
+        "samples": 16
+      }
+    ],
+    "errors": []
+  },
+  "after": {
+    "label": "after-verified",
+    "renderer": "Chromium ANGLE/SwiftShader; CPU callback includes submission and may include blocking, not hardware FPS",
+    "date": "2026-11-03",
+    "origin": "http://127.0.0.1:5177",
+    "measurements": [
+      {
+        "device": "desktop",
+        "pose": "arrival",
+        "position": [
+          12.5,
+          10.5,
+          66
+        ],
+        "target": [
+          -3,
+          10,
+          -58
+        ],
+        "drawCalls": 193,
+        "triangles": 105416,
+        "points": 3140,
+        "textures": 52,
+        "geometries": 147,
+        "resolution": {
+          "pixelRatio": 1,
+          "width": 1280,
+          "height": 800,
+          "composerWidth": 1280,
+          "composerHeight": 800
+        },
+        "atmosphere": {
+          "drawCalls": 5,
+          "exteriorVessels": 9,
+          "shipTriangles": 224,
+          "shippingBatches": 1,
+          "visibleShippingDrawCalls": 1,
+          "particles": 1040,
+          "triangles": 392,
+          "textures": 0,
+          "lights": 0
+        },
+        "stationLife": {
+          "drawCalls": 3,
+          "triangles": 3096,
+          "textures": 0,
+          "lights": 0,
+          "cargoCars": 3,
+          "expressCabins": 2,
+          "serviceBerths": 4,
+          "serviceLifts": 2,
+          "slidingDoorLeaves": 4,
+          "serviceCycleSeconds": 120,
+          "cleaners": 3,
+          "repairArms": 2,
+          "winches": 1,
+          "visibleDrawCalls": 3,
+          "submittedTriangles": 3096
+        },
+        "modelErrors": [],
+        "calls": {
+          "min": 193,
+          "median": 193,
+          "p95": 193,
+          "max": 193
+        },
+        "submittedTriangles": {
+          "min": 105416,
+          "median": 105416,
+          "p95": 105416,
+          "max": 105416
+        },
+        "cpuMs": {
+          "min": 1.9000000059604645,
+          "median": 2.100000023841858,
+          "p95": 2.5999999940395355,
+          "max": 2.5999999940395355
+        },
+        "samples": 16
+      },
+      {
+        "device": "desktop",
+        "pose": "concourse",
+        "position": [
+          0,
+          1.75,
+          48
+        ],
+        "target": [
+          0,
+          1.75,
+          -58
+        ],
+        "drawCalls": 179,
+        "triangles": 104896,
+        "points": 3140,
+        "textures": 52,
+        "geometries": 147,
+        "resolution": {
+          "pixelRatio": 1,
+          "width": 1280,
+          "height": 800,
+          "composerWidth": 1280,
+          "composerHeight": 800
+        },
+        "atmosphere": {
+          "drawCalls": 5,
+          "exteriorVessels": 9,
+          "shipTriangles": 224,
+          "shippingBatches": 1,
+          "visibleShippingDrawCalls": 1,
+          "particles": 1040,
+          "triangles": 392,
+          "textures": 0,
+          "lights": 0
+        },
+        "stationLife": {
+          "drawCalls": 3,
+          "triangles": 3096,
+          "textures": 0,
+          "lights": 0,
+          "cargoCars": 3,
+          "expressCabins": 2,
+          "serviceBerths": 4,
+          "serviceLifts": 2,
+          "slidingDoorLeaves": 4,
+          "serviceCycleSeconds": 120,
+          "cleaners": 3,
+          "repairArms": 2,
+          "winches": 1,
+          "visibleDrawCalls": 3,
+          "submittedTriangles": 3096
+        },
+        "modelErrors": [],
+        "calls": {
+          "min": 179,
+          "median": 179,
+          "p95": 179,
+          "max": 179
+        },
+        "submittedTriangles": {
+          "min": 104896,
+          "median": 104896,
+          "p95": 104896,
+          "max": 104896
+        },
+        "cpuMs": {
+          "min": 1.5,
+          "median": 1.9000000059604645,
+          "p95": 2.2000000178813934,
+          "max": 2.2000000178813934
+        },
+        "samples": 16
+      },
+      {
+        "device": "desktop",
+        "pose": "observation",
+        "position": [
+          75,
+          3.675,
+          -20
+        ],
+        "target": [
+          140,
+          3.675,
+          -20
+        ],
+        "drawCalls": 68,
+        "triangles": 70991,
+        "points": 3140,
+        "textures": 53,
+        "geometries": 150,
+        "resolution": {
+          "pixelRatio": 1,
+          "width": 1280,
+          "height": 800,
+          "composerWidth": 1280,
+          "composerHeight": 800
+        },
+        "atmosphere": {
+          "drawCalls": 5,
+          "exteriorVessels": 9,
+          "shipTriangles": 224,
+          "shippingBatches": 1,
+          "visibleShippingDrawCalls": 1,
+          "particles": 1040,
+          "triangles": 392,
+          "textures": 0,
+          "lights": 0
+        },
+        "stationLife": {
+          "drawCalls": 3,
+          "triangles": 3096,
+          "textures": 0,
+          "lights": 0,
+          "cargoCars": 3,
+          "expressCabins": 2,
+          "serviceBerths": 4,
+          "serviceLifts": 2,
+          "slidingDoorLeaves": 4,
+          "serviceCycleSeconds": 120,
+          "cleaners": 3,
+          "repairArms": 2,
+          "winches": 1,
+          "visibleDrawCalls": 0,
+          "submittedTriangles": 0
+        },
+        "modelErrors": [],
+        "calls": {
+          "min": 68,
+          "median": 68,
+          "p95": 68,
+          "max": 68
+        },
+        "submittedTriangles": {
+          "min": 70991,
+          "median": 70991,
+          "p95": 70991,
+          "max": 70991
+        },
+        "cpuMs": {
+          "min": 0.7999999821186066,
+          "median": 1,
+          "p95": 1.5,
+          "max": 1.5
+        },
+        "samples": 16
+      },
+      {
+        "device": "desktop",
+        "pose": "market",
+        "position": [
+          -38,
+          1.75,
+          30
+        ],
+        "target": [
+          -90,
+          1.75,
+          30
+        ],
+        "drawCalls": 90,
+        "triangles": 70100,
+        "points": 2440,
+        "textures": 60,
+        "geometries": 160,
+        "resolution": {
+          "pixelRatio": 1,
+          "width": 1280,
+          "height": 800,
+          "composerWidth": 1280,
+          "composerHeight": 800
+        },
+        "atmosphere": {
+          "drawCalls": 5,
+          "exteriorVessels": 9,
+          "shipTriangles": 224,
+          "shippingBatches": 1,
+          "visibleShippingDrawCalls": 0,
+          "particles": 1040,
+          "triangles": 392,
+          "textures": 0,
+          "lights": 0
+        },
+        "stationLife": {
+          "drawCalls": 3,
+          "triangles": 3096,
+          "textures": 0,
+          "lights": 0,
+          "cargoCars": 3,
+          "expressCabins": 2,
+          "serviceBerths": 4,
+          "serviceLifts": 2,
+          "slidingDoorLeaves": 4,
+          "serviceCycleSeconds": 120,
+          "cleaners": 3,
+          "repairArms": 2,
+          "winches": 1,
+          "visibleDrawCalls": 0,
+          "submittedTriangles": 0
+        },
+        "modelErrors": [],
+        "calls": {
+          "min": 90,
+          "median": 90,
+          "p95": 90,
+          "max": 90
+        },
+        "submittedTriangles": {
+          "min": 70100,
+          "median": 70100,
+          "p95": 70100,
+          "max": 70100
+        },
+        "cpuMs": {
+          "min": 0.9000000059604645,
+          "median": 1.2999999821186066,
+          "p95": 1.800000011920929,
+          "max": 1.800000011920929
+        },
+        "samples": 16
+      },
+      {
+        "device": "desktop",
+        "pose": "docks",
+        "position": [
+          0,
+          1.75,
+          -150
+        ],
+        "target": [
+          0,
+          1.75,
+          -204
+        ],
+        "drawCalls": 66,
+        "triangles": 66328,
+        "points": 3140,
+        "textures": 60,
+        "geometries": 160,
+        "resolution": {
+          "pixelRatio": 1,
+          "width": 1280,
+          "height": 800,
+          "composerWidth": 1280,
+          "composerHeight": 800
+        },
+        "atmosphere": {
+          "drawCalls": 5,
+          "exteriorVessels": 9,
+          "shipTriangles": 224,
+          "shippingBatches": 1,
+          "visibleShippingDrawCalls": 1,
+          "particles": 1040,
+          "triangles": 392,
+          "textures": 0,
+          "lights": 0
+        },
+        "stationLife": {
+          "drawCalls": 3,
+          "triangles": 3096,
+          "textures": 0,
+          "lights": 0,
+          "cargoCars": 3,
+          "expressCabins": 2,
+          "serviceBerths": 4,
+          "serviceLifts": 2,
+          "slidingDoorLeaves": 4,
+          "serviceCycleSeconds": 120,
+          "cleaners": 3,
+          "repairArms": 2,
+          "winches": 1,
+          "visibleDrawCalls": 3,
+          "submittedTriangles": 3096
+        },
+        "modelErrors": [],
+        "calls": {
+          "min": 66,
+          "median": 66,
+          "p95": 66,
+          "max": 66
+        },
+        "submittedTriangles": {
+          "min": 66328,
+          "median": 66328,
+          "p95": 66328,
+          "max": 66328
+        },
+        "cpuMs": {
+          "min": 0.800000011920929,
+          "median": 1,
+          "p95": 1.5,
+          "max": 1.5
+        },
+        "samples": 16
+      },
+      {
+        "device": "desktop",
+        "pose": "promenade",
+        "position": [
+          -24,
+          9.375,
+          48
+        ],
+        "target": [
+          5,
+          12,
+          -25
+        ],
+        "drawCalls": 190,
+        "triangles": 109744,
+        "points": 3140,
+        "textures": 60,
+        "geometries": 160,
+        "resolution": {
+          "pixelRatio": 1,
+          "width": 1280,
+          "height": 800,
+          "composerWidth": 1280,
+          "composerHeight": 800
+        },
+        "atmosphere": {
+          "drawCalls": 5,
+          "exteriorVessels": 9,
+          "shipTriangles": 224,
+          "shippingBatches": 1,
+          "visibleShippingDrawCalls": 1,
+          "particles": 1040,
+          "triangles": 392,
+          "textures": 0,
+          "lights": 0
+        },
+        "stationLife": {
+          "drawCalls": 3,
+          "triangles": 3096,
+          "textures": 0,
+          "lights": 0,
+          "cargoCars": 3,
+          "expressCabins": 2,
+          "serviceBerths": 4,
+          "serviceLifts": 2,
+          "slidingDoorLeaves": 4,
+          "serviceCycleSeconds": 120,
+          "cleaners": 3,
+          "repairArms": 2,
+          "winches": 1,
+          "visibleDrawCalls": 3,
+          "submittedTriangles": 3096
+        },
+        "modelErrors": [],
+        "calls": {
+          "min": 189,
+          "median": 189,
+          "p95": 190,
+          "max": 190
+        },
+        "submittedTriangles": {
+          "min": 109732,
+          "median": 109732,
+          "p95": 109744,
+          "max": 109744
+        },
+        "cpuMs": {
+          "min": 1.600000023841858,
+          "median": 2,
+          "p95": 2.4000000059604645,
+          "max": 2.4000000059604645
+        },
+        "samples": 16
+      },
+      {
+        "device": "mobile",
+        "pose": "arrival",
+        "position": [
+          12.5,
+          10.5,
+          66
+        ],
+        "target": [
+          -3,
+          10,
+          -58
+        ],
+        "drawCalls": 154,
+        "triangles": 92572,
+        "points": 3140,
+        "textures": 39,
+        "geometries": 116,
+        "resolution": {
+          "pixelRatio": 1,
+          "width": 390,
+          "height": 844,
+          "composerWidth": 390,
+          "composerHeight": 844
+        },
+        "atmosphere": {
+          "drawCalls": 5,
+          "exteriorVessels": 9,
+          "shipTriangles": 224,
+          "shippingBatches": 1,
+          "visibleShippingDrawCalls": 1,
+          "particles": 1040,
+          "triangles": 392,
+          "textures": 0,
+          "lights": 0
+        },
+        "stationLife": {
+          "drawCalls": 3,
+          "triangles": 3096,
+          "textures": 0,
+          "lights": 0,
+          "cargoCars": 3,
+          "expressCabins": 2,
+          "serviceBerths": 4,
+          "serviceLifts": 2,
+          "slidingDoorLeaves": 4,
+          "serviceCycleSeconds": 120,
+          "cleaners": 3,
+          "repairArms": 2,
+          "winches": 1,
+          "visibleDrawCalls": 3,
+          "submittedTriangles": 3096
+        },
+        "modelErrors": [],
+        "calls": {
+          "min": 154,
+          "median": 154,
+          "p95": 154,
+          "max": 154
+        },
+        "submittedTriangles": {
+          "min": 92572,
+          "median": 92572,
+          "p95": 92572,
+          "max": 92572
+        },
+        "cpuMs": {
+          "min": 1.5,
+          "median": 1.7999999821186066,
+          "p95": 2.0999999940395355,
+          "max": 2.0999999940395355
+        },
+        "samples": 16
+      },
+      {
+        "device": "mobile",
+        "pose": "concourse",
+        "position": [
+          0,
+          1.75,
+          48
+        ],
+        "target": [
+          0,
+          1.75,
+          -58
+        ],
+        "drawCalls": 151,
+        "triangles": 94036,
+        "points": 3140,
+        "textures": 39,
+        "geometries": 116,
+        "resolution": {
+          "pixelRatio": 1,
+          "width": 390,
+          "height": 844,
+          "composerWidth": 390,
+          "composerHeight": 844
+        },
+        "atmosphere": {
+          "drawCalls": 5,
+          "exteriorVessels": 9,
+          "shipTriangles": 224,
+          "shippingBatches": 1,
+          "visibleShippingDrawCalls": 1,
+          "particles": 1040,
+          "triangles": 392,
+          "textures": 0,
+          "lights": 0
+        },
+        "stationLife": {
+          "drawCalls": 3,
+          "triangles": 3096,
+          "textures": 0,
+          "lights": 0,
+          "cargoCars": 3,
+          "expressCabins": 2,
+          "serviceBerths": 4,
+          "serviceLifts": 2,
+          "slidingDoorLeaves": 4,
+          "serviceCycleSeconds": 120,
+          "cleaners": 3,
+          "repairArms": 2,
+          "winches": 1,
+          "visibleDrawCalls": 3,
+          "submittedTriangles": 3096
+        },
+        "modelErrors": [],
+        "calls": {
+          "min": 151,
+          "median": 151,
+          "p95": 151,
+          "max": 151
+        },
+        "submittedTriangles": {
+          "min": 94036,
+          "median": 94036,
+          "p95": 94036,
+          "max": 94036
+        },
+        "cpuMs": {
+          "min": 1.300000011920929,
+          "median": 1.699999988079071,
+          "p95": 2.100000023841858,
+          "max": 2.100000023841858
+        },
+        "samples": 16
+      },
+      {
+        "device": "mobile",
+        "pose": "observation",
+        "position": [
+          75,
+          3.675,
+          -20
+        ],
+        "target": [
+          140,
+          3.675,
+          -20
+        ],
+        "drawCalls": 68,
+        "triangles": 70991,
+        "points": 3140,
+        "textures": 40,
+        "geometries": 126,
+        "resolution": {
+          "pixelRatio": 1,
+          "width": 390,
+          "height": 844,
+          "composerWidth": 390,
+          "composerHeight": 844
+        },
+        "atmosphere": {
+          "drawCalls": 5,
+          "exteriorVessels": 9,
+          "shipTriangles": 224,
+          "shippingBatches": 1,
+          "visibleShippingDrawCalls": 1,
+          "particles": 1040,
+          "triangles": 392,
+          "textures": 0,
+          "lights": 0
+        },
+        "stationLife": {
+          "drawCalls": 3,
+          "triangles": 3096,
+          "textures": 0,
+          "lights": 0,
+          "cargoCars": 3,
+          "expressCabins": 2,
+          "serviceBerths": 4,
+          "serviceLifts": 2,
+          "slidingDoorLeaves": 4,
+          "serviceCycleSeconds": 120,
+          "cleaners": 3,
+          "repairArms": 2,
+          "winches": 1,
+          "visibleDrawCalls": 0,
+          "submittedTriangles": 0
+        },
+        "modelErrors": [],
+        "calls": {
+          "min": 68,
+          "median": 68,
+          "p95": 68,
+          "max": 68
+        },
+        "submittedTriangles": {
+          "min": 70991,
+          "median": 70991,
+          "p95": 70991,
+          "max": 70991
+        },
+        "cpuMs": {
+          "min": 0.5999999940395355,
+          "median": 0.9000000059604645,
+          "p95": 1.5,
+          "max": 1.5
+        },
+        "samples": 16
+      },
+      {
+        "device": "mobile",
+        "pose": "market",
+        "position": [
+          -38,
+          1.75,
+          30
+        ],
+        "target": [
+          -90,
+          1.75,
+          30
+        ],
+        "drawCalls": 82,
+        "triangles": 69624,
+        "points": 2440,
+        "textures": 47,
+        "geometries": 143,
+        "resolution": {
+          "pixelRatio": 1,
+          "width": 390,
+          "height": 844,
+          "composerWidth": 390,
+          "composerHeight": 844
+        },
+        "atmosphere": {
+          "drawCalls": 5,
+          "exteriorVessels": 9,
+          "shipTriangles": 224,
+          "shippingBatches": 1,
+          "visibleShippingDrawCalls": 0,
+          "particles": 1040,
+          "triangles": 392,
+          "textures": 0,
+          "lights": 0
+        },
+        "stationLife": {
+          "drawCalls": 3,
+          "triangles": 3096,
+          "textures": 0,
+          "lights": 0,
+          "cargoCars": 3,
+          "expressCabins": 2,
+          "serviceBerths": 4,
+          "serviceLifts": 2,
+          "slidingDoorLeaves": 4,
+          "serviceCycleSeconds": 120,
+          "cleaners": 3,
+          "repairArms": 2,
+          "winches": 1,
+          "visibleDrawCalls": 0,
+          "submittedTriangles": 0
+        },
+        "modelErrors": [],
+        "calls": {
+          "min": 82,
+          "median": 82,
+          "p95": 82,
+          "max": 82
+        },
+        "submittedTriangles": {
+          "min": 69624,
+          "median": 69624,
+          "p95": 69624,
+          "max": 69624
+        },
+        "cpuMs": {
+          "min": 0.9000000059604645,
+          "median": 1.2000000178813934,
+          "p95": 1.800000011920929,
+          "max": 1.800000011920929
+        },
+        "samples": 16
+      },
+      {
+        "device": "mobile",
+        "pose": "docks",
+        "position": [
+          0,
+          1.75,
+          -150
+        ],
+        "target": [
+          0,
+          1.75,
+          -204
+        ],
+        "drawCalls": 61,
+        "triangles": 66320,
+        "points": 2440,
+        "textures": 47,
+        "geometries": 143,
+        "resolution": {
+          "pixelRatio": 1,
+          "width": 390,
+          "height": 844,
+          "composerWidth": 390,
+          "composerHeight": 844
+        },
+        "atmosphere": {
+          "drawCalls": 5,
+          "exteriorVessels": 9,
+          "shipTriangles": 224,
+          "shippingBatches": 1,
+          "visibleShippingDrawCalls": 1,
+          "particles": 1040,
+          "triangles": 392,
+          "textures": 0,
+          "lights": 0
+        },
+        "stationLife": {
+          "drawCalls": 3,
+          "triangles": 3096,
+          "textures": 0,
+          "lights": 0,
+          "cargoCars": 3,
+          "expressCabins": 2,
+          "serviceBerths": 4,
+          "serviceLifts": 2,
+          "slidingDoorLeaves": 4,
+          "serviceCycleSeconds": 120,
+          "cleaners": 3,
+          "repairArms": 2,
+          "winches": 1,
+          "visibleDrawCalls": 3,
+          "submittedTriangles": 3096
+        },
+        "modelErrors": [],
+        "calls": {
+          "min": 61,
+          "median": 61,
+          "p95": 61,
+          "max": 61
+        },
+        "submittedTriangles": {
+          "min": 66320,
+          "median": 66320,
+          "p95": 66320,
+          "max": 66320
+        },
+        "cpuMs": {
+          "min": 0.699999988079071,
+          "median": 0.9000000059604645,
+          "p95": 1,
+          "max": 1
+        },
+        "samples": 16
+      },
+      {
+        "device": "mobile",
+        "pose": "promenade",
+        "position": [
+          -24,
+          9.375,
+          48
+        ],
+        "target": [
+          5,
+          12,
+          -25
+        ],
+        "drawCalls": 166,
+        "triangles": 103288,
+        "points": 3140,
+        "textures": 56,
+        "geometries": 154,
+        "resolution": {
+          "pixelRatio": 1,
+          "width": 390,
+          "height": 844,
+          "composerWidth": 390,
+          "composerHeight": 844
+        },
+        "atmosphere": {
+          "drawCalls": 5,
+          "exteriorVessels": 9,
+          "shipTriangles": 224,
+          "shippingBatches": 1,
+          "visibleShippingDrawCalls": 1,
+          "particles": 1040,
+          "triangles": 392,
+          "textures": 0,
+          "lights": 0
+        },
+        "stationLife": {
+          "drawCalls": 3,
+          "triangles": 3096,
+          "textures": 0,
+          "lights": 0,
+          "cargoCars": 3,
+          "expressCabins": 2,
+          "serviceBerths": 4,
+          "serviceLifts": 2,
+          "slidingDoorLeaves": 4,
+          "serviceCycleSeconds": 120,
+          "cleaners": 3,
+          "repairArms": 2,
+          "winches": 1,
+          "visibleDrawCalls": 3,
+          "submittedTriangles": 3096
+        },
+        "modelErrors": [],
+        "calls": {
+          "min": 166,
+          "median": 166,
+          "p95": 166,
+          "max": 166
+        },
+        "submittedTriangles": {
+          "min": 103288,
+          "median": 103288,
+          "p95": 103288,
+          "max": 103288
+        },
+        "cpuMs": {
+          "min": 1.4000000059604645,
+          "median": 1.800000011920929,
+          "p95": 2.300000011920929,
+          "max": 2.300000011920929
+        },
+        "samples": 16
+      }
+    ],
+    "errors": []
+  },
+  "independentChecks": {
+    "date": "2026-11-03",
+    "budgets": {
+      "atmosphere": {
+        "drawCalls": 5,
+        "triangles": 392,
+        "attributeBytes": 48616
+      },
+      "machines": {
+        "drawCalls": 3,
+        "triangles": 3096,
+        "attributeBytes": 408672
+      }
+    },
+    "checks": {
+      "machineBounds": {
+        "probes": 2414880,
+        "minimumTransportHeight": 22.610000729560852
+      },
+      "doorInterlock": true,
+      "fleetBounds": {
+        "probes": 513408,
+        "minimumPlanetGap": 9.256455822033999,
+        "minimumObservationX": 110.74756997415062,
+        "minimumRingHullGap": 9.25768545142019
+      },
+      "atmosphereLifecycle": {
+        "reducedMotionUpdates": 1000,
+        "resumeSeconds": 0.05,
+        "resourcesDisposedExactlyOnce": 10
+      },
+      "machinesLifecycle": {
+        "reducedMotionUpdates": 1000,
+        "resumeSeconds": 0.05,
+        "resourcesDisposedExactlyOnce": 6
+      }
+    }
+  },
+  "memoryAccounting": "Independent atmosphere attributeBytes includes geometry indices and instance matrices; documentation table counts base geometry attributes. Both totals are unchanged versus baseline.",
+  "productionSmoke": {
+    "date": "2026-11-03",
+    "target": "Final Node 24 production build; local Vite preview",
+    "fonts": "Google Fonts CSS replaced with empty CSS to verify local fallbacks",
+    "devices": [
+      {
+        "device": "desktop 1280x800",
+        "ready": true,
+        "loadedModels": 4,
+        "modelErrors": [],
+        "inhabitants": 80,
+        "exteriorVessels": 9,
+        "expressCabins": 2,
+        "serviceLifts": 2,
+        "slidingDoorLeaves": 4,
+        "models": [
+          {
+            "file": "scifi-computer.glb",
+            "status": 200
+          },
+          {
+            "file": "tree-spiral.glb",
+            "status": 200
+          },
+          {
+            "file": "animated-robot.glb",
+            "status": 200
+          },
+          {
+            "file": "cooking-pot.glb",
+            "status": 200
+          }
+        ],
+        "sectors": [
+          {
+            "target": "observation",
+            "sector": "observation",
+            "floorHeight": 1.9249999999999998
+          },
+          {
+            "target": "market",
+            "sector": "market",
+            "floorHeight": 0
+          },
+          {
+            "target": "docks",
+            "sector": "docks",
+            "floorHeight": 0
+          },
+          {
+            "target": "promenade",
+            "sector": "concourse",
+            "floorHeight": 7.625
+          }
+        ],
+        "creditsStatus": 200,
+        "javascriptErrors": [],
+        "localHttpFailures": [],
+        "devServerRequests": false
+      },
+      {
+        "device": "mobile 390x844 touch",
+        "ready": true,
+        "loadedModels": 4,
+        "modelErrors": [],
+        "inhabitants": 80,
+        "exteriorVessels": 9,
+        "expressCabins": 2,
+        "serviceLifts": 2,
+        "slidingDoorLeaves": 4,
+        "models": [
+          {
+            "file": "animated-robot.glb",
+            "status": 200
+          },
+          {
+            "file": "scifi-computer.glb",
+            "status": 200
+          },
+          {
+            "file": "tree-spiral.glb",
+            "status": 200
+          },
+          {
+            "file": "cooking-pot.glb",
+            "status": 200
+          }
+        ],
+        "sectors": [
+          {
+            "target": "observation",
+            "sector": "observation",
+            "floorHeight": 1.9249999999999998
+          },
+          {
+            "target": "market",
+            "sector": "market",
+            "floorHeight": 0
+          },
+          {
+            "target": "docks",
+            "sector": "docks",
+            "floorHeight": 0
+          },
+          {
+            "target": "promenade",
+            "sector": "concourse",
+            "floorHeight": 7.625
+          }
+        ],
+        "creditsStatus": 200,
+        "javascriptErrors": [],
+        "localHttpFailures": [],
+        "devServerRequests": false
+      }
+    ]
+  },
+  "completeBufferArrayBytes": {
+    "before": 457288,
+    "after": 457288
+  }
+}
