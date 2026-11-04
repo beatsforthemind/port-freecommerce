@@ -1,0 +1,987 @@
+{
+  "passed": true,
+  "sourceHashes": {
+    "src/population.js": "b8cb7d302bc2cde8f6a4d97e5c30da76ac78a14d173e7881ce27e37dbd13a131",
+    "src/population-behavior.js": "8c40b0a93813a3d8237a8ac0e56ebea862270c30b7c137fddb9a44c22ffaa70d",
+    "src/population-timetable.js": "338c5ca902162e4ba38d17279ef8c3b73b9b15132baf1bbfb38b4f1910cae371",
+    "src/districts.js": "2ff77b89a40465ddd4edff35216b5ae579c233ed81b13249218e727382a10229",
+    "src/commuter-behavior.js": "889fdf925619c2ff68f4335c5717c2dfe2d6b8878dc629f536eefe1cd6f07ba7",
+    "src/main.js": "f2d8471f4f03bf5e5e1013e7fd4cd6b6bef90d7502f9d35c850753db2e7648ef",
+    "src/audio.js": "e01935000541ac4ca047d62101cb468e483ce44ff902cd6698eaff489bffe623",
+    "src/audio-sources.js": "81df027e596c388179d0f5aad8247cfa772526430c9a80dcd3fcb474ce662731",
+    "src/navigation.js": "855f7f9098ed9b33cfc552f0b707a81b807de014e6584686a21812c78a0735a7",
+    "src/humanoid.js": "f210a30947f7af82b9842bc6b93c06cb96fbffec042c1b17ec58b9008313ddb7"
+  },
+  "physical": {
+    "probes": 111561,
+    "navFailures": 0,
+    "bodyHits": 0,
+    "edgeFailures": 0,
+    "examples": []
+  },
+  "geometry": {
+    "populationBatches": 7,
+    "populationMaximumTriangles": 18912,
+    "legacy": {
+      "actors": 20,
+      "drawCalls": 4,
+      "triangles": 4204,
+      "updateHz": 30,
+      "adultHeight": 1.78,
+      "purposefulJourneys": 20,
+      "activities": {
+        "walking": 10,
+        "waiting": 10,
+        "roles": 4,
+        "destinations": 60,
+        "timetableSeconds": 720,
+        "teleportWraps": 0
+      }
+    },
+    "floors": 23,
+    "colliders": 200
+  },
+  "finalTimetable": {
+    "masterPeriodSeconds": 1440,
+    "scheduled": 60,
+    "calibrated": 60,
+    "paddingSeconds": 4143.118993167802
+  },
+  "denseTemporal": {
+    "seconds": 1800,
+    "dt": 0.1,
+    "probes": 1656092,
+    "maxStep": 0.10660848461573548,
+    "maxFloorStep": 0.01575164473686641,
+    "maxYawStep": 0.5518400098358934,
+    "maxHeadingError": 1.0268406118722104,
+    "teleports": [],
+    "floorJumps": [],
+    "backwards": [],
+    "negativeDistance": 0,
+    "dwellSamples": 668646,
+    "movingSamples": 987446,
+    "stoppedWithWalkWeight": 0
+  },
+  "offgridTemporal": {
+    "seconds": 1800,
+    "dt": 0.037,
+    "probes": 4475800,
+    "maxStep": 0.03983867708650517,
+    "maxFloorStep": 0.005828108552677236,
+    "maxYawStep": 0.2049979608854442,
+    "maxHeadingError": 1.0268406118722104,
+    "teleports": [],
+    "floorJumps": [],
+    "backwards": [],
+    "negativeDistance": 0,
+    "dwellSamples": 1807040,
+    "movingSamples": 2668760,
+    "stoppedWithWalkWeight": 0
+  },
+  "spacing": {
+    "threshold": 0.6,
+    "denseMinimumMeters": 0.758293066174134,
+    "offgridMinimumMeters": 0.7581869612729719,
+    "events": 0,
+    "includedFixedStandingPeople": 12
+  },
+  "mechanics": {
+    "uploadCaps": {
+      "populationInOneSecond": [
+        19,
+        19,
+        19,
+        19,
+        19,
+        19,
+        19
+      ],
+      "commutersInOneSecond": [
+        29,
+        29,
+        29,
+        29
+      ]
+    },
+    "offscreen": {
+      "equal": true,
+      "firstMismatch": null,
+      "commutersEqual": true,
+      "restoredCommuterMatrices": true
+    },
+    "frozen": {
+      "samePopulation": true,
+      "sameCommuters": true,
+      "extraMatrixUploads": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "finite": true,
+    "bufferBytes": {
+      "populationInstances": 108604,
+      "legacyInstances": 23332
+    },
+    "disposed": {
+      "populationChildren": 0,
+      "districtChildren": 0
+    },
+    "passed": true
+  },
+  "botClearance": {
+    "probes": 2490,
+    "radius": 0.6,
+    "hits": 0,
+    "examples": []
+  },
+  "renderComparison": [
+    {
+      "device": "desktop",
+      "view": "arrival",
+      "callsBefore": 193,
+      "callsAfter": 193,
+      "cpuMedianBeforeMs": 2.2000000178813934,
+      "cpuMedianAfterMs": 2.2999999821186066,
+      "trianglesBefore": 111382,
+      "trianglesAfter": 111938,
+      "texturesBefore": 52,
+      "texturesAfter": 52,
+      "geometriesBefore": 147,
+      "geometriesAfter": 147,
+      "resolutionIdentical": true
+    },
+    {
+      "device": "desktop",
+      "view": "concourse",
+      "callsBefore": 179,
+      "callsAfter": 179,
+      "cpuMedianBeforeMs": 1.899999976158142,
+      "cpuMedianAfterMs": 2,
+      "trianglesBefore": 110482,
+      "trianglesAfter": 110712,
+      "texturesBefore": 52,
+      "texturesAfter": 52,
+      "geometriesBefore": 147,
+      "geometriesAfter": 147,
+      "resolutionIdentical": true
+    },
+    {
+      "device": "desktop",
+      "view": "observation",
+      "callsBefore": 68,
+      "callsAfter": 68,
+      "cpuMedianBeforeMs": 1,
+      "cpuMedianAfterMs": 1,
+      "trianglesBefore": 73715,
+      "trianglesAfter": 73989,
+      "texturesBefore": 53,
+      "texturesAfter": 53,
+      "geometriesBefore": 150,
+      "geometriesAfter": 150,
+      "resolutionIdentical": true
+    },
+    {
+      "device": "desktop",
+      "view": "market",
+      "callsBefore": 90,
+      "callsAfter": 90,
+      "cpuMedianBeforeMs": 1.2999999821186066,
+      "cpuMedianAfterMs": 1.2999999821186066,
+      "trianglesBefore": 73730,
+      "trianglesAfter": 74226,
+      "texturesBefore": 60,
+      "texturesAfter": 60,
+      "geometriesBefore": 160,
+      "geometriesAfter": 160,
+      "resolutionIdentical": true
+    },
+    {
+      "device": "desktop",
+      "view": "docks",
+      "callsBefore": 66,
+      "callsAfter": 66,
+      "cpuMedianBeforeMs": 1,
+      "cpuMedianAfterMs": 1.0999999940395355,
+      "trianglesBefore": 70102,
+      "trianglesAfter": 69646,
+      "texturesBefore": 60,
+      "texturesAfter": 60,
+      "geometriesBefore": 160,
+      "geometriesAfter": 160,
+      "resolutionIdentical": true
+    },
+    {
+      "device": "desktop",
+      "view": "promenade",
+      "callsBefore": 189,
+      "callsAfter": 189,
+      "cpuMedianBeforeMs": 2,
+      "cpuMedianAfterMs": 1.9000000059604645,
+      "trianglesBefore": 115088,
+      "trianglesAfter": 115596,
+      "texturesBefore": 60,
+      "texturesAfter": 60,
+      "geometriesBefore": 160,
+      "geometriesAfter": 160,
+      "resolutionIdentical": true
+    },
+    {
+      "device": "mobile",
+      "view": "arrival",
+      "callsBefore": 154,
+      "callsAfter": 154,
+      "cpuMedianBeforeMs": 1.7999999821186066,
+      "cpuMedianAfterMs": 2,
+      "trianglesBefore": 97666,
+      "trianglesAfter": 98222,
+      "texturesBefore": 39,
+      "texturesAfter": 39,
+      "geometriesBefore": 116,
+      "geometriesAfter": 116,
+      "resolutionIdentical": true
+    },
+    {
+      "device": "mobile",
+      "view": "concourse",
+      "callsBefore": 151,
+      "callsAfter": 151,
+      "cpuMedianBeforeMs": 1.699999988079071,
+      "cpuMedianAfterMs": 1.7999999821186066,
+      "trianglesBefore": 98750,
+      "trianglesAfter": 98980,
+      "texturesBefore": 39,
+      "texturesAfter": 39,
+      "geometriesBefore": 116,
+      "geometriesAfter": 116,
+      "resolutionIdentical": true
+    },
+    {
+      "device": "mobile",
+      "view": "observation",
+      "callsBefore": 68,
+      "callsAfter": 68,
+      "cpuMedianBeforeMs": 0.8999999761581421,
+      "cpuMedianAfterMs": 1.0999999940395355,
+      "trianglesBefore": 73715,
+      "trianglesAfter": 73989,
+      "texturesBefore": 40,
+      "texturesAfter": 40,
+      "geometriesBefore": 126,
+      "geometriesAfter": 126,
+      "resolutionIdentical": true
+    },
+    {
+      "device": "mobile",
+      "view": "market",
+      "callsBefore": 82,
+      "callsAfter": 82,
+      "cpuMedianBeforeMs": 1.199999988079071,
+      "cpuMedianAfterMs": 1.300000011920929,
+      "trianglesBefore": 73254,
+      "trianglesAfter": 73750,
+      "texturesBefore": 47,
+      "texturesAfter": 47,
+      "geometriesBefore": 143,
+      "geometriesAfter": 143,
+      "resolutionIdentical": true
+    },
+    {
+      "device": "mobile",
+      "view": "docks",
+      "callsBefore": 61,
+      "callsAfter": 61,
+      "cpuMedianBeforeMs": 1,
+      "cpuMedianAfterMs": 1,
+      "trianglesBefore": 70094,
+      "trianglesAfter": 69650,
+      "texturesBefore": 47,
+      "texturesAfter": 47,
+      "geometriesBefore": 143,
+      "geometriesAfter": 143,
+      "resolutionIdentical": true
+    },
+    {
+      "device": "mobile",
+      "view": "promenade",
+      "callsBefore": 166,
+      "callsAfter": 166,
+      "cpuMedianBeforeMs": 1.899999976158142,
+      "cpuMedianAfterMs": 1.800000011920929,
+      "trianglesBefore": 107772,
+      "trianglesAfter": 108280,
+      "texturesBefore": 56,
+      "texturesAfter": 56,
+      "geometriesBefore": 154,
+      "geometriesAfter": 154,
+      "resolutionIdentical": true
+    }
+  ],
+  "renderSourceNote": {
+    "onlySubsequentChange": [
+      {
+        "file": "src/population-behavior.js",
+        "captureSHA256": "f65125bb4125fb6c4785fc58eee3c785557e538c57d99183c42b46f1baf0ff8b",
+        "finalFunctionalSHA256": "8c40b0a93813a3d8237a8ac0e56ebea862270c30b7c137fddb9a44c22ffaa70d"
+      }
+    ],
+    "description": "Camera comparison preceded the one-line harmonic clock decomposition correction; path geometry, phase table, actors, rendering resources and sampled views are unchanged. Final functional checks use corrected source."
+  },
+  "javascriptErrors": [],
+  "activities": {
+    "evidence": [
+      {
+        "kind": "market",
+        "actor": {
+          "id": "resident-40",
+          "journeyId": "market-local-0",
+          "role": "local shopper",
+          "state": "browsing",
+          "intent": "Comparing produce at Salt + Static",
+          "x": -42.5,
+          "z": 24,
+          "floor": 0,
+          "yaw": -1.5707963267948966,
+          "speed": 0,
+          "cruiseSpeed": 0.86,
+          "gait": 0,
+          "walkWeight": 0,
+          "travelDistance": 141.29175364371721,
+          "cycleDuration": 360,
+          "localTime": 287.30010000002386,
+          "goal": {
+            "x": -42.5,
+            "z": 24,
+            "intent": "Comparing produce at Salt + Static",
+            "facing": -1.5707963267948966
+          }
+        },
+        "position": [
+          -38.5,
+          1.8,
+          27
+        ],
+        "target": [
+          -42.5,
+          1.1,
+          24
+        ],
+        "file": "/tmp/pfc-npc-activity-market.png"
+      },
+      {
+        "kind": "gallery",
+        "actor": {
+          "id": "resident-35",
+          "journeyId": "observation-local-1",
+          "role": "gallery observer",
+          "state": "watching the planet",
+          "intent": "Taking in the rings",
+          "x": 93.75,
+          "z": -20,
+          "floor": 2.8,
+          "yaw": 1.5707963267948966,
+          "speed": 0,
+          "cruiseSpeed": 0.86,
+          "gait": 0,
+          "walkWeight": 0,
+          "travelDistance": 19.61447432881456,
+          "cycleDuration": 80,
+          "localTime": 25.09090000000609,
+          "goal": {
+            "x": 93.75,
+            "z": -20,
+            "intent": "Taking in the rings",
+            "facing": 1.5707963267948966
+          }
+        },
+        "position": [
+          89.75,
+          4.699999999999999,
+          -16.5
+        ],
+        "target": [
+          93.75,
+          3.9,
+          -20
+        ],
+        "file": "/tmp/pfc-npc-activity-gallery.png"
+      },
+      {
+        "kind": "docks",
+        "actor": {
+          "id": "resident-12",
+          "journeyId": "long-haul-2",
+          "role": "long-haul passenger",
+          "state": "waiting for boarding",
+          "intent": "Waiting for long-haul boarding clearance",
+          "x": -3.3999999999999795,
+          "z": -182.2,
+          "floor": 0,
+          "yaw": -3.1415926535897936,
+          "speed": 0,
+          "cruiseSpeed": 0.94,
+          "gait": 0,
+          "walkWeight": 0,
+          "travelDistance": 287.4815735055506,
+          "cycleDuration": 720,
+          "localTime": 311.7654000000105,
+          "goal": {
+            "x": -3.4,
+            "z": -182.2,
+            "intent": "Waiting for long-haul boarding clearance",
+            "facing": 3.141592653589793
+          }
+        },
+        "position": [
+          -0.5999999999999797,
+          1.8,
+          -177.2
+        ],
+        "target": [
+          -3.3999999999999795,
+          1.1,
+          -182.2
+        ],
+        "file": "/tmp/pfc-npc-activity-docks.png"
+      },
+      {
+        "kind": "arrivals",
+        "actor": {
+          "id": "resident-2",
+          "journeyId": "connection-2",
+          "role": "connecting passenger",
+          "state": "meeting",
+          "intent": "Meeting an arrival",
+          "x": -3,
+          "z": 79.7,
+          "floor": 0,
+          "yaw": 0,
+          "speed": 0,
+          "cruiseSpeed": 0.86,
+          "gait": 0,
+          "walkWeight": 0,
+          "travelDistance": 409.9121572433396,
+          "cycleDuration": 720,
+          "localTime": 491.45680000002244,
+          "goal": {
+            "x": -3,
+            "z": 79.7,
+            "intent": "Meeting an arrival",
+            "facing": 0
+          }
+        },
+        "position": [
+          1,
+          2,
+          74.7
+        ],
+        "target": [
+          -3,
+          1.1,
+          79.7
+        ],
+        "file": "/tmp/pfc-npc-activity-arrivals.png"
+      },
+      {
+        "kind": "walking sequence",
+        "actor": {
+          "id": "resident-0",
+          "journeyId": "connection-0",
+          "role": "connecting passenger",
+          "state": "walking",
+          "intent": "Checking the gate direction",
+          "x": 6.4,
+          "z": 2.7548960529480553,
+          "floor": 0,
+          "yaw": 3.141592653589793,
+          "speed": 0.86,
+          "cruiseSpeed": 0.86,
+          "gait": -0.9825833110163417,
+          "walkWeight": 1,
+          "travelDistance": 77.38434800000837,
+          "cycleDuration": 720,
+          "localTime": 90.45680000000974,
+          "goal": {
+            "x": 17,
+            "z": -108,
+            "intent": "Checking the gate direction",
+            "facing": 3.141592653589793
+          }
+        }
+      }
+    ],
+    "errors": []
+  },
+  "limits": [
+    "Authored deterministic schedules, not dynamic crowd avoidance or player collision.",
+    "Dense sampled validation covers a complete shared timetable and its continuation; spacing is not a proof for arbitrary future route edits.",
+    "Software-rendered callback samples do not establish physical phone or hardware GPU frame rate.",
+    "Rendered comparison preceded only a one-line floating-point clock boundary correction; final functional audits and activity captures use corrected source."
+  ],
+  "capturedAt": "2026-11-04T16:24:07.625230+00:00",
+  "baselineCommit": "378032281c11904afc235412215837d3e96c37c5",
+  "baseline": {
+    "sourceCommit": "378032281c11904afc235412215837d3e96c37c5",
+    "counts": {
+      "population": {
+        "actors": 80,
+        "travelers": 56,
+        "seated": 8,
+        "social": 12,
+        "serviceUnits": 4,
+        "pathRoutes": 10,
+        "upperDeckTravelers": 8,
+        "drawCalls": 7,
+        "triangles": 18912,
+        "updateHz": 20,
+        "textures": 0,
+        "lights": 0,
+        "humanStyle": "tailored adult proportions / understated faces",
+        "humanHeadHeight": 0.26,
+        "visibleActors": 53,
+        "submittedTriangles": 12010,
+        "detailedActors": 7
+      },
+      "legacy": {
+        "actors": 20,
+        "drawCalls": 4,
+        "triangles": 4204,
+        "updateHz": 30,
+        "adultHeight": 1.78
+      },
+      "floors": 23,
+      "colliders": 200
+    },
+    "routes": [
+      {
+        "id": "promenade/0",
+        "probes": 2295,
+        "walkFailures": 0,
+        "bodyHits": 0,
+        "edgeFailures": 0,
+        "examples": []
+      },
+      {
+        "id": "observation/0",
+        "probes": 345,
+        "walkFailures": 0,
+        "bodyHits": 0,
+        "edgeFailures": 0,
+        "examples": []
+      },
+      {
+        "id": "observation/1",
+        "probes": 301,
+        "walkFailures": 0,
+        "bodyHits": 0,
+        "edgeFailures": 0,
+        "examples": []
+      },
+      {
+        "id": "observation/2",
+        "probes": 782,
+        "walkFailures": 0,
+        "bodyHits": 0,
+        "edgeFailures": 0,
+        "examples": []
+      },
+      {
+        "id": "market/0",
+        "probes": 731,
+        "walkFailures": 0,
+        "bodyHits": 0,
+        "edgeFailures": 0,
+        "examples": []
+      },
+      {
+        "id": "market/1",
+        "probes": 514,
+        "walkFailures": 0,
+        "bodyHits": 0,
+        "edgeFailures": 0,
+        "examples": []
+      },
+      {
+        "id": "docks/0",
+        "probes": 222,
+        "walkFailures": 0,
+        "bodyHits": 0,
+        "edgeFailures": 0,
+        "examples": []
+      },
+      {
+        "id": "docks/1",
+        "probes": 656,
+        "walkFailures": 0,
+        "bodyHits": 0,
+        "edgeFailures": 0,
+        "examples": []
+      },
+      {
+        "id": "docks/2",
+        "probes": 470,
+        "walkFailures": 0,
+        "bodyHits": 0,
+        "edgeFailures": 0,
+        "examples": []
+      },
+      {
+        "id": "docks/3",
+        "probes": 331,
+        "walkFailures": 0,
+        "bodyHits": 0,
+        "edgeFailures": 0,
+        "examples": []
+      }
+    ],
+    "temporal": {
+      "wraps": 94,
+      "stops": 0,
+      "maxStep": 204.95661428638886,
+      "offeredUpdates": 10000
+    }
+  },
+  "phaseCalibration": {
+    "T": 1440,
+    "dt": 0.25,
+    "minimum": 0.76,
+    "checked": 234,
+    "phases": {
+      "service-2": 180,
+      "long-haul-0": 51.5,
+      "long-haul-1": 171.5,
+      "long-haul-2": 291.5,
+      "long-haul-3": 411.5,
+      "long-haul-4": 531.5,
+      "long-haul-5": 651.5,
+      "connection-0": 43.25,
+      "connection-2": 444.75,
+      "connection-3": 64.75,
+      "connection-4": 283.25,
+      "connection-5": 169.75,
+      "connection-6": 424.75,
+      "connection-8": 339.75,
+      "connection-1": 296.5,
+      "connection-7": 113.25,
+      "connection-9": 226.5,
+      "gallery-break-0": 296.5,
+      "gallery-break-1": 296.5,
+      "gallery-break-2": 296.5,
+      "gallery-break-3": 113.25,
+      "market-errand-0": 319.75,
+      "market-errand-1": 319.75,
+      "market-errand-2": 319.75,
+      "market-errand-3": 319.75,
+      "promenade-break-0": 55.25,
+      "promenade-break-1": 175.25,
+      "market-local-0": 287.25,
+      "market-local-1": 287.25,
+      "market-local-2": 254.75,
+      "market-local-3": 254.75,
+      "market-local-4": 254.75,
+      "market-local-5": 222.25,
+      "market-local-6": 222.25,
+      "market-local-7": 222.25,
+      "market-local-8": 222.25,
+      "market-local-9": 222.25,
+      "docks-local-1": 17.25,
+      "docks-local-5": 122.75,
+      "docks-local-2": 13.25,
+      "docks-local-3": 10.25,
+      "docks-local-0": 7.75,
+      "docks-local-4": 40.5,
+      "promenade-local-0": 296.5,
+      "promenade-local-1": 74.5,
+      "promenade-local-2": 134.5,
+      "promenade-local-3": 113.25,
+      "promenade-local-4": 43.25,
+      "promenade-local-5": 314.5,
+      "promenade-local-6": 374.5,
+      "promenade-local-7": 339.75,
+      "observation-local-2": 153.5,
+      "observation-local-5": 84.75,
+      "observation-local-0": 76.75,
+      "observation-local-3": 8,
+      "observation-local-1": 9.5,
+      "observation-local-4": 52,
+      "service-3": 76.5,
+      "service-0": 12.25,
+      "service-1": 24.75
+    },
+    "failures": [],
+    "staticFailures": []
+  },
+  "constructionMillisecondsNodeFixture": 1020.052834,
+  "adversarialReview": {
+    "corrected": [
+      "Arrivals visitors face Customs",
+      "Physical counter and gate-facing activities",
+      "Heading continuity at walking/wait transitions",
+      "No counterflow on shared market centerlines",
+      "Arrival crossing spokes clear long-held meeting positions",
+      "No path through fixed visitors",
+      "Parcel-porter arm clearance",
+      "Cumulative distance at harmonic clock boundaries"
+    ],
+    "mainBoundaryEvidence": {
+      "sourceHashes": {
+        "population.js": "3e936540302f9f3cf697ae2e2abc4c92705e182fde6a806594090a5dabd83515",
+        "population-behavior.js": "f65125bb4125fb6c4785fc58eee3c785557e538c57d99183c42b46f1baf0ff8b",
+        "population-timetable.js": "63b2f98d0d451c2589955a800092263518d84deea6581e1ab1a41ea293c386e2"
+      },
+      "plans": 60,
+      "probes": 432,
+      "maxPositionJump": 4.948219611833338e-11,
+      "maxFloorJump": 7.792877454448899e-12,
+      "maxYawJump": 1.3044574309617474e-09,
+      "maxDistanceChange": 4.979483492206782e-11,
+      "invalid": [],
+      "yawCases": [],
+      "passed": true
+    },
+    "legacyBoundaryEvidence": {
+      "sourceHash": "889fdf925619c2ff68f4335c5717c2dfe2d6b8878dc629f536eefe1cd6f07ba7",
+      "boundaryProbes": 140,
+      "maxPositionDelta": 2.1316282072803006e-14,
+      "maxYawDelta": 2.90887314235988e-10,
+      "maxDistanceDelta": 2.2737367544323206e-13,
+      "failures": [],
+      "passed": true
+    },
+    "exactHarmonicDistanceFailures": []
+  },
+  "poseCacheEquivalence": {
+    "method": "Same current journey catalog, compare neutral dwell cache on/off over1000 updates with culling, camera changes and reduced motion",
+    "sourceHashes": {
+      "population.js": "3e936540302f9f3cf697ae2e2abc4c92705e182fde6a806594090a5dabd83515",
+      "population-behavior.js": "f65125bb4125fb6c4785fc58eee3c785557e538c57d99183c42b46f1baf0ff8b"
+    },
+    "frames": 1000,
+    "values": 22864000,
+    "maxDifference": 0,
+    "stoppedSamples": 1052,
+    "passed": true
+  },
+  "plannerCacheEquivalence": {
+    "method": "Same complete pre-final-catalog-repair fixture, original planner versus exact-value memoization; construction time includes mesh generation, one run per variant. Final two static-human path repairs and averaged heading fields happened afterward; these numbers are an illustrative microbenchmark rather than final production timings.",
+    "beforeMilliseconds": 1458.3399169999998,
+    "afterMilliseconds": 1012.3054170000003,
+    "beforePlanSha256": "02a3fb489d8b525acdd2856beb7b0ee0c952a793cb9d08cb602ccd1212c61692",
+    "afterPlanSha256": "02a3fb489d8b525acdd2856beb7b0ee0c952a793cb9d08cb602ccd1212c61692",
+    "beforeProbes": 71146,
+    "afterProbes": 44619,
+    "pointFitCacheHits": 11598,
+    "segmentCacheHits": 1562,
+    "temporaryCachesReleasedAfterConstruction": true,
+    "passed": true
+  },
+  "browserProduction": {
+    "origin": "http://127.0.0.1:5175",
+    "devices": [
+      {
+        "device": "desktop 1280x800",
+        "npc": {
+          "scheduledResidents": 60,
+          "crossSectorJourneys": 14,
+          "crossDeckJourneys": 2,
+          "activityStops": 124,
+          "calibrated": 60,
+          "invalidRoutes": [],
+          "finiteSnapshots": true,
+          "reducedMotionFrozen": true,
+          "isolatedSnapshotCopies": true
+        },
+        "lazyStart": true,
+        "preferencesWhileOff": true,
+        "on": {
+          "state": "running",
+          "coreNodes": 41,
+          "spatialNodes": 25,
+          "bufferBytes": 2023680
+        },
+        "muteSuspends": true,
+        "rapidToggleUsesOneContext": true,
+        "keyboardVolume": true,
+        "preferencesRestoredWithoutAutoplay": true,
+        "layout": {
+          "viewport": [
+            1280,
+            800
+          ],
+          "dialog": [
+            395,
+            30,
+            490,
+            740
+          ],
+          "range": [
+            436,
+            705.96875,
+            408,
+            34
+          ],
+          "overflow": false,
+          "scrollable": true
+        },
+        "sectors": [
+          {
+            "target": "observation",
+            "sector": "observation",
+            "audioSector": "observation",
+            "floorHeight": 1.9249999999999998,
+            "transitFootsteps": 0
+          },
+          {
+            "target": "market",
+            "sector": "market",
+            "audioSector": "market",
+            "floorHeight": 0,
+            "transitFootsteps": 0
+          },
+          {
+            "target": "docks",
+            "sector": "docks",
+            "audioSector": "docks",
+            "floorHeight": 0,
+            "transitFootsteps": 0
+          },
+          {
+            "target": "promenade",
+            "sector": "concourse",
+            "audioSector": "concourse",
+            "floorHeight": 7.625,
+            "transitFootsteps": 0
+          }
+        ],
+        "preserved": {
+          "populationActors": 80,
+          "populationTriangles": 18912,
+          "populationBatches": 7,
+          "exteriorShips": 9,
+          "expressCabins": 2,
+          "serviceLifts": 2,
+          "modelAssets": 4
+        },
+        "errors": [],
+        "localFailures": []
+      },
+      {
+        "device": "mobile 390x844 touch",
+        "npc": {
+          "scheduledResidents": 60,
+          "crossSectorJourneys": 14,
+          "crossDeckJourneys": 2,
+          "activityStops": 124,
+          "calibrated": 60,
+          "invalidRoutes": [],
+          "finiteSnapshots": true,
+          "reducedMotionFrozen": true,
+          "isolatedSnapshotCopies": true
+        },
+        "lazyStart": true,
+        "preferencesWhileOff": true,
+        "on": {
+          "state": "running",
+          "coreNodes": 41,
+          "spatialNodes": 25,
+          "bufferBytes": 2023680
+        },
+        "muteSuspends": true,
+        "rapidToggleUsesOneContext": true,
+        "keyboardVolume": true,
+        "preferencesRestoredWithoutAutoplay": true,
+        "layout": {
+          "viewport": [
+            390,
+            844
+          ],
+          "dialog": [
+            16,
+            15,
+            358,
+            814
+          ],
+          "range": [
+            40,
+            571.5,
+            310,
+            44
+          ],
+          "overflow": false,
+          "scrollable": true
+        },
+        "sectors": [
+          {
+            "target": "observation",
+            "sector": "observation",
+            "audioSector": "observation",
+            "floorHeight": 1.9249999999999998,
+            "transitFootsteps": 0
+          },
+          {
+            "target": "market",
+            "sector": "market",
+            "audioSector": "market",
+            "floorHeight": 0,
+            "transitFootsteps": 0
+          },
+          {
+            "target": "docks",
+            "sector": "docks",
+            "audioSector": "docks",
+            "floorHeight": 0,
+            "transitFootsteps": 0
+          },
+          {
+            "target": "promenade",
+            "sector": "concourse",
+            "audioSector": "concourse",
+            "floorHeight": 7.625,
+            "transitFootsteps": 0
+          }
+        ],
+        "preserved": {
+          "populationActors": 80,
+          "populationTriangles": 18912,
+          "populationBatches": 7,
+          "exteriorShips": 9,
+          "expressCabins": 2,
+          "serviceLifts": 2,
+          "modelAssets": 4
+        },
+        "errors": [],
+        "localFailures": []
+      }
+    ]
+  },
+  "productionBuild": {
+    "node": "24.22.1",
+    "command": "npm run build",
+    "passed": true,
+    "compiledAssets": 2,
+    "models": 4,
+    "publicFilesByteIdentical": 5,
+    "existingBundleAdvisory": true,
+    "files": {
+      "index-BFcVOavk.css": {
+        "bytes": 17996,
+        "gzipBytesLevel6": 4846,
+        "sha256": "fe4f599c6c29bfb15ada0969c9253eb2734629a2740ad6af634d85d1ad5a8402"
+      },
+      "index-CXpIBmpd.js": {
+        "bytes": 897589,
+        "gzipBytesLevel6": 255659,
+        "sha256": "fdaa156815a982c64455d54c79d8815a9875466edf912c63e662b15935d10628"
+      }
+    }
+  }
+}

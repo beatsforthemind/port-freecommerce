@@ -1,6 +1,8 @@
 import * as THREE from 'three';
 import { sectorAt } from './navigation.js';
 import {createHumanHeadGeometry,createHumanTorsoGeometry,createHumanLimbGeometry,HUMAN_PALETTE,HUMAN_PROFILE} from './humanoid.js';
+import {createJourneyPlanner,sampleJourney} from './population-behavior.js';
+import {applyPopulationTimetable} from './population-timetable.js';
 
 /**
  * A cross-section of the port: commuters, adapted travelers, readers, traders,
@@ -35,25 +37,11 @@ export function createPopulation({districtLayouts = [], promenadeRoutes = [], na
   const coats = HUMAN_PALETTE.coats;
   const faces = HUMAN_PALETTE.skin;
   const boneDirection=new THREE.Vector3(),boneUp=new THREE.Vector3(0,1,0);
-  const sectorIndex=(x,z)=>({concourse:0,observation:1,market:2,docks:3})[sectorAt(x,z)];
-
-  function route(points) {
-    const segments=[];let length=0;
-    for(let i=1;i<points.length;i++) {
-      const a=points[i-1],b=points[i],distance=Math.hypot(b[0]-a[0],b[1]-a[1]);
-      if(distance){segments.push({a,b,start:length,length:distance});length+=distance;}
-    }
-    return {segments,length};
-  }
-  function sampleRoute(a,distance) {
-    const path=a.path;
-    const along=((distance%path.length)+path.length)%path.length;
-    const segment=path.segments.find(s=>along<s.start+s.length)||path.segments[path.segments.length-1];
-    const t=(along-segment.start)/segment.length;
-    a.x=segment.a[0]+(segment.b[0]-segment.a[0])*t;
-    a.z=segment.a[1]+(segment.b[1]-segment.a[1])*t;
-    a.yaw=Math.atan2(segment.b[0]-segment.a[0],segment.b[1]-segment.a[1]);
-  }
+  const sectorNumbers={concourse:0,observation:1,market:2,docks:3};
+  const sectorIndex=(x,z)=>sectorNumbers[sectorAt(x,z)];
+  const planner=createJourneyPlanner({navigation});
+  const journeys=[];
+  const invalidJourneys=[];
 
   function actor(x, z, options = {}) {
     // Standing visitors belong in public aisles, seated readers in their seats.
@@ -63,7 +51,7 @@ export function createPopulation({districtLayouts = [], promenadeRoutes = [], na
         if(sectorAt(nx,nz)===sectorAt(x,z)&&navigation.canWalk(nx,nz,options.floor)){x=nx;z=nz;break search;}
       }
     }
-    const record = {x, z, baseX: x, baseZ: z, yaw: options.yaw || 0, scale: options.scale || .89 + random() * .24,
+    const record = {id:`resident-${actors.length}`,x, z, baseX: x, baseZ: z, yaw: options.yaw || 0, scale: options.scale || .89 + random() * .24,
       height: options.height || .94 + random() * .13, phase: random() * Math.PI * 2,
       speed: .43 + random() * .37, ...options, matrix: new THREE.Matrix4(), parts: [],
       sector: sectorIndex(x,z), detailed: true};
@@ -95,7 +83,7 @@ export function createPopulation({districtLayouts = [], promenadeRoutes = [], na
     const face = faces[(index * 3) % faces.length];
     const trousers=HUMAN_PALETTE.trousers[index%HUMAN_PALETTE.trousers.length];
     const seated=a.pose==='seated';
-    const workwear=a.sector===3||index%8===0;
+    const workwear=(a.homeSector??a.sector)===3||index%8===0;
     const longCoat=index%4===1&&!seated;
     a.joints=new Float32Array(36);
     a.seatedShift=seated?(a.seatHeight+.075)/(a.scale*a.height)-HUMAN_PROFILE.hipY:0;
@@ -132,7 +120,7 @@ export function createPopulation({districtLayouts = [], promenadeRoutes = [], na
     // and identical staring eyes, establish role without caricature.
     if(workwear)part(a,'gear','#424b49',0,1.46,.045,.31,.075,.18,0,0,0,'',true);
     if(index%4===0)part(a,'light','#aaa891',-.105,1.29,.153,.036,.053,.009,0,0,0,'',true);
-    if(seated||a.pose==='standing') {
+    if(seated||a.pose==='standing'||a.journey) {
       a.poseCache={valid:false};
       for(const p of a.parts)p.worldMatrix=new THREE.Matrix4();
     }
@@ -233,24 +221,104 @@ export function createPopulation({districtLayouts = [], promenadeRoutes = [], na
     }
   }
 
-  // Long-haul streams keep the central five metres and all kiosk footprints clear.
-  const mainLanes = [6.4, 8.8, 11.1, 14.1];
-  for (let i = 0; i < 26; i++) {
-    const side = i % 2 ? -1 : 1;
-    actor(side * mainLanes[Math.floor(i / 2) % mainLanes.length], -112 + (i * 31.7) % 197, {
-      route: 'z', min: -116, max: 89, direction: side, yaw: side > 0 ? 0 : Math.PI,
-      scale: i % 9 === 0 ? 1.07 : .94 + random() * .12, height: .97 + random() * .05,
-    });
+  const stop=(point,intent,wait,facing,activity='waiting',via=[])=>({point,intent,wait,facing,activity,via});
+  function residentJourney({id,role,stops,speed=.82,floor,phase=.2},options={}) {
+    const journey=planner.compile({id,role,stops,speed,floor});
+    if(!journey.valid){
+      invalidJourneys.push(id);
+      return actor(stops[0].point[0],stops[0].point[1],{...options,role,state:'waiting for clearance',intent:'Waiting for a public route to clear',pose:'standing',speed:0});
+    }
+    journeys.push(journey);
+    const a=actor(journey.legs[0].path.start[0],journey.legs[0].path.start[1],{homeSector:0,...options,route:'journey',journey,role,speed,floor,journeyClock:journey.duration*phase});
+    sampleJourney(journey,a.journeyClock,a);a.sector=sectorIndex(a.x,a.z);return a;
+  }
+  // Arrivals and departures use paired lanes, with unhurried turnaround stops.
+  // These retain the established clear lanes between the older commuters.
+  for(let i=0;i<10;i++) {
+    const family=i%4,side=family<2?1:-1,outer=family%2===1,x=side*(outer?11.1:6.4),back=side*(outer?14.1:8.8),slot=Math.floor(i/4),count=family<2?3:2,homeZ=i===3?95.1:i===5?97.1:77+Math.floor(i/2)*2.7+(family%2)*1.35,gateZ=-108-(family%2)*1.5;
+    residentJourney({id:`connection-${i}`,role:'connecting passenger',speed:outer?.94:.86,phase:(slot+.18)/count,stops:[
+      stop([side*3,homeZ],'Meeting an arrival',9,0,'meeting',[[x,homeZ],[x,-112],[side*17,-112]]),
+      stop([side*17,gateZ],'Checking the gate direction',11,Math.PI,'checking departures',[[back,gateZ],[back,homeZ]]),
+    ]},{scale:i%9===0?1.07:.94+random()*.12,height:.97+random()*.05});
+  }
+  // The pressure locks stay shut: passengers wait beside the real long-haul
+  // approach and walk back to arrivals rather than vanishing through a wall.
+  for(let i=0;i<6;i++) {
+    const side=i%2?1:-1,slot=Math.floor(i/2),x=side*11.1,gateZ=-178-i*2.1,homeZ=91+slot*1.6;
+    residentJourney({id:`long-haul-${i}`,role:'long-haul passenger',speed:.94,phase:(i+.43)/6,stops:[
+      stop([side*3,homeZ],'Collecting a connection from arrivals',9,0,'checking arrivals',[[x,homeZ],[x,-119],[-2.2,-127],[-2.2,-146],[-2.2,gateZ]]),
+      stop([-3.4,gateZ],'Waiting for long-haul boarding clearance',39+slot*7,Math.PI,'waiting for boarding',[[2.6,gateZ],[2.6,-146],[2.6,-127],[side*14.1,-119],[side*14.1,homeZ]]),
+    ]});
+  }
+  for(let i=0;i<4;i++) {
+    const slot=i%2,saltZ=24.8+i*1.6,noodleX=-67+i*1.6,homeZ=69+i*1.45;
+    residentJourney({id:`market-errand-${i}`,role:'provision shopper',speed:.86,phase:(i+.21)/4,stops:[
+      stop([-3,homeZ],'Returning provisions to arrivals',7,0,'checking a shopping list',[[-6.4,homeZ],[-6.4,32],[-28,32],[-36,32],[-40.1,35],[-40.1,saltZ]]),
+      stop([-41.3,saltZ],'Browsing Salt + Static produce',14,-Math.PI/2,'browsing',[[-40.1,saltZ],[-41,35],[-56.5,35],[-56.5,26.5],[-71.2,26.5],[-71.2,42],[noodleX,42]]),
+      stop([noodleX,41.3],'Ordering a meal at Hot Noodles',22,Math.PI,'ordering food',[[noodleX,42],[-55,42],[-55,36],[-41,36],[-36,34],[-28,34],[-8.8,34],[-8.8,homeZ]]),
+    ]});
+  }
+  for(let i=0;i<4;i++) {
+    const slot=i%2,viewZ=[-29,-25,-15,-11][i],homeZ=59+i*1.45;
+    residentJourney({id:`gallery-break-${i}`,role:'gallery visitor',speed:.86,phase:(i+.37)/4,stops:[
+      stop([3.1,homeZ],'Returning to the concourse after a break',8,0,'checking a connection',[[6.4,homeZ],[6.4,-22],[28,-22],[38,-22],[60,-24],[78,-25],[86,-28]]),
+      stop([94,viewZ],'Watching Pelagos and the rings',32+slot*9,Math.PI/2,'watching the planet',[[86,viewZ],[86,-12],[78,-14],[60,-18],[38,-18],[28,-18],[8.8,-18],[8.8,homeZ]]),
+    ]});
+  }
+  for(let i=0;i<2;i++) {
+    const side=i?1:-1;
+    residentJourney({id:`promenade-break-${i}`,role:'promenade visitor',speed:.785,phase:.23+i*.5,stops:[
+      stop([side*3,96],'Returning to arrivals from the promenade',8,0,'checking arrivals',[[side*25.6,96],[side*25.6,56],[side*24,48]]),
+      {...stop([side*14,48],'Looking over the interchange',25,Math.PI,'watching the concourse',[[side*24,48],[side*25.6,56],[side*25.6,96],[side*14.1,96]]),floor:7.625},
+    ]});
+  }
+  function pausePocket(points,index,allRoutes,floor) {
+    const last=points.length-1,point=points[index],previous=points[index===0?last-1:index-1],next=points[index===last?1:index+1];
+    const dx=next[0]-previous[0],dz=next[1]-previous[1],length=Math.hypot(dx,dz)||1;
+    function distanceToLine(p,a,b){const x=b[0]-a[0],z=b[1]-a[1],t=Math.max(0,Math.min(1,((p[0]-a[0])*x+(p[1]-a[1])*z)/(x*x+z*z||1)));return Math.hypot(p[0]-a[0]-x*t,p[1]-a[1]-z*t);}
+    for(const offset of[1.25,1.65,2])for(const side of[-1,1]){
+      const p=[point[0]-dz/length*offset*side,point[1]+dx/length*offset*side],h=navigation?.heightAt(p[0],p[1],floor)??floor??0;
+      if(navigation&&(!navigation.canWalk(p[0],p[1],h)||!navigation.canWalk(p[0]+.12,p[1],h)||!navigation.canWalk(p[0]-.12,p[1],h)||!navigation.canWalk(p[0],p[1]+.12,h)||!navigation.canWalk(p[0],p[1]-.12,h)))continue;
+      if(allRoutes.some(path=>path.some((b,i)=>i&&distanceToLine(p,path[i-1],b)<.8)))continue;
+      return p;
+    }
+    return[...point];
   }
   const routeGroups=[{id:'promenade',routes:promenadeRoutes,count:8,floor:7.625,speed:.55},
     ...districtLayouts.map(layout=>({id:layout.id,routes:layout.routes,count:layout.id==='market'?10:6,speed:layout.id==='observation'?.36:.65}))];
   let pathRoutes=0;
   for(const section of routeGroups) {
-    const paths=(section.routes||[]).map(route).filter(path=>path.length>0);pathRoutes+=paths.length;
+    const paths=section.routes||[];pathRoutes+=paths.length;
     for(let i=0;i<section.count&&paths.length;i++) {
-      const path=paths[i%paths.length],offset=path.length*(i+.23)/section.count;
-      const a=actor(path.segments[0].a[0],path.segments[0].a[1],{route:'path',path,offset,floor:section.floor,speed:section.speed*(.9+random()*.2)});
-      sampleRoute(a,offset);a.sector=sectorIndex(a.x,a.z);
+      if(section.id==='market'){
+        const slot=i%5;
+        if(i<5){
+          const saltZ=24+slot*1.25,partsX=-82.5+slot*1.5;
+          residentJourney({id:`market-local-${i}`,role:'local shopper',speed:.86,phase:(slot+.24)/5,stops:[
+            stop([-42.5,saltZ],'Comparing produce at Salt + Static',15,-Math.PI/2,'browsing',[[-41.3,saltZ],[-41.3,35],[-56.5,35],[-56.5,26.5],[-72.6,26.5],[-72.6,24.5],[partsX,24.5]]),
+            stop([partsX,23.3],'Inspecting equipment at Second Orbit',17,Math.PI,'inspecting equipment',[[partsX,25.5],[-71.2,25.5],[-71.2,42],[-55,42],[-55,36],[-41,36],[-41.3,saltZ]]),
+          ]},{homeSector:2});
+        }else{
+          const noodleX=-67.8+slot*1.6,afterZ=41+slot*1.2;
+          residentJourney({id:`market-local-${i}`,role:'local shopper',speed:.86,phase:(slot+.34)/5,stops:[
+            stop([noodleX,40.9],'Collecting a meal at Hot Noodles',20,Math.PI,'collecting food',[[noodleX,43],[-85,43],[-85,afterZ]]),
+            stop([-86.7,afterZ],'Examining stock at After Hours',16,-Math.PI/2,'examining salvage',[[-85,afterZ],[-85,39],[-86,35],[-94.5,35],[-94.5,33],[-94,26],[-85,26],[-85,42],[-72,42],[noodleX,42]]),
+          ]},{homeSector:2});
+        }
+        continue;
+      }
+      const original=paths[i%paths.length],points=original.map(p=>[...p]);
+      if(Math.hypot(points[0][0]-points[points.length-1][0],points[0][1]-points[points.length-1][1])>.1)points.push([...points[0]]);
+      const middle=Math.max(1,Math.floor((points.length-1)/2)),start=points[0],target=points[middle],slot=Math.floor(i/paths.length);
+      const startPocket=pausePocket(points,0,paths,section.floor),targetPocket=pausePocket(points,middle,paths,section.floor);
+      const activity=section.id==='market'?'browsing':section.id==='observation'?'watching the planet':section.id==='docks'?'checking departures':'meeting';
+      const role=section.id==='market'?'local shopper':section.id==='observation'?'gallery observer':section.id==='docks'?(i%paths.length===2?'freight crew':'departing traveler'):'promenade commuter';
+      let facing=section.id==='observation'?Math.PI/2:section.id==='docks'?Math.PI:0;
+      if(section.id==='market')facing=i%paths.length===0?-Math.PI/2:Math.PI;
+      residentJourney({id:`${section.id}-local-${i}`,role,floor:section.floor,speed:section.id==='promenade'?.865:.86,phase:(slot+.24)/(Math.ceil(section.count/paths.length)),stops:[
+        stop(startPocket,section.id==='market'?'Comparing stalls':section.id==='observation'?'Reading the gallery information':section.id==='docks'?'Reading gate directions':'Meeting a connection',7,facing,section.id==='docks'?'checking gate directions':activity,points.slice(0,middle+1)),
+        stop(targetPocket,section.id==='market'?'Inspecting the neighboring displays':section.id==='observation'?'Taking in the rings':section.id==='docks'?(role==='freight crew'?'Checking the freight tender manifest':'Waiting beside the boarding approach'):'Watching the lower concourse',12,section.id==='docks'&&i%paths.length===2?Math.PI/2:section.id==='docks'&&i%paths.length===3?-Math.PI/2:facing,activity,points.slice(middle)),
+      ]},{homeSector:sectorNumbers[section.id]??0});
     }
   }
   for (const side of [-1, 1]) for (const z of [-51, -97]) actor(side * 21.3, z, {pose: 'seated', seatHeight: .55, seatOffset: .6, yaw: -side * Math.PI / 2, scale: .96, height: 1});
@@ -263,6 +331,16 @@ export function createPopulation({districtLayouts = [], promenadeRoutes = [], na
   // attendant and an optical courier. Their compact silhouettes read at a glance.
   for (const [i, x, z] of [[0,-18,-15],[1,18,48],[2,-66,35],[3,65,-27]]) {
     const a = actor(x,z,{bot:true,yaw: i % 2 ? -Math.PI/2 : Math.PI/2,scale:1,height:1});
+    const role=['arrival concierge','parcel porter','reclamation attendant','optical courier'][i];
+    const jobs=[
+      [stop([a.x,a.z],'Helping at the arrivals information aisle',16,Math.PI/2,'assisting travelers',[[-15,-15]]),stop([-15,12],'Checking the public information feed',12,Math.PI/2,'checking information',[[-18,12]])],
+      [stop([a.x,a.z],'Collecting small freight at arrivals',13,0,'collecting parcels',[[18,58]]),stop([19,68],'Delivering parcels to the transfer approach',15,Math.PI/2,'unloading parcels',[[19.5,58],[19.5,48]])],
+      [stop([-69.2,41.3],'Collecting returned bowls at Hot Noodles',18,Math.PI,'collecting containers',[[-69.2,43],[-72.6,43],[-72.6,25.5],[-56.5,25.5]]),stop([-56.5,24.3],'Sorting containers beside the market service aisle',12,-Math.PI/2,'sorting returns',[[-55.3,24.3],[-55.3,43],[-69.2,43]])],
+      [stop([65,-27],'Collecting a sensor packet at the gallery ramp',14,Math.PI/2,'collecting sensor data',[[77,-30],[86,-31]]),stop([93,-30],'Delivering a sensor packet to the optical array',20,Math.PI/2,'servicing the optical array',[[84,-33],[76,-29]])],
+    ][i];
+    const journey=planner.compile({id:`service-${i}`,role,stops:jobs,speed:.86});
+    if(journey.valid){journeys.push(journey);Object.assign(a,{route:'journey',journey,role,journeyClock:journey.duration*(.12+i*.19),speed:.86});sampleJourney(journey,a.journeyClock,a);a.sector=sectorIndex(a.x,a.z);}
+    else{invalidJourneys.push(`service-${i}`);Object.assign(a,{role,state:'waiting for clearance',intent:'Waiting for a public service route to clear',speed:0});}
     const shell = ['#a47950','#6f8d83','#a09265','#7d6e84'][i];
     part(a,'bot',shell,0,.64,0,.4,.55,.34);
     part(a,'bot','#667d7b',0,1.17,0,.29,.22,.27);
@@ -276,6 +354,9 @@ export function createPopulation({districtLayouts = [], promenadeRoutes = [], na
     part(a,'light','#c19d6c',.15,1.64,-.04,.06,.04,.06);
   }
 
+  planner.finish();
+  const timetable=applyPopulationTimetable(actors);
+  for(const a of actors)if(a.journey){sampleJourney(a.journey,a.journeyClock,a);a.sector=sectorIndex(a.x,a.z);}
   let triangleCount = 0;
   for (const [type, records] of batches) {
     const {geometry, material} = types[type];
@@ -299,6 +380,7 @@ export function createPopulation({districtLayouts = [], promenadeRoutes = [], na
   let initialized = false;
   let lastCameraX = NaN, lastCameraZ = NaN;
   let lastReduced = false;
+  let lastBehaviorTime=0;
   const renderTypes = Object.values(types);
   let visibleActors = actors.length;
   let submittedTriangles = triangleCount;
@@ -359,16 +441,18 @@ export function createPopulation({districtLayouts = [], promenadeRoutes = [], na
     lastCameraX = eye?.x ?? NaN;
     lastCameraZ = eye?.z ?? NaN;
     const view = eye ? sectorIndex(eye.x,eye.z) : -1;
+    const behaviorDelta=simulationTime-lastBehaviorTime;lastBehaviorTime=simulationTime;
     visibleActors = detailedActors = submittedTriangles = 0;
     for (const type of renderTypes) {type.count = 0; type.colorChanged = false;}
     for (const a of actors) {
-      if(a.route==='path')sampleRoute(a,a.offset+simulationTime*a.speed);
-      else if (a.route) {
-        const span = a.max - a.min;
-        const offset = a.route === 'z' ? a.baseZ : a.baseX;
-        const along = a.min + ((offset - a.min + simulationTime * a.direction * a.speed) % span + span) % span;
-        if (a.route === 'z') a.z = along; else a.x = along;
-      }
+      if(a.journey){a.journeyClock+=behaviorDelta;sampleJourney(a.journey,a.journeyClock,a);}
+      a.sector=sectorIndex(a.x,a.z);
+      // Height and behavior keep advancing while a room is hidden. Reappearing
+      // on the public ramp must not choose the lower floor under the balcony.
+      const floor=navigation?.heightAt(a.x,a.z,a.floor)??0;
+      if(Number.isFinite(floor))a.floor=floor;
+      const gait = a.journey?Math.sin(a.travelDistance*6.6+a.phase)*a.walkWeight:0;
+      a.gait=gait;
       if (eye && !visibleFromRoom(a, view, eye.x, eye.z)) continue;
       visibleActors++;
       if (eye) {
@@ -379,11 +463,8 @@ export function createPopulation({districtLayouts = [], promenadeRoutes = [], na
         else if (distanceSquared < 3600) a.detailed = true;
       } else a.detailed = true;
       if (a.detailed) detailedActors++;
-      const gait = Math.sin(simulationTime * (a.speed * 5.6 + .8) + a.phase);
-      const floor=navigation?.heightAt(a.x,a.z,a.floor)??0;
-      if(Number.isFinite(floor))a.floor=floor;
       const cache=a.poseCache;
-      const staticPose=Boolean(cache&&!a.route&&(a.pose==='seated'||a.pose==='standing'));
+      const staticPose=Boolean(cache&&((!a.route&&(a.pose==='seated'||a.pose==='standing'))||(a.journey&&a.walkWeight===0)));
       if(cache&&!staticPose)cache.valid=false;
       if(!staticPose||!sameStaticPose(a,cache)) {
         if(staticPose)refreshSeatedLocals(a);
@@ -429,8 +510,12 @@ export function createPopulation({districtLayouts = [], promenadeRoutes = [], na
     }
   }
   update(0,0);
-  const stats = Object.freeze({actors:actors.length, travelers:56, seated:8, social:12, serviceUnits:4,pathRoutes,upperDeckTravelers:8, drawCalls:batches.size, triangles:triangleCount, updateHz:20, textures:0, lights:0, humanStyle:'tailored adult proportions / understated faces', humanHeadHeight:.26,
+  const stats = Object.freeze({actors:actors.length, travelers:56, seated:8, social:12, serviceUnits:4,pathRoutes,upperDeckTravelers:10, drawCalls:batches.size, triangles:triangleCount, updateHz:20, textures:0, lights:0, humanStyle:'tailored adult proportions / understated faces', humanHeadHeight:.26,
+    get behavior(){const states={};for(const a of actors){const state=a.state||a.pose||'standing';states[state]=(states[state]||0)+1;}return{scheduledResidents:journeys.length,crossSectorJourneys:14,crossDeckJourneys:2,destinationStops:journeys.reduce((n,p)=>n+p.stops.length,0),invalidRoutes:[...invalidJourneys],states,planner:planner.stats,timetable};},
     get visibleActors(){return visibleActors;}, get submittedTriangles(){return submittedTriangles;}, get detailedActors(){return detailedActors;}});
   group.userData.population = stats;
-  return {group,update,stats,dispose(){if(disposed)return;disposed=true;for(const type of renderTypes){type.mesh.dispose();type.geometry.dispose();}for(const material of [cloth,skin,equipment,lights])material.dispose();group.clear();}};
+  return {group,update,stats,
+    get behaviorSnapshot(){return actors.map(a=>({id:a.id,journeyId:a.journey?.id||null,role:a.role||(a.pose==='seated'?'reader':a.pose==='talking'?'conversation partner':'local visitor'),state:a.state||a.pose||'standing',intent:a.intent||(a.pose==='seated'?'Reading while waiting':a.pose==='talking'?'Talking with a companion':'Looking over the nearby display'),x:a.x,z:a.z,floor:a.floor||0,yaw:a.yaw,speed:a.journey?a.speed:0,cruiseSpeed:a.journey?.speed||0,gait:a.gait||0,walkWeight:a.walkWeight||0,travelDistance:a.travelDistance||0,cycleDuration:a.journey?.duration||0,localTime:a.localTime||0,goal:a.goal?{x:a.goal.point[0],z:a.goal.point[1],intent:a.goal.intent,facing:a.goal.facing}:null}));},
+    get behaviorPlans(){return journeys.map(p=>structuredClone(p));},
+    dispose(){if(disposed)return;disposed=true;for(const type of renderTypes){type.mesh.dispose();type.geometry.dispose();}for(const material of [cloth,skin,equipment,lights])material.dispose();group.clear();}};
 }

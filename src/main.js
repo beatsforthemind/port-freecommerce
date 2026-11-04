@@ -500,6 +500,7 @@ async function init() {
   window.stationExperience = {
     get state() { return {ready, mode, sector: activeSector, visited: [...visited], position: camera.position.toArray(), yaw: controls.yaw, floorHeight:navigation.heightAt(camera.position.x,camera.position.z,camera.position.y-1.75), drawCalls: renderer.info.render.calls, triangles: renderer.info.render.triangles, points: renderer.info.render.points, textures: renderer.info.memory.textures, geometries: renderer.info.memory.geometries, resolution:{pixelRatio:renderer.getPixelRatio(),width:canvas.width,height:canvas.height,composerWidth:composer.renderTarget1.width,composerHeight:composer.renderTarget1.height}, atmosphere: atmosphere.stats, furnishings: furnishings.stats, population: population.stats, commerce: commerce.stats, stationLife: stationLife.stats, importedModels: importedModels.stats, architecture:districts.layouts.map(({id,stats})=>({id,...stats})), concourse:station.stats, conversations: shownConversations, sound: audio.enabled, audio:audio.stats}; },
     get places() { return interactables.map(item => ({name: item.title || item.code, x: item.x, z: item.z, radius: item.radius || 3.8})); },
+    get npcBehavior() { return {population:population.behaviorSnapshot ?? [], commuters:districts.behaviorSnapshot ?? []}; },
     canWalk,
     heightAt:navigation.heightAt,
     get floors(){return navigation.surfaces.map(s=>({...s}));},

@@ -4,6 +4,7 @@ import { createHumanHeadGeometry, createHumanTorsoGeometry, createHumanLimbGeome
 import { buildObservationDistrict } from './district-observation.js';
 import { buildMarketDistrict } from './district-market.js';
 import { buildDocksDistrict } from './district-docks.js';
+import { createCommuterBehavior } from './commuter-behavior.js';
 
 /** Connected station districts, all built locally without model downloads. */
 export function createDistricts() {
@@ -137,7 +138,7 @@ export function createDistricts() {
   // Adult proportions and tailored travel layers share the same four batches.
   // Segmented limbs pivot at joints; hands, boots and luggage follow the chain.
   const crowdCount = 20;
-  const commuterLanes = [5.2,7.7,7.7,5.2];
+  const commuterBehavior = createCommuterBehavior(crowdCount);
   const bodies = new THREE.InstancedMesh(createHumanTorsoGeometry(),mat('#ffffff',{roughness:.9,metalness:0}),crowdCount);
   const heads = new THREE.InstancedMesh(createHumanHeadGeometry(),mat('#ffffff',{roughness:.95,metalness:0,vertexColors:true}),crowdCount);
   const legs = new THREE.InstancedMesh(createHumanLimbGeometry(),mat('#ffffff',{roughness:.92,metalness:0}),crowdCount*8);
@@ -166,8 +167,9 @@ export function createDistricts() {
     partMatrix.multiplyMatrices(actorMatrix,transform.matrix);object.setMatrixAt(index,partMatrix);
   }
   const crowdTriangles=crowdMeshes.reduce((sum,object)=>sum+(object.geometry.index?.count??object.geometry.attributes.position.count)/3*object.count,0);
-  group.userData.commuters=Object.freeze({actors:crowdCount,drawCalls:4,triangles:crowdTriangles,updateHz:30,adultHeight:HUMAN_PROFILE.height});
-  const crowdBounds = new THREE.Box3(new THREE.Vector3(-20,-.5,-97),new THREE.Vector3(20,2.6,63));
+  group.userData.commuters=Object.freeze({actors:crowdCount,drawCalls:4,triangles:crowdTriangles,updateHz:30,adultHeight:HUMAN_PROFILE.height,purposefulJourneys:crowdCount,
+    get activities(){return commuterBehavior.counts(motionTime);}});
+  const crowdBounds = new THREE.Box3(new THREE.Vector3(-30,-.5,-124),new THREE.Vector3(30,2.6,91));
   const crowdFrustum = new THREE.Frustum();
   const crowdProjection = new THREE.Matrix4();
   let lastCrowdUpdate = -Infinity;
@@ -203,12 +205,10 @@ export function createDistricts() {
     if (!crowdVisible) return;
     if (time - lastCrowdUpdate < 1 / 30 && !(justShown && time > lastCrowdUpdate)) return;
     lastCrowdUpdate = time;
+    commuterBehavior.update(time);
     for(let i=0;i<crowdCount;i++) {
-      const direction=i%2?1:-1;
-      const x=(i%2?-1:1)*commuterLanes[i%commuterLanes.length];
-      const along=i*19.2+time*direction*.65+1300;
-      const z=((along%156)+156)%156-95;
-      const phase=time*4.65+i*.83,gait=Math.sin(phase),cadence=Math.cos(phase);
+      const commuter=commuterBehavior.records[i],x=commuter.x,z=commuter.z;
+      const phase=commuter.gait,motion=smoothWalk(commuter.speed/commuter.cruiseSpeed),gait=Math.sin(phase)*motion,cadence=Math.cos(phase)*motion;
       const stature=.972+(i%5)*.014,breadth=.95+(i%4)*.03;
       let minimumFoot=Infinity;
       for(let side=0;side<2;side++) {
@@ -222,8 +222,8 @@ export function createDistricts() {
         p.fz=p.az-.045*Math.sin(p.foot)+.065*Math.cos(p.foot);
         minimumFoot=Math.min(minimumFoot,p.fy-.055*Math.abs(Math.cos(p.foot))-.13*Math.abs(Math.sin(p.foot)));
       }
-      const bob=Math.max(0,-minimumFoot*stature)+Math.abs(Math.sin(phase*2))*.003;
-      transform.position.set(x,bob,z);transform.rotation.set(0,direction>0?0:Math.PI,0);transform.scale.set(breadth,stature,breadth);transform.updateMatrix();actorMatrix.copy(transform.matrix);
+      const bob=Math.max(0,-minimumFoot*stature)+Math.abs(Math.sin(phase*2))*.003*motion;
+      transform.position.set(x,bob,z);transform.rotation.set(0,commuter.yaw,0);transform.scale.set(breadth,stature,breadth);transform.updateMatrix();actorMatrix.copy(transform.matrix);
       place(bodies,i,0,HUMAN_PROFILE.torsoY,0,...HUMAN_PROFILE.torsoScale);
       place(heads,i,0,HUMAN_PROFILE.headY,0,...HUMAN_PROFILE.headScale);
       place(bags,i*5,0,1.49,.005,.105,.10,.10);
@@ -246,7 +246,8 @@ export function createDistricts() {
     initialized = true;
   }
   update(0, 0);
-  return {group,colliders,layouts,update,dispose(){
+  function smoothWalk(value){const t=Math.max(0,Math.min(1,value));return t*t*(3-2*t);}
+  return {group,colliders,layouts,update,get behaviorSnapshot(){return commuterBehavior.snapshot(motionTime);},dispose(){
     if(disposed)return;disposed=true;
     const geometries=new Set(),materials=new Set(Object.values(m)),textures=new Set([atlas]);
     group.traverse(node=>{if(!node.isMesh&&!node.isPoints)return;node.dispose?.();geometries.add(node.geometry);for(const material of Array.isArray(node.material)?node.material:[node.material])materials.add(material);});
