@@ -17,6 +17,7 @@ import { createImportedModels } from './imported-models.js';
 import { createNavigation, sectorAt } from './navigation.js';
 import { createStationPlan } from './station-plan.js';
 import { createPublicLifts } from './public-lifts.js';
+import {createEscalators} from './escalators.js';
 import { CONCOURSE_LEVELS, PUBLIC_LIFT_SHAFTS, concourseLevelAt } from './concourse-levels.js';
 import { box, label, panelMaterial, glowMaterial } from './kit.js';
 
@@ -39,7 +40,7 @@ const sectors = {
 const terminalData = [
   { x: -10, z: 18, code: 'PFC—001 / PUBLIC ARRIVALS', title: 'Welcome to the in-between.', text: [
     'Port FreeCommerce recognizes all valid transit credentials and no particular allegiance. Please keep your belongings, your contracts, and your opinions close.',
-    'The <strong>Exchange</strong> winds west of the concourse. The <strong>Observation Gallery</strong> rises east toward the rings. Departures branch into three boarding piers at the far end. Long amber ramps near Arrivals lead to the <strong>Deck 02 public promenade</strong>. The <strong>lantern lifts</strong> beside the northern rest bays serve all four concourse decks, including the Lantern Galleries and Express Overlook.',
+    'The <strong>Exchange</strong> winds west of the concourse. The <strong>Observation Gallery</strong> rises east toward the rings. Departures branch into three boarding piers at the far end. Long amber ramps near Arrivals lead to the <strong>Deck 02 public promenade</strong>. Three <strong>escalator pairs</strong> connect Decks 01 and 02 at Arrivals, Interchange, and Departures: west goes up, east goes down. The <strong>lantern lifts</strong> beside the northern rest bays serve all four concourse decks, including the Lantern Galleries and Express Overlook.',
     'Station notice: the security feed is functioning normally. It has always been functioning normally.',
   ] },
   { x: 89, z: -20, code: 'PFC—029 / ORBITAL OBSERVATION', title: 'Everything keeps moving.', text: [
@@ -70,7 +71,7 @@ const conversations = [
   {sector: 'docks', x: 0, z: -155, radius: 28, speaker: 'DOCK CREW / LOCAL CHANNEL', lines: ['The little crate is heavier. The large crate is angry.', 'Boarding group seven: please stop rejoining boarding group six.', 'The next ship is somebody’s way home. Treat it accordingly.']},
 ];
 
-let scene, camera, renderer, composer, station, districts, controls, audio, atmosphere, furnishings, population, commerce, stationLife, importedModels, navigation, journeyNavigation, stationPlan, publicLifts;
+let scene, camera, renderer, composer, station, districts, controls, audio, atmosphere, furnishings, population, commerce, stationLife, importedModels, navigation, journeyNavigation, stationPlan, publicLifts, escalators;
 let mode = 'arrival';
 let activeSector = '';
 let elapsed = 0;
@@ -428,9 +429,10 @@ async function init() {
   station = createStation();
   districts = createDistricts();
   publicLifts=createPublicLifts({onStateChange:liftStateChanged});
-  colliders.push(...publicLifts.colliders);
+  escalators=createEscalators();
+  colliders.push(...publicLifts.colliders,...escalators.colliders);
   const districtSurfaces=districts.layouts.flatMap(layout=>layout.surfaces.map(surface=>({...surface,sector:layout.id})));
-  navigation = createNavigation({surfaces:[...station.surfaces,...publicLifts.surfaces,...districtSurfaces],colliders});
+  navigation = createNavigation({surfaces:[...station.surfaces,...publicLifts.surfaces,...escalators.surfaces,...districtSurfaces],colliders});
   journeyNavigation=createNavigation({surfaces:[...(station.journeySurfaces||station.surfaces),...districtSurfaces],colliders});
   for (const layout of districts.layouts) {
     if(layout.spawn)Object.assign(sectors[layout.id],layout.spawn);
@@ -450,7 +452,7 @@ async function init() {
       speaker: event.caption.slice(0, divider), lines: [event.caption.slice(divider + 3)],
     });
   }
-  scene.add(station.group, districts.group, furnishings.group, atmosphere.group, commerce.group, stationLife.group, importedModels.group, publicLifts.group);
+  scene.add(station.group, districts.group, furnishings.group, atmosphere.group, commerce.group, stationLife.group, importedModels.group, publicLifts.group, escalators.group);
   colliders.push(...station.colliders, ...districts.colliders, ...furnishings.colliders, ...commerce.colliders, ...stationLife.colliders, ...importedModels.colliders);
   const tradeNotices = {
     'Night Market Tea': 'Six mismatched cups wait beside a pressure-sealed kettle. The handwritten price is crossed out in three different scripts. The seller appears to accept stories as a fourth currency.',
@@ -477,6 +479,7 @@ async function init() {
   controls = createFirstPersonControls(camera, canvas, {
     canWalk,
     heightAt:navigation.heightAt,
+    transportAt:escalators.transportAt,
     onLockChange(locked) {
       if (!locked && !intentionalUnlock && mode === 'exploring') openDialog('#pause-dialog');
     },
@@ -500,6 +503,7 @@ async function init() {
     if (document.hidden) return;
     elapsed += dt;
     publicLifts.update(dt,{camera,controls,mode,reducedMotion});
+    escalators.update(dt,{camera,controls,mode,reducedMotion});
     if (mode === 'arrival') {
       const drift = reducedMotion ? 0 : Math.sin(elapsed * .075);
       camera.position.set(12.5 + drift * .65, 10.5 + drift * .2, 66);
@@ -511,7 +515,7 @@ async function init() {
         updateNearbyInteractable();
         if (frameCount % 8 === 0) {
           const level=concourseLevelAt(camera.position.y-1.75);
-          const deck=publicLifts.riding?'LANTERN LIFT / LOOK AROUND':activeSector==='concourse'?`DECK ${String(level.number).padStart(2,'0')} / ${level.short}`:activeSector==='observation'&&camera.position.x>64?'PANORAMIC TERRACE':activeSector==='market'?'EXCHANGE STREETS':activeSector==='docks'?'BOARDING PIERS':'DECK 01 / PUBLIC DECK';
+          const deck=publicLifts.riding?'LANTERN LIFT / LOOK AROUND':controls.passiveTransport?`ESCALATOR / TO DECK ${camera.position.x<0?'02':'01'}`:activeSector==='concourse'?`DECK ${String(level.number).padStart(2,'0')} / ${level.short}`:activeSector==='observation'&&camera.position.x>64?'PANORAMIC TERRACE':activeSector==='market'?'EXCHANGE STREETS':activeSector==='docks'?'BOARDING PIERS':'DECK 01 / PUBLIC DECK';
           if(deck!==lastDeckLabel){$('#deck-name').textContent=`PORT FREECOMMERCE / ${deck}`;lastDeckLabel=deck;}
           const heading = ((-THREE.MathUtils.radToDeg(controls.yaw) % 360) + 360) % 360;
           const cardinal = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'][Math.round(heading / 45) % 8];
@@ -527,7 +531,7 @@ async function init() {
     importedModels.update(dt, elapsed, effectContext);
     atmosphere.update(dt, elapsed, effectContext);
     updateConversations(dt);
-    effectContext.mode = publicLifts.riding?'riding':mode;
+    effectContext.mode = publicLifts.riding||(controls.passiveTransport&&!controls.moving)?'riding':mode;
     effectContext.yaw = mode === 'arrival' ? camera.rotation.y : controls.yaw;
     effectContext.serviceTime = stationLife.serviceTime;
     audio.update(camera.position, elapsed, effectContext);
@@ -563,6 +567,8 @@ async function init() {
     get npcBehavior() { return {population:population.behaviorSnapshot ?? [], commuters:districts.behaviorSnapshot ?? []}; },
     get lifts() { return publicLifts.snapshot; },
     get publicLiftStats() { return publicLifts.stats; },
+    get escalators() { return escalators.stats; },
+    get movement() { return {moving:controls.moving,passiveTransport:controls.passiveTransport,liftRide:controls.riding,floorHeight:controls.floorHeight}; },
     get concourseLevels() { return CONCOURSE_LEVELS.map(level=>({...level})); },
     get promenade() { return {stats:structuredClone(station.promenadeStats),shops:station.shops.map(({id,name,type,side,z,width})=>({id,name,type,side,x:side*26.1,y:CONCOURSE_LEVELS[1].height,z,width}))}; },
     canWalk,
@@ -687,6 +693,7 @@ window.addEventListener('pagehide', event => {
   clearTimeout(transitTimer);
   publicLifts?.cancelRide(controls);
   publicLifts?.dispose();
+  escalators?.dispose();
   stationPlan?.dispose?.();
   controls?.dispose();
   audio?.dispose();

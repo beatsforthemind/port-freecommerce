@@ -37,12 +37,17 @@ export function createNavigation({surfaces, colliders}) {
   });
   function heightAt(x, z, reference) {
     if (!Number.isFinite(x) || !Number.isFinite(z)) return NaN;
-    let best = NaN, distance = Infinity;
+    let best = NaN, distance = Infinity, bestPriority = 0;
     for (const surface of floors) {
       if (!containsPoint(surface, x, z)) continue;
       const height = surfaceHeight(surface, x, z);
       const delta = Number.isFinite(reference) ? Math.abs(height - reference) : height;
-      if (delta < distance) {distance = delta; best = height;}
+      // Transport inclines can overlap the public floor beneath them. Capture
+      // only a continuous walking step; a high flight stays an underpass.
+      const priority = Number.isFinite(reference) && delta <= .32 ? Math.max(0,surface.priority || 0) : 0;
+      if (priority > bestPriority || (priority === bestPriority && delta < distance)) {
+        distance = delta; best = height; bestPriority = priority;
+      }
     }
     return best;
   }
@@ -55,9 +60,12 @@ export function createNavigation({surfaces, colliders}) {
       if (!Number.isFinite(edge) || Math.abs(edge - height) > .32) return false;
     }
     for (const c of colliders) {
-      const bottom = c.minY ?? 0, top = c.maxY ?? 3.2;
+      if (x <= c.minX-.28 || x >= c.maxX+.28 || z <= c.minZ-.28 || z >= c.maxZ+.28) continue;
+      const slopeHeight = c.sloped ? surfaceHeight(c,x,z) : 0;
+      const bottom = c.sloped ? slopeHeight+c.minYOffset : c.minY ?? 0;
+      const top = c.sloped ? slopeHeight+c.maxYOffset : c.maxY ?? 3.2;
       if (height >= top - .05 || height + 1.7 <= bottom + .05) continue;
-      if (x > c.minX - .28 && x < c.maxX + .28 && z > c.minZ - .28 && z < c.maxZ + .28) return false;
+      return false;
     }
     return true;
   }

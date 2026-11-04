@@ -5,6 +5,7 @@
 export function createFirstPersonControls(camera, canvas, {
   canWalk = () => true,
   heightAt = () => 0,
+  transportAt = () => null,
   onLockChange = () => {},
   onInteract = () => {},
 } = {}) {
@@ -29,6 +30,7 @@ export function createFirstPersonControls(camera, canvas, {
   let disposed = false;
   let reducedMotionOverride = null;
   let ride = null;
+  let passiveTransport = false;
 
   const keys = new Set();
   const removeListeners = [];
@@ -56,6 +58,7 @@ export function createFirstPersonControls(camera, canvas, {
     joystickPointer = null;
     dragPointer = null;
     moving = false;
+    passiveTransport = false;
     if (joystickThumb) joystickThumb.style.transform = 'translate(-50%, -50%)';
   }
 
@@ -178,9 +181,14 @@ export function createFirstPersonControls(camera, canvas, {
       if (ride) {
         camera.position.set(ride.x,ride.height+baseHeight,ride.z);
         moving=false;
+        passiveTransport=false;
         return;
       }
       const delta = Math.min(0.05, Math.max(0, dt));
+      const oldX = camera.position.x;
+      const oldZ = camera.position.z;
+      const currentFloor = heightAt(oldX,oldZ,groundHeight);
+      if (Number.isFinite(currentFloor)) groundHeight = currentFloor;
       let strafe = Number(keys.has('KeyD') || keys.has('ArrowRight')) -
         Number(keys.has('KeyA') || keys.has('ArrowLeft')) + joystickX;
       let forward = Number(keys.has('KeyW') || keys.has('ArrowUp')) -
@@ -195,15 +203,17 @@ export function createFirstPersonControls(camera, canvas, {
       velocityX += (targetX - velocityX) * damping;
       velocityZ += (targetZ - velocityZ) * damping;
 
+      const reduceMotion = reducedMotionOverride ?? reducedMotion.matches;
+      const transport = reduceMotion ? null : transportAt(oldX,oldZ,groundHeight);
+      const beltX = Number.isFinite(transport?.vx) ? transport.vx : 0;
+      const beltZ = Number.isFinite(transport?.vz) ? transport.vz : 0;
+      passiveTransport = Boolean(transport && (beltX || beltZ));
+
       // Small steps prevent tunnelling through narrow kiosks at sprint speed.
-      const distance = Math.hypot(velocityX, velocityZ) * delta;
+      const distance = Math.hypot(velocityX+beltX, velocityZ+beltZ) * delta;
       const steps = Math.max(1, Math.ceil(distance / 0.2));
-      const dx = velocityX * delta / steps;
-      const dz = velocityZ * delta / steps;
-      const oldX = camera.position.x;
-      const oldZ = camera.position.z;
-      const currentFloor = heightAt(oldX,oldZ,groundHeight);
-      if (Number.isFinite(currentFloor)) groundHeight = currentFloor;
+      const dx = (velocityX+beltX) * delta / steps;
+      const dz = (velocityZ+beltZ) * delta / steps;
       for (let i = 0; i < steps; i++) {
         if (canWalk(camera.position.x + dx, camera.position.z,groundHeight)) {
           camera.position.x += dx;
@@ -216,9 +226,10 @@ export function createFirstPersonControls(camera, canvas, {
         }
         else velocityZ = 0;
       }
-      moving = Math.hypot(camera.position.x - oldX, camera.position.z - oldZ) > 0.0001;
+      // Conveyor motion carries the view without pretending that the rider took
+      // a footstep. Walking input still produces ordinary bob and walking cues.
+      moving = Math.hypot(velocityX,velocityZ) > .01 && Math.hypot(camera.position.x - oldX, camera.position.z - oldZ) > 0.0001;
       if (moving) bobPhase += delta * (sprint ? 12 : 8.5);
-      const reduceMotion = reducedMotionOverride ?? reducedMotion.matches;
       const bob = moving && !reduceMotion ? Math.sin(bobPhase) * 0.022 : 0;
       camera.position.y += (groundHeight + baseHeight + bob - camera.position.y) * (1 - Math.exp(-14 * delta));
     },
@@ -286,6 +297,8 @@ export function createFirstPersonControls(camera, canvas, {
     get moving() { return moving; },
     get locked() { return locked; },
     get riding() { return Boolean(ride); },
+    get passiveTransport() { return passiveTransport; },
+    get floorHeight() { return groundHeight; },
   };
   return api;
 }

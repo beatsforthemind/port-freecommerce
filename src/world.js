@@ -5,6 +5,7 @@ import { PUBLIC_LIFT_SHAFTS } from './concourse-levels.js';
 import {PROMENADE_SHOPS,createPromenadeSigns} from './promenade-directory.js';
 import {buildPromenadeShops} from './promenade-shops.js';
 import {buildPromenadeKeepers} from './promenade-keepers.js';
+import {splitPromenadeRail} from './escalator-layout.js';
 
 // Multiple station instances can share the cached atlas during previews/tests.
 const surfaceUsers = new Map();
@@ -160,7 +161,7 @@ export function createStation() {
         box(materials.amber,side*20.9,level+.05,(a+b)/2,.1,.14,b-a);
       }
       const rails = first ? [[-130,-103],[-97,45],[51,RAMP_NORTH],[RAMP_SOUTH,100]] : [[-130,-87],[-81,17],[23,100]];
-      for (const [a,b] of rails) {
+      for (const [a,b] of first?rails.flatMap(([start,end])=>splitPromenadeRail(start,end)):rails) {
         box(materials.edge,side*21.2,level+1.5,(a+b)/2,.11,.11,b-a);
         box(materials.edge,side*21.2,level+.75,(a+b)/2,.07,.07,b-a);
         for(let z=a+.8;z<b;z+=5) box(materials.edge,side*21.2,level+.75,z,.09,1.5,.09);

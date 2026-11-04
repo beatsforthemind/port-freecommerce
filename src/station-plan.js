@@ -1,4 +1,5 @@
 import {CONCOURSE_LEVELS,PUBLIC_LIFT_SHAFTS,concourseLevelAt} from './concourse-levels.js';
+import {ESCALATORS} from './escalator-layout.js';
 
 /** Public floor plans share their geometry with walking, including lift landings. */
 export function createStationPlan(navigation,{shops=[]}={}) {
@@ -25,13 +26,22 @@ export function createStationPlan(navigation,{shops=[]}={}) {
     const title=document.createElementNS(ns,'title');title.textContent=`Deck 02 / ${shop.name}`;node.append(title);
     return node;
   });
+  const escalatorMarkers=ESCALATORS.map(route=>{
+    const node=add('g',{'class':'plan-escalator'}),z=(route.topZ+route.bottomZ)/2;
+    const title=document.createElementNS(ns,'title');title.textContent=`${route.name} / Decks 01–02`;node.append(title);
+    const arrow=document.createElementNS(ns,'path'),tip=z-route.direction*2.5;
+    arrow.setAttribute('d',`M${route.x} ${route.bottomZ}V${route.topZ}M${route.x-1.3} ${tip+route.direction*2}L${route.x} ${tip}L${route.x+1.3} ${tip+route.direction*2}`);
+    arrow.setAttribute('fill','none');arrow.setAttribute('stroke','#dec49b');arrow.setAttribute('stroke-width','1');node.append(arrow);
+    return node;
+  });
   const marker=add('circle',{r:2.4,fill:'#f2c98c',stroke:'#182b30','stroke-width':1});
-  const caption=add('text',{x:-104,y:101,fill:'#b8c6b8','font-size':3.6,'font-family':'sans-serif'},'AMBER / LIFTS    SAGE / DECK 02 TRADERS');caption.classList.add('plan-legend');
+  const caption=add('text',{x:-104,y:101,fill:'#b8c6b8','font-size':3.6,'font-family':'sans-serif'},'AMBER / LIFTS    SAGE / SHOPS    ARROWS / ESCALATORS');caption.classList.add('plan-legend');
   function refresh(){
     const level=CONCOURSE_LEVELS.find(item=>item.id===selected);
     document.querySelector('#map-deck-label').textContent=level?`DECK ${String(level.number).padStart(2,'0')} / ${level.short}`:'ALL PUBLIC DECKS';
     for(const button of document.querySelectorAll('[data-map-deck]'))button.setAttribute('aria-pressed',String(button.dataset.mapDeck===selected));
     for(const node of shopMarkers)node.style.display=selected==='promenade'||selected==='all'?'':'none';
+    for(const node of escalatorMarkers)node.style.display=['concourse','promenade','all'].includes(selected)?'':'none';
     for(const item of paths){
       const visible=item.sector!=='concourse'||selected==='all'||item.deck===selected||(item.deck==='ramp'&&(selected==='concourse'||selected==='promenade'));
       item.path.style.display=visible?'':'none';
