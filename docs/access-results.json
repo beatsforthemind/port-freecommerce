@@ -1,0 +1,1588 @@
+{
+  "result": "pass; all four public concourse decks reachable",
+  "verifiedAtUTC": "2026-11-04T17:40:00.394835+00:00",
+  "baselineCommit": "5074b6314617ad5c30483540c12cd3dd093ff885",
+  "scope": "Twin four-stop panoramic lantern lifts, physically connected public galleries/sunwalks/overlooks, accessible floor map and touch/keyboard controls.",
+  "independentQA": {
+    "result": "pass; no reproduced remaining blockers",
+    "baselineCommit": "5074b6314617ad5c30483540c12cd3dd093ff885",
+    "ownership": "Independent QA; only temporary scripts, copied-source instrumentation, results and screenshots. No production edits or commits.",
+    "levels": [
+      {
+        "name": "Public concourse",
+        "height": 0
+      },
+      {
+        "name": "Public promenade",
+        "height": 7.625
+      },
+      {
+        "name": "Lantern galleries",
+        "height": 17.625
+      },
+      {
+        "name": "Express overlook",
+        "height": 23.36
+      }
+    ],
+    "method": "Archived exact baseline commit; isolated copied final preview; deterministic real first-person controls and native collision updates with actual keyboard/touch UI interaction. Initial fixture placement only. Heading resets occur in place, not by walking-coordinate teleport. Browser rendering comparison uses matching views, DPR1, software WebGL and callback CPU time, not hardware FPS.",
+    "static": {
+      "playerSurfaceCountWithoutLift": 33,
+      "staticColliderCount": 252,
+      "shaftRayProbes": 18,
+      "slabHits": [],
+      "npcPlans": {
+        "count": 60,
+        "changed": [],
+        "invalid": []
+      },
+      "connectivity": [
+        {
+          "height": 7.625,
+          "startSide": 1,
+          "clear": 12158,
+          "reachableFromLanding": 12158,
+          "startValid": true,
+          "landmarkProbes": [
+            {
+              "x": -24,
+              "z": -118,
+              "walkable": true,
+              "connected": true
+            },
+            {
+              "x": -24,
+              "z": -96,
+              "walkable": true,
+              "connected": true
+            },
+            {
+              "x": -24,
+              "z": -70,
+              "walkable": true,
+              "connected": true
+            },
+            {
+              "x": -24,
+              "z": -56,
+              "walkable": true,
+              "connected": true
+            },
+            {
+              "x": -24,
+              "z": -48,
+              "walkable": true,
+              "connected": true
+            },
+            {
+              "x": -24,
+              "z": -10,
+              "walkable": true,
+              "connected": true
+            },
+            {
+              "x": -24,
+              "z": 30,
+              "walkable": true,
+              "connected": true
+            },
+            {
+              "x": -24,
+              "z": 70,
+              "walkable": false,
+              "connected": false
+            },
+            {
+              "x": -24,
+              "z": 88,
+              "walkable": false,
+              "connected": false
+            },
+            {
+              "x": -24,
+              "z": 96,
+              "walkable": true,
+              "connected": true
+            },
+            {
+              "x": 24,
+              "z": -118,
+              "walkable": true,
+              "connected": true
+            },
+            {
+              "x": 24,
+              "z": -96,
+              "walkable": true,
+              "connected": true
+            },
+            {
+              "x": 24,
+              "z": -70,
+              "walkable": true,
+              "connected": true
+            },
+            {
+              "x": 24,
+              "z": -56,
+              "walkable": true,
+              "connected": true
+            },
+            {
+              "x": 24,
+              "z": -48,
+              "walkable": true,
+              "connected": true
+            },
+            {
+              "x": 24,
+              "z": -10,
+              "walkable": true,
+              "connected": true
+            },
+            {
+              "x": 24,
+              "z": 30,
+              "walkable": true,
+              "connected": true
+            },
+            {
+              "x": 24,
+              "z": 70,
+              "walkable": false,
+              "connected": false
+            },
+            {
+              "x": 24,
+              "z": 88,
+              "walkable": false,
+              "connected": false
+            },
+            {
+              "x": 24,
+              "z": 96,
+              "walkable": true,
+              "connected": true
+            }
+          ],
+          "unreachable": []
+        },
+        {
+          "height": 17.625,
+          "startSide": 1,
+          "clear": 13906,
+          "reachableFromLanding": 13906,
+          "startValid": true,
+          "landmarkProbes": [
+            {
+              "x": -24,
+              "z": -118,
+              "walkable": true,
+              "connected": true
+            },
+            {
+              "x": -24,
+              "z": -96,
+              "walkable": true,
+              "connected": true
+            },
+            {
+              "x": -24,
+              "z": -70,
+              "walkable": true,
+              "connected": true
+            },
+            {
+              "x": -24,
+              "z": -56,
+              "walkable": true,
+              "connected": true
+            },
+            {
+              "x": -24,
+              "z": -48,
+              "walkable": true,
+              "connected": true
+            },
+            {
+              "x": -24,
+              "z": -10,
+              "walkable": true,
+              "connected": true
+            },
+            {
+              "x": -24,
+              "z": 30,
+              "walkable": true,
+              "connected": true
+            },
+            {
+              "x": -24,
+              "z": 70,
+              "walkable": true,
+              "connected": true
+            },
+            {
+              "x": -24,
+              "z": 88,
+              "walkable": true,
+              "connected": true
+            },
+            {
+              "x": -24,
+              "z": 96,
+              "walkable": true,
+              "connected": true
+            },
+            {
+              "x": 24,
+              "z": -118,
+              "walkable": true,
+              "connected": true
+            },
+            {
+              "x": 24,
+              "z": -96,
+              "walkable": true,
+              "connected": true
+            },
+            {
+              "x": 24,
+              "z": -70,
+              "walkable": true,
+              "connected": true
+            },
+            {
+              "x": 24,
+              "z": -56,
+              "walkable": true,
+              "connected": true
+            },
+            {
+              "x": 24,
+              "z": -48,
+              "walkable": true,
+              "connected": true
+            },
+            {
+              "x": 24,
+              "z": -10,
+              "walkable": true,
+              "connected": true
+            },
+            {
+              "x": 24,
+              "z": 30,
+              "walkable": true,
+              "connected": true
+            },
+            {
+              "x": 24,
+              "z": 70,
+              "walkable": true,
+              "connected": true
+            },
+            {
+              "x": 24,
+              "z": 88,
+              "walkable": true,
+              "connected": true
+            },
+            {
+              "x": 24,
+              "z": 96,
+              "walkable": true,
+              "connected": true
+            }
+          ],
+          "unreachable": []
+        },
+        {
+          "height": 23.36,
+          "startSide": 1,
+          "clear": 4938,
+          "reachableFromLanding": 2469,
+          "startValid": true,
+          "landmarkProbes": [
+            {
+              "x": 27,
+              "z": -118,
+              "walkable": true,
+              "connected": true
+            },
+            {
+              "x": 27,
+              "z": -96,
+              "walkable": true,
+              "connected": true
+            },
+            {
+              "x": 27,
+              "z": -70,
+              "walkable": true,
+              "connected": true
+            },
+            {
+              "x": 27,
+              "z": -56,
+              "walkable": true,
+              "connected": true
+            },
+            {
+              "x": 27,
+              "z": -48,
+              "walkable": true,
+              "connected": true
+            },
+            {
+              "x": 27,
+              "z": -10,
+              "walkable": true,
+              "connected": true
+            },
+            {
+              "x": 27,
+              "z": 30,
+              "walkable": true,
+              "connected": true
+            },
+            {
+              "x": 27,
+              "z": 70,
+              "walkable": true,
+              "connected": true
+            },
+            {
+              "x": 27,
+              "z": 88,
+              "walkable": true,
+              "connected": true
+            },
+            {
+              "x": 27,
+              "z": 96,
+              "walkable": false,
+              "connected": false
+            }
+          ],
+          "unreachable": []
+        },
+        {
+          "height": 23.36,
+          "startSide": -1,
+          "clear": 4938,
+          "reachableFromLanding": 2469,
+          "startValid": true,
+          "landmarkProbes": [
+            {
+              "x": -27,
+              "z": -118,
+              "walkable": true,
+              "connected": true
+            },
+            {
+              "x": -27,
+              "z": -96,
+              "walkable": true,
+              "connected": true
+            },
+            {
+              "x": -27,
+              "z": -70,
+              "walkable": true,
+              "connected": true
+            },
+            {
+              "x": -27,
+              "z": -56,
+              "walkable": true,
+              "connected": true
+            },
+            {
+              "x": -27,
+              "z": -48,
+              "walkable": true,
+              "connected": true
+            },
+            {
+              "x": -27,
+              "z": -10,
+              "walkable": true,
+              "connected": true
+            },
+            {
+              "x": -27,
+              "z": 30,
+              "walkable": true,
+              "connected": true
+            },
+            {
+              "x": -27,
+              "z": 70,
+              "walkable": true,
+              "connected": true
+            },
+            {
+              "x": -27,
+              "z": 88,
+              "walkable": true,
+              "connected": true
+            },
+            {
+              "x": -27,
+              "z": 96,
+              "walkable": false,
+              "connected": false
+            }
+          ],
+          "unreachable": []
+        }
+      ],
+      "sunwalkProbeResultFile": "/tmp/pfc-access-sunwalk-check.json"
+    },
+    "walkthrough": {
+      "devices": [
+        {
+          "mobile": false,
+          "errors": [],
+          "failures": [],
+          "loadedModels": 4,
+          "npcCalibrated": 60,
+          "pauseFrozen": true,
+          "walkingLegs": 58,
+          "rides": 6,
+          "maxWalkingEyeVariation": 0.0064967889279188284
+        },
+        {
+          "mobile": true,
+          "errors": [],
+          "failures": [],
+          "loadedModels": 4,
+          "npcCalibrated": 60,
+          "pauseFrozen": true,
+          "walkingLegs": 9,
+          "rides": 3,
+          "maxWalkingEyeVariation": 0
+        }
+      ],
+      "additionalMirroredPromenadeAndInterruptions": {
+        "escapeDestinationMenuResumes": true,
+        "mapPausesRide": true,
+        "mapDeckFilterWorks": true,
+        "mapTransitReleasesRide": true,
+        "mapTransitPosition": [
+          75,
+          3.675,
+          -20
+        ],
+        "arrivalReturnReleasesRide": true,
+        "arrivalReentryGroundStable": true,
+        "errors": [],
+        "models": 4,
+        "npcCalibrated": 60
+      },
+      "totalWalkingLegs": 91,
+      "coverage": [
+        "Both new gallery skybridges",
+        "Both existing promenade bridges",
+        "Both southern ribbons and caps",
+        "Both express overlooks, including full longitudinal routes",
+        "All four floor call/board/travel/exit interactions",
+        "Keyboard E, touch interaction button, responsive destination buttons",
+        "Escape destination-menu dismissal and midride pause/resume",
+        "Midride map pause, floor filtering and sector transit cancellation",
+        "Midride return-to-arrival and clean ground-floor reentry",
+        "Reduced-motion travel without vertical sweep"
+      ]
+    },
+    "nativeLift": {
+      "cases": 24,
+      "trips": [
+        {
+          "shaft": "west",
+          "from": "concourse",
+          "to": "promenade",
+          "steps": 118,
+          "arrived": true
+        },
+        {
+          "shaft": "west",
+          "from": "concourse",
+          "to": "galleries",
+          "steps": 238,
+          "arrived": true
+        },
+        {
+          "shaft": "west",
+          "from": "concourse",
+          "to": "express",
+          "steps": 307,
+          "arrived": true
+        },
+        {
+          "shaft": "west",
+          "from": "promenade",
+          "to": "concourse",
+          "steps": 118,
+          "arrived": true
+        },
+        {
+          "shaft": "west",
+          "from": "promenade",
+          "to": "galleries",
+          "steps": 147,
+          "arrived": true
+        },
+        {
+          "shaft": "west",
+          "from": "promenade",
+          "to": "express",
+          "steps": 215,
+          "arrived": true
+        },
+        {
+          "shaft": "west",
+          "from": "galleries",
+          "to": "concourse",
+          "steps": 238,
+          "arrived": true
+        },
+        {
+          "shaft": "west",
+          "from": "galleries",
+          "to": "promenade",
+          "steps": 147,
+          "arrived": true
+        },
+        {
+          "shaft": "west",
+          "from": "galleries",
+          "to": "express",
+          "steps": 95,
+          "arrived": true
+        },
+        {
+          "shaft": "west",
+          "from": "express",
+          "to": "concourse",
+          "steps": 307,
+          "arrived": true
+        },
+        {
+          "shaft": "west",
+          "from": "express",
+          "to": "promenade",
+          "steps": 215,
+          "arrived": true
+        },
+        {
+          "shaft": "west",
+          "from": "express",
+          "to": "galleries",
+          "steps": 95,
+          "arrived": true
+        },
+        {
+          "shaft": "east",
+          "from": "concourse",
+          "to": "promenade",
+          "steps": 118,
+          "arrived": true
+        },
+        {
+          "shaft": "east",
+          "from": "concourse",
+          "to": "galleries",
+          "steps": 238,
+          "arrived": true
+        },
+        {
+          "shaft": "east",
+          "from": "concourse",
+          "to": "express",
+          "steps": 307,
+          "arrived": true
+        },
+        {
+          "shaft": "east",
+          "from": "promenade",
+          "to": "concourse",
+          "steps": 118,
+          "arrived": true
+        },
+        {
+          "shaft": "east",
+          "from": "promenade",
+          "to": "galleries",
+          "steps": 147,
+          "arrived": true
+        },
+        {
+          "shaft": "east",
+          "from": "promenade",
+          "to": "express",
+          "steps": 215,
+          "arrived": true
+        },
+        {
+          "shaft": "east",
+          "from": "galleries",
+          "to": "concourse",
+          "steps": 238,
+          "arrived": true
+        },
+        {
+          "shaft": "east",
+          "from": "galleries",
+          "to": "promenade",
+          "steps": 147,
+          "arrived": true
+        },
+        {
+          "shaft": "east",
+          "from": "galleries",
+          "to": "express",
+          "steps": 95,
+          "arrived": true
+        },
+        {
+          "shaft": "east",
+          "from": "express",
+          "to": "concourse",
+          "steps": 307,
+          "arrived": true
+        },
+        {
+          "shaft": "east",
+          "from": "express",
+          "to": "promenade",
+          "steps": 215,
+          "arrived": true
+        },
+        {
+          "shaft": "east",
+          "from": "express",
+          "to": "galleries",
+          "steps": 95,
+          "arrived": true
+        }
+      ],
+      "maximumCarryError": 1.7763568394002505e-15,
+      "maximumTravelStep": 0.1562468355025146,
+      "pausedFrozen": true,
+      "hiddenFrozen": true,
+      "freeLook": true,
+      "reducedMotionImmediate": true,
+      "absentShaftBlocked": true,
+      "exitSeamsClear": true,
+      "idleUploads": 0,
+      "stats": {
+        "carCount": 2,
+        "stops": 4,
+        "drawCalls": 8,
+        "triangles": 1512,
+        "textures": 0,
+        "lights": 0,
+        "matrixUploads": 4589,
+        "rides": 26,
+        "calls": 21,
+        "disposed": false,
+        "riding": null,
+        "cars": [
+          {
+            "id": "west",
+            "height": 17.625,
+            "levelId": "galleries",
+            "targetId": null,
+            "state": "idle",
+            "doors": 1,
+            "occupied": false
+          },
+          {
+            "id": "east",
+            "height": 23.36,
+            "levelId": "express",
+            "targetId": null,
+            "state": "idle",
+            "doors": 1,
+            "occupied": true
+          }
+        ]
+      },
+      "disposed": true,
+      "errors": []
+    },
+    "performance": {
+      "measurements": 18,
+      "errors": [],
+      "comparison": [
+        {
+          "device": "desktop",
+          "view": "arrival",
+          "drawCalls": 8,
+          "triangles": 9120,
+          "cpuCallbackMs": -0.1,
+          "textures": 0,
+          "geometries": 5
+        },
+        {
+          "device": "desktop",
+          "view": "concourse",
+          "drawCalls": 8,
+          "triangles": 9120,
+          "cpuCallbackMs": -0.2,
+          "textures": 0,
+          "geometries": 5
+        },
+        {
+          "device": "desktop",
+          "view": "observation",
+          "drawCalls": 2,
+          "triangles": 7848,
+          "cpuCallbackMs": -0.1,
+          "textures": 0,
+          "geometries": 5
+        },
+        {
+          "device": "desktop",
+          "view": "market",
+          "drawCalls": 2,
+          "triangles": 7848,
+          "cpuCallbackMs": 0.1,
+          "textures": 0,
+          "geometries": 5
+        },
+        {
+          "device": "desktop",
+          "view": "docks",
+          "drawCalls": 2,
+          "triangles": 7632,
+          "cpuCallbackMs": -0.1,
+          "textures": 0,
+          "geometries": 5
+        },
+        {
+          "device": "desktop",
+          "view": "promenade",
+          "drawCalls": 8,
+          "triangles": 9120,
+          "cpuCallbackMs": -0.1,
+          "textures": 0,
+          "geometries": 5
+        },
+        {
+          "device": "desktop",
+          "view": "upper-west",
+          "drawCalls": 6,
+          "triangles": 8964,
+          "cpuCallbackMs": 0.1,
+          "textures": 0,
+          "geometries": 5
+        },
+        {
+          "device": "desktop",
+          "view": "upper-east",
+          "drawCalls": 4,
+          "triangles": 8808,
+          "cpuCallbackMs": -0.2,
+          "textures": 0,
+          "geometries": 5
+        },
+        {
+          "device": "desktop",
+          "view": "express-overlook",
+          "drawCalls": 6,
+          "triangles": 8964,
+          "cpuCallbackMs": -0.2,
+          "textures": 0,
+          "geometries": 5
+        },
+        {
+          "device": "mobile",
+          "view": "arrival",
+          "drawCalls": 8,
+          "triangles": 9120,
+          "cpuCallbackMs": 0.1,
+          "textures": 0,
+          "geometries": 5
+        },
+        {
+          "device": "mobile",
+          "view": "concourse",
+          "drawCalls": 8,
+          "triangles": 9120,
+          "cpuCallbackMs": -0.0,
+          "textures": 0,
+          "geometries": 5
+        },
+        {
+          "device": "mobile",
+          "view": "observation",
+          "drawCalls": 2,
+          "triangles": 7848,
+          "cpuCallbackMs": -0.1,
+          "textures": 0,
+          "geometries": 5
+        },
+        {
+          "device": "mobile",
+          "view": "market",
+          "drawCalls": 2,
+          "triangles": 7848,
+          "cpuCallbackMs": 0.0,
+          "textures": 0,
+          "geometries": 5
+        },
+        {
+          "device": "mobile",
+          "view": "docks",
+          "drawCalls": 2,
+          "triangles": 7632,
+          "cpuCallbackMs": 0.0,
+          "textures": 0,
+          "geometries": 5
+        },
+        {
+          "device": "mobile",
+          "view": "promenade",
+          "drawCalls": 6,
+          "triangles": 8964,
+          "cpuCallbackMs": 0.0,
+          "textures": 0,
+          "geometries": 5
+        },
+        {
+          "device": "mobile",
+          "view": "upper-west",
+          "drawCalls": 4,
+          "triangles": 8808,
+          "cpuCallbackMs": 0.1,
+          "textures": 0,
+          "geometries": 5
+        },
+        {
+          "device": "mobile",
+          "view": "upper-east",
+          "drawCalls": 4,
+          "triangles": 8808,
+          "cpuCallbackMs": -0.1,
+          "textures": 0,
+          "geometries": 5
+        },
+        {
+          "device": "mobile",
+          "view": "express-overlook",
+          "drawCalls": 4,
+          "triangles": 8808,
+          "cpuCallbackMs": 0.0,
+          "textures": 0,
+          "geometries": 5
+        }
+      ],
+      "additionalTextures": 0,
+      "additionalResidentGeometries": 5,
+      "maximumAddedVisibleDrawCalls": 8,
+      "maximumAddedSubmittedTriangles": 9120,
+      "minimumCallbackCpuDeltaMs": -0.2,
+      "maximumCallbackCpuDeltaMs": 0.1,
+      "qualification": "Software renderer and short fixed-view sample; bounded draw/memory evidence, not a hardware frame-rate guarantee."
+    },
+    "regressions": {
+      "all60AuthoredNPCPlanHashesUnchanged": true,
+      "loadedModels": 4,
+      "modelAssetErrors": [],
+      "unchangedSourceFromBaseline": [
+        "src/population.js",
+        "src/district-docks.js",
+        "src/commuter-behavior.js",
+        "src/surfaces.js",
+        "src/district-observation.js",
+        "src/audio-sources.js",
+        "src/commerce.js",
+        "src/kit.js",
+        "src/station-life.js",
+        "src/district-market.js",
+        "src/humanoid.js",
+        "src/population-behavior.js",
+        "src/furnishings.js",
+        "src/navigation.js",
+        "src/audio.js",
+        "src/atmosphere.js",
+        "src/districts.js",
+        "src/population-timetable.js",
+        "src/imported-models.js"
+      ],
+      "audioAndExternalShipImplementationsUnchanged": true
+    },
+    "sourceHashes": {
+      "testedSnapshot": {
+        "src/population.js": "b8cb7d302bc2cde8f6a4d97e5c30da76ac78a14d173e7881ce27e37dbd13a131",
+        "src/concourse-upper.js": "a70a08073c860b44e9d69eb2c55461a8928ff9f6ded6296b2b352ba6cc68a978",
+        "src/district-docks.js": "cc661a127637530dd24d6f8d78b692011920d93657e95ec1cf5afe11a27d3cb2",
+        "src/commuter-behavior.js": "889fdf925619c2ff68f4335c5717c2dfe2d6b8878dc629f536eefe1cd6f07ba7",
+        "src/surfaces.js": "eabbd7e5f442e1f2bdaa28765e44c7b7b41281e17b89921d663e0fbeb20cb34b",
+        "src/public-lifts.js": "5fa591062fff5fb958715c91cc991684ac630a0447741296dfff2d666f407ba3",
+        "src/district-observation.js": "28c8276774b57671a578ed6c1607213c9046d5a2a2b320fbcc91e3a2f24299e0",
+        "src/audio-sources.js": "81df027e596c388179d0f5aad8247cfa772526430c9a80dcd3fcb474ce662731",
+        "src/controls.js": "d7cd3120b16aafad71ee3f39423ec6440faeb7112e5aacc2de105db01f2bca98",
+        "src/world.js": "771749696d1c901e7eae5f61bf5a9e6f480dc686209a9dbc51d68f347d88af9b",
+        "src/commerce.js": "64ba68926300deb423c93080d819865634f0e4d7b930197e6ec1f97af6a6463c",
+        "src/kit.js": "c9dab8e517106ae5f2b2f2ea1e08161666dc669cf503098637afcbf3a914004e",
+        "src/station-life.js": "cec2805ea1e5b74099992db91fd6ecf5a6803ee7b50750c4a734fc8c3c97b01b",
+        "src/concourse-levels.js": "e1360f152272859bf076a1ba6337a7a31d623291e6968e7c1ed1cc6e93ddadba",
+        "src/district-market.js": "ea5f43f766c9e00b2eb9b86b1bda6faadce52c521cf374cc5231a033f031527a",
+        "src/humanoid.js": "f210a30947f7af82b9842bc6b93c06cb96fbffec042c1b17ec58b9008313ddb7",
+        "src/population-behavior.js": "8c40b0a93813a3d8237a8ac0e56ebea862270c30b7c137fddb9a44c22ffaa70d",
+        "src/main.js": "7789e9dc8931149eeff64b27b485a61f7374a3270e61a1c90b7669b1b4ff2f0e",
+        "src/furnishings.js": "bffe3b934a9384c1c39a927b93fdde10fefd0e5bc39546334ec96e09b0f9e7e0",
+        "src/navigation.js": "855f7f9098ed9b33cfc552f0b707a81b807de014e6584686a21812c78a0735a7",
+        "src/audio.js": "e01935000541ac4ca047d62101cb468e483ce44ff902cd6698eaff489bffe623",
+        "src/atmosphere.js": "411c580987d91fbda822e6512515a5d9539e5605ae0d1008c1814997cb23ac80",
+        "src/concourse-access.js": "25826f33548195925038abde3c4308cfd26586cfb00365a52d973fb121671e10",
+        "src/station-plan.js": "244a6389228a7503db02d20b70cc697ca40fca61f41b742a7604bea0c77ad3a8",
+        "src/districts.js": "2ff77b89a40465ddd4edff35216b5ae579c233ed81b13249218e727382a10229",
+        "src/population-timetable.js": "338c5ca902162e4ba38d17279ef8c3b73b9b15132baf1bbfb38b4f1910cae371",
+        "src/imported-models.js": "2b3d3e434d054d801c62990eef1093afb764d09df5e395fc0f5feb123ad0c0fd"
+      },
+      "currentProduction": {
+        "src/population.js": "b8cb7d302bc2cde8f6a4d97e5c30da76ac78a14d173e7881ce27e37dbd13a131",
+        "src/concourse-upper.js": "a70a08073c860b44e9d69eb2c55461a8928ff9f6ded6296b2b352ba6cc68a978",
+        "src/district-docks.js": "cc661a127637530dd24d6f8d78b692011920d93657e95ec1cf5afe11a27d3cb2",
+        "src/commuter-behavior.js": "889fdf925619c2ff68f4335c5717c2dfe2d6b8878dc629f536eefe1cd6f07ba7",
+        "src/surfaces.js": "eabbd7e5f442e1f2bdaa28765e44c7b7b41281e17b89921d663e0fbeb20cb34b",
+        "src/public-lifts.js": "5fa591062fff5fb958715c91cc991684ac630a0447741296dfff2d666f407ba3",
+        "src/district-observation.js": "28c8276774b57671a578ed6c1607213c9046d5a2a2b320fbcc91e3a2f24299e0",
+        "src/audio-sources.js": "81df027e596c388179d0f5aad8247cfa772526430c9a80dcd3fcb474ce662731",
+        "src/controls.js": "d7cd3120b16aafad71ee3f39423ec6440faeb7112e5aacc2de105db01f2bca98",
+        "src/world.js": "771749696d1c901e7eae5f61bf5a9e6f480dc686209a9dbc51d68f347d88af9b",
+        "src/commerce.js": "64ba68926300deb423c93080d819865634f0e4d7b930197e6ec1f97af6a6463c",
+        "src/kit.js": "c9dab8e517106ae5f2b2f2ea1e08161666dc669cf503098637afcbf3a914004e",
+        "src/station-life.js": "cec2805ea1e5b74099992db91fd6ecf5a6803ee7b50750c4a734fc8c3c97b01b",
+        "src/concourse-levels.js": "e1360f152272859bf076a1ba6337a7a31d623291e6968e7c1ed1cc6e93ddadba",
+        "src/district-market.js": "ea5f43f766c9e00b2eb9b86b1bda6faadce52c521cf374cc5231a033f031527a",
+        "src/humanoid.js": "f210a30947f7af82b9842bc6b93c06cb96fbffec042c1b17ec58b9008313ddb7",
+        "src/population-behavior.js": "8c40b0a93813a3d8237a8ac0e56ebea862270c30b7c137fddb9a44c22ffaa70d",
+        "src/main.js": "bb69bd8feac6a30720fa09b976fad091080e0046fbfd4e99fb806afa7387e3eb",
+        "src/furnishings.js": "bffe3b934a9384c1c39a927b93fdde10fefd0e5bc39546334ec96e09b0f9e7e0",
+        "src/navigation.js": "855f7f9098ed9b33cfc552f0b707a81b807de014e6584686a21812c78a0735a7",
+        "src/audio.js": "e01935000541ac4ca047d62101cb468e483ce44ff902cd6698eaff489bffe623",
+        "src/atmosphere.js": "411c580987d91fbda822e6512515a5d9539e5605ae0d1008c1814997cb23ac80",
+        "src/concourse-access.js": "25826f33548195925038abde3c4308cfd26586cfb00365a52d973fb121671e10",
+        "src/station-plan.js": "244a6389228a7503db02d20b70cc697ca40fca61f41b742a7604bea0c77ad3a8",
+        "src/districts.js": "2ff77b89a40465ddd4edff35216b5ae579c233ed81b13249218e727382a10229",
+        "src/population-timetable.js": "338c5ca902162e4ba38d17279ef8c3b73b9b15132baf1bbfb38b4f1910cae371",
+        "src/imported-models.js": "2b3d3e434d054d801c62990eef1093afb764d09df5e395fc0f5feb123ad0c0fd"
+      },
+      "changedAfterSnapshot": [
+        "src/main.js"
+      ],
+      "lateChangeQualification": "The only source change since copied-preview capture is the Arrivals terminal paragraph adding lantern-lift directions. All movement, geometry, safety, rendering, map and lift runtime code remains identical."
+    },
+    "localEvidence": {
+      "artifactNames": [
+        "pfc-access-render-baseline.json",
+        "pfc-access-render-final.json",
+        "pfc-access-native.json",
+        "pfc-access-integration.json",
+        "pfc-access-interruptions.json",
+        "pfc-access-static-check.json",
+        "pfc-access-sunwalk-check.json",
+        "pfc-access-mobile-lift-dialog.png",
+        "pfc-access-mobile-map.png",
+        "pfc-access-final-upper-west.png",
+        "pfc-access-final-express-overlook.png"
+      ],
+      "note": "Temporary QA captures; numerical results are retained in this report."
+    }
+  },
+  "adversarialDoorPocketVerification": {
+    "finding": "Open landing and cabin door pockets extended beyond their collision guards.",
+    "before": {
+      "acceptedCapsulePanelContacts": 404,
+      "example": {
+        "x": 26.4,
+        "z": -54.5,
+        "panel": "east ground landing leaf8",
+        "panelBounds": {
+          "min": [
+            26.662500761449337,
+            0.019999980926513672,
+            -54.43999844789505
+          ],
+          "max": [
+            26.73750076442957,
+            2.4200000762939453,
+            -53.25999850034714
+          ]
+        }
+      }
+    },
+    "after": {
+      "contacts": 0,
+      "examples": []
+    },
+    "currentPublicLiftsSHA256": "5fa591062fff5fb958715c91cc991684ac630a0447741296dfff2d666f407ba3",
+    "method": "Actual instanced door AABBs versus 0.27m player capsule at navigation-accepted ground positions."
+  },
+  "adversarialApplicationFlow": {
+    "passed": true,
+    "gallerySpawn": [
+      -24,
+      19.375,
+      -52
+    ],
+    "enteredCar": {
+      "p": [
+        -27.397129756282382,
+        19.375,
+        -52
+      ],
+      "lifts": {
+        "riding": null,
+        "cars": [
+          {
+            "id": "west",
+            "height": 17.625,
+            "levelId": "galleries",
+            "targetId": null,
+            "state": "idle",
+            "doors": 1,
+            "occupied": true
+          },
+          {
+            "id": "east",
+            "height": 0,
+            "levelId": "concourse",
+            "targetId": null,
+            "state": "idle",
+            "doors": 1,
+            "occupied": false
+          }
+        ]
+      },
+      "hint": "Choose a concourse deck"
+    },
+    "quickExpress": [
+      -27.397129756282382,
+      25.11,
+      -52
+    ],
+    "mapFilters": true,
+    "midRideMapPause": true,
+    "cancelledRideOnTransit": true,
+    "marketAfterLift": [
+      -38,
+      1.75,
+      30
+    ],
+    "errors": []
+  },
+  "boardingInteriorEdgeVerification": {
+    "publicLiftsSHA256": "5fa591062fff5fb958715c91cc991684ac630a0447741296dfff2d666f407ba3",
+    "playerCapsuleRadius": 0.27,
+    "cases": [
+      {
+        "position": [
+          29.59,
+          1.75,
+          -52
+        ],
+        "walkable": true,
+        "interaction": "choose"
+      },
+      {
+        "position": [
+          28.5,
+          1.75,
+          -50.71
+        ],
+        "walkable": true,
+        "interaction": "choose"
+      }
+    ],
+    "method": "Direct native navigation and real lift interaction descriptors at rear and side cabin edges; assertions passed."
+  },
+  "architectureGeometry": {
+    "baseline": {
+      "meshes": 66,
+      "draws": 67,
+      "triangles": 49910,
+      "boxInstances": 2888,
+      "textures": 28,
+      "geometries": 67,
+      "stationFloors": 14
+    },
+    "final": {
+      "meshes": 66,
+      "draws": 67,
+      "triangles": 57518,
+      "boxInstances": 3522,
+      "textures": 28,
+      "geometries": 67,
+      "stationFloors": 24
+    },
+    "originalFloorSurfacesIdentical": true
+  },
+  "npcEquivalence": {
+    "plannedJourneys": 60,
+    "beforeHash": "262c5dae413effb22dd6a261a8f68ebda6b7248465ab57a5c42e0bf9a15b682f",
+    "afterHash": "262c5dae413effb22dd6a261a8f68ebda6b7248465ab57a5c42e0bf9a15b682f",
+    "initialPeopleIdentical": true,
+    "legacyIdentical": true,
+    "plansIdentical": true
+  },
+  "finalProductionUI": {
+    "origin": "http://127.0.0.1:5175",
+    "devices": [
+      {
+        "device": "desktop 1280x800",
+        "layout": {
+          "width": 1280,
+          "height": 800,
+          "dialog": [
+            240,
+            30,
+            800,
+            740
+          ],
+          "overflow": false,
+          "filters": [
+            [
+              36,
+              34
+            ],
+            [
+              36,
+              34
+            ],
+            [
+              36,
+              34
+            ],
+            [
+              36,
+              34
+            ],
+            [
+              36,
+              34
+            ]
+          ]
+        },
+        "callFromUpperFloor": true,
+        "walkedIntoCabin": true,
+        "touchJoystick": false,
+        "touchLiftButton": false,
+        "quickRideAndExit": true,
+        "normalRide": {
+          "pausedHeight": 23.36,
+          "arrived": 17.625,
+          "pauseFrozen": true
+        },
+        "floors": [
+          {
+            "id": "concourse",
+            "height": 0,
+            "position": [
+              0,
+              1.75,
+              48
+            ]
+          },
+          {
+            "id": "promenade",
+            "height": 7.625,
+            "position": [
+              -24,
+              9.375,
+              48
+            ]
+          },
+          {
+            "id": "galleries",
+            "height": 17.625,
+            "position": [
+              -24,
+              19.375,
+              -52
+            ]
+          },
+          {
+            "id": "express",
+            "height": 23.36,
+            "position": [
+              -27,
+              25.11,
+              -58
+            ]
+          }
+        ],
+        "preservedModels": 4,
+        "preservedPopulationTriangles": 18912,
+        "preservedShips": 9,
+        "errors": [],
+        "localFailures": []
+      },
+      {
+        "device": "mobile 390x844 touch",
+        "layout": {
+          "width": 390,
+          "height": 844,
+          "dialog": [
+            16,
+            15,
+            358,
+            814
+          ],
+          "overflow": false,
+          "filters": [
+            [
+              44,
+              44
+            ],
+            [
+              44,
+              44
+            ],
+            [
+              44,
+              44
+            ],
+            [
+              44,
+              44
+            ],
+            [
+              44,
+              44
+            ]
+          ]
+        },
+        "callFromUpperFloor": true,
+        "walkedIntoCabin": true,
+        "touchJoystick": true,
+        "touchLiftButton": true,
+        "quickRideAndExit": true,
+        "normalRide": null,
+        "floors": [
+          {
+            "id": "concourse",
+            "height": 0,
+            "position": [
+              0,
+              1.75,
+              48
+            ]
+          },
+          {
+            "id": "promenade",
+            "height": 7.625,
+            "position": [
+              -24,
+              9.375,
+              48
+            ]
+          },
+          {
+            "id": "galleries",
+            "height": 17.625,
+            "position": [
+              -24,
+              19.375,
+              -52
+            ]
+          },
+          {
+            "id": "express",
+            "height": 23.36,
+            "position": [
+              -27,
+              25.11,
+              -58
+            ]
+          }
+        ],
+        "preservedModels": 4,
+        "preservedPopulationTriangles": 18912,
+        "preservedShips": 9,
+        "errors": [],
+        "localFailures": []
+      }
+    ]
+  },
+  "finalProductionRegression": {
+    "origin": "http://127.0.0.1:5175",
+    "devices": [
+      {
+        "device": "desktop 1280x800",
+        "npc": {
+          "scheduledResidents": 60,
+          "crossSectorJourneys": 14,
+          "crossDeckJourneys": 2,
+          "activityStops": 124,
+          "calibrated": 60,
+          "invalidRoutes": [],
+          "finiteSnapshots": true,
+          "reducedMotionFrozen": true,
+          "isolatedSnapshotCopies": true
+        },
+        "lazyStart": true,
+        "preferencesWhileOff": true,
+        "on": {
+          "state": "running",
+          "coreNodes": 41,
+          "spatialNodes": 25,
+          "bufferBytes": 2023680
+        },
+        "muteSuspends": true,
+        "rapidToggleUsesOneContext": true,
+        "keyboardVolume": true,
+        "preferencesRestoredWithoutAutoplay": true,
+        "layout": {
+          "viewport": [
+            1280,
+            800
+          ],
+          "dialog": [
+            395,
+            30,
+            490,
+            740
+          ],
+          "range": [
+            436,
+            535.859375,
+            408,
+            34
+          ],
+          "overflow": false,
+          "scrollable": true
+        },
+        "sectors": [
+          {
+            "target": "observation",
+            "sector": "observation",
+            "audioSector": "observation",
+            "floorHeight": 1.9249999999999998,
+            "transitFootsteps": 0
+          },
+          {
+            "target": "market",
+            "sector": "market",
+            "audioSector": "market",
+            "floorHeight": 0,
+            "transitFootsteps": 0
+          },
+          {
+            "target": "docks",
+            "sector": "docks",
+            "audioSector": "docks",
+            "floorHeight": 0,
+            "transitFootsteps": 0
+          },
+          {
+            "target": "promenade",
+            "sector": "concourse",
+            "audioSector": "concourse",
+            "floorHeight": 7.625,
+            "transitFootsteps": 0
+          }
+        ],
+        "preserved": {
+          "populationActors": 80,
+          "populationTriangles": 18912,
+          "populationBatches": 7,
+          "exteriorShips": 9,
+          "expressCabins": 2,
+          "serviceLifts": 2,
+          "modelAssets": 4
+        },
+        "errors": [],
+        "localFailures": []
+      },
+      {
+        "device": "mobile 390x844 touch",
+        "npc": {
+          "scheduledResidents": 60,
+          "crossSectorJourneys": 14,
+          "crossDeckJourneys": 2,
+          "activityStops": 124,
+          "calibrated": 60,
+          "invalidRoutes": [],
+          "finiteSnapshots": true,
+          "reducedMotionFrozen": true,
+          "isolatedSnapshotCopies": true
+        },
+        "lazyStart": true,
+        "preferencesWhileOff": true,
+        "on": {
+          "state": "running",
+          "coreNodes": 41,
+          "spatialNodes": 25,
+          "bufferBytes": 2023680
+        },
+        "muteSuspends": true,
+        "rapidToggleUsesOneContext": true,
+        "keyboardVolume": true,
+        "preferencesRestoredWithoutAutoplay": true,
+        "layout": {
+          "viewport": [
+            390,
+            844
+          ],
+          "dialog": [
+            16,
+            15,
+            358,
+            814
+          ],
+          "range": [
+            40,
+            571.5,
+            310,
+            44
+          ],
+          "overflow": false,
+          "scrollable": true
+        },
+        "sectors": [
+          {
+            "target": "observation",
+            "sector": "observation",
+            "audioSector": "observation",
+            "floorHeight": 1.9249999999999998,
+            "transitFootsteps": 0
+          },
+          {
+            "target": "market",
+            "sector": "market",
+            "audioSector": "market",
+            "floorHeight": 0,
+            "transitFootsteps": 0
+          },
+          {
+            "target": "docks",
+            "sector": "docks",
+            "audioSector": "docks",
+            "floorHeight": 0,
+            "transitFootsteps": 0
+          },
+          {
+            "target": "promenade",
+            "sector": "concourse",
+            "audioSector": "concourse",
+            "floorHeight": 7.625,
+            "transitFootsteps": 0
+          }
+        ],
+        "preserved": {
+          "populationActors": 80,
+          "populationTriangles": 18912,
+          "populationBatches": 7,
+          "exteriorShips": 9,
+          "expressCabins": 2,
+          "serviceLifts": 2,
+          "modelAssets": 4
+        },
+        "errors": [],
+        "localFailures": []
+      }
+    ]
+  },
+  "finalSourceHashes": {
+    "src/population.js": "b8cb7d302bc2cde8f6a4d97e5c30da76ac78a14d173e7881ce27e37dbd13a131",
+    "src/concourse-upper.js": "a70a08073c860b44e9d69eb2c55461a8928ff9f6ded6296b2b352ba6cc68a978",
+    "src/district-docks.js": "cc661a127637530dd24d6f8d78b692011920d93657e95ec1cf5afe11a27d3cb2",
+    "src/commuter-behavior.js": "889fdf925619c2ff68f4335c5717c2dfe2d6b8878dc629f536eefe1cd6f07ba7",
+    "src/surfaces.js": "eabbd7e5f442e1f2bdaa28765e44c7b7b41281e17b89921d663e0fbeb20cb34b",
+    "src/public-lifts.js": "5fa591062fff5fb958715c91cc991684ac630a0447741296dfff2d666f407ba3",
+    "src/district-observation.js": "28c8276774b57671a578ed6c1607213c9046d5a2a2b320fbcc91e3a2f24299e0",
+    "src/audio-sources.js": "81df027e596c388179d0f5aad8247cfa772526430c9a80dcd3fcb474ce662731",
+    "src/controls.js": "d7cd3120b16aafad71ee3f39423ec6440faeb7112e5aacc2de105db01f2bca98",
+    "src/world.js": "771749696d1c901e7eae5f61bf5a9e6f480dc686209a9dbc51d68f347d88af9b",
+    "src/commerce.js": "64ba68926300deb423c93080d819865634f0e4d7b930197e6ec1f97af6a6463c",
+    "src/kit.js": "c9dab8e517106ae5f2b2f2ea1e08161666dc669cf503098637afcbf3a914004e",
+    "src/station-life.js": "cec2805ea1e5b74099992db91fd6ecf5a6803ee7b50750c4a734fc8c3c97b01b",
+    "src/concourse-levels.js": "e1360f152272859bf076a1ba6337a7a31d623291e6968e7c1ed1cc6e93ddadba",
+    "src/district-market.js": "ea5f43f766c9e00b2eb9b86b1bda6faadce52c521cf374cc5231a033f031527a",
+    "src/humanoid.js": "f210a30947f7af82b9842bc6b93c06cb96fbffec042c1b17ec58b9008313ddb7",
+    "src/population-behavior.js": "8c40b0a93813a3d8237a8ac0e56ebea862270c30b7c137fddb9a44c22ffaa70d",
+    "src/main.js": "bb69bd8feac6a30720fa09b976fad091080e0046fbfd4e99fb806afa7387e3eb",
+    "src/furnishings.js": "bffe3b934a9384c1c39a927b93fdde10fefd0e5bc39546334ec96e09b0f9e7e0",
+    "src/navigation.js": "855f7f9098ed9b33cfc552f0b707a81b807de014e6584686a21812c78a0735a7",
+    "src/audio.js": "e01935000541ac4ca047d62101cb468e483ce44ff902cd6698eaff489bffe623",
+    "src/atmosphere.js": "411c580987d91fbda822e6512515a5d9539e5605ae0d1008c1814997cb23ac80",
+    "src/concourse-access.js": "25826f33548195925038abde3c4308cfd26586cfb00365a52d973fb121671e10",
+    "src/station-plan.js": "244a6389228a7503db02d20b70cc697ca40fca61f41b742a7604bea0c77ad3a8",
+    "src/districts.js": "2ff77b89a40465ddd4edff35216b5ae579c233ed81b13249218e727382a10229",
+    "src/population-timetable.js": "338c5ca902162e4ba38d17279ef8c3b73b9b15132baf1bbfb38b4f1910cae371",
+    "src/imported-models.js": "2b3d3e434d054d801c62990eef1093afb764d09df5e395fc0f5feb123ad0c0fd",
+    "index.html": "55a5fe1496ac659af6e636aa45739b1546abfea9088a39ebb42bb8fe4d0de34a",
+    "src/style.css": "1c862ca961e8d0480d50a68142fd039315eface9ab858761810952e39e3bc265",
+    "package.json": "1b2ccddcde9bc86d4d3ea97ba1c6d7c17f767448de7568ff29cc415e3a795d3d",
+    "package-lock.json": "35f5fae47bf102f6929b8b601eb9fd54e46c26b3cb91315710024d9a02756c63",
+    "vercel.json": "5c77bea581677f3464b8e15099c711365920ae5c5fcb8f0fb0489548ea05f2ae"
+  },
+  "sourceQualification": "Independent access/native/render verification hashes match final runtime modules; its only JavaScript snapshot change was the Arrivals directions paragraph. Final production UI and regression checks cover the final HTML/CSS, including desktop map sizing. The touch walkthrough waits for the reduced-motion travel curtain to clear before initiating a new joystick gesture.",
+  "build": {
+    "command": "npm run build",
+    "node": "24.22.1",
+    "result": "passed Vite and verify-build.mjs",
+    "compression": "Node 24 gzipSync default level 6, matching Vite reporting",
+    "compiledAssets": [
+      {
+        "path": "assets/index-BN1Obrin.js",
+        "bytes": 915654,
+        "gzipBytes": 264068,
+        "sha256": "a4754c1c7b45d051df0b7583fd738f9cf80b3c725b6b11f3ab4d3f6bb46f8f00"
+      },
+      {
+        "path": "assets/index-DhQ6S7wL.css",
+        "bytes": 20461,
+        "gzipBytes": 5331,
+        "sha256": "4a3eb24a8db6adfc8ce8cb23918e4e4893e5103aba9ac4aee44c6e8bd1243fce"
+      }
+    ],
+    "publicFilesByteIdentical": [
+      {
+        "path": "models/poly-pizza/animated-robot.glb",
+        "bytes": 401024,
+        "sha256": "54f1a6999cca701cdc2f8fb67bcd9a283e1154cb80cac356f031bed7c2e74cbe"
+      },
+      {
+        "path": "models/poly-pizza/cooking-pot.glb",
+        "bytes": 15016,
+        "sha256": "3836f63ea0a1135d1dbb6f8a942af6a1bc27912c21d5112c1820e88c64779995"
+      },
+      {
+        "path": "models/poly-pizza/credits.txt",
+        "bytes": 952,
+        "sha256": "e1877b031ff883f06c7ccf7727d526af404e437d2372c0eac960e2fc6ff05f61"
+      },
+      {
+        "path": "models/poly-pizza/scifi-computer.glb",
+        "bytes": 41964,
+        "sha256": "2462a9e43d8ef20636a5be154cb092c17548b9baac2e3538fde7319e9928b923"
+      },
+      {
+        "path": "models/poly-pizza/tree-spiral.glb",
+        "bytes": 35944,
+        "sha256": "16b571e404dff48380d8289a92596d41a5b49e75fae9e0151d1a3fc1fc0a4e86"
+      }
+    ],
+    "models": 4,
+    "newDependencies": 0,
+    "newDownloadedAssets": 0,
+    "baselineJavaScriptKB": 897.59,
+    "baselineJavaScriptGzipKB": 257.37,
+    "finalJavaScriptKB": 915.65,
+    "finalJavaScriptGzipKB": 264.07,
+    "gzipDeltaKB": 6.7,
+    "existingAdvisory": "Nonfatal Vite chunk-size warning."
+  },
+  "limitations": [
+    "Software WebGL browser measurements do not establish hardware GPU or physical phone frame rates.",
+    "Deck 04 east/west overlooks connect across the concourse through Deck 03 bridges via the public lifts; moving staff cages remain separated.",
+    "No Vercel deployment was initiated by this pass."
+  ]
+}

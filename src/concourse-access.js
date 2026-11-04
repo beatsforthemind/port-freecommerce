@@ -1,12 +1,13 @@
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+import {buildUpperConcourse} from './concourse-upper.js';
 
 export const PROMENADE_HEIGHT = 7.625;
 export const RAMP_SOUTH = 94;
 export const RAMP_NORTH = 56;
 
 /** A usable second deck turns the concourse into a transport interchange. */
-export function buildConcourseAccess({group, box, beam, text, materials}) {
+export function buildConcourseAccess({group, box, beam, text, materials,colliders}) {
   const h = PROMENADE_HEIGHT;
   const surfaces = [
     {sector:'concourse',minX:-22.6,maxX:22.6,minZ:-130.2,maxZ:98.8,height:0},
@@ -29,7 +30,7 @@ export function buildConcourseAccess({group, box, beam, text, materials}) {
     geometry.setIndex([0,3,2,0,2,1,4,5,6,4,6,7,0,1,5,0,5,4,1,2,6,1,6,5,2,3,7,2,7,6,3,0,4,3,4,7]);
     geometry.computeVertexNormals();
     const flat=geometry.toNonIndexed();flat.computeVertexNormals();ramps.push(flat);geometry.dispose();
-    for(const [a,b] of [[21.2,22.6],[28.6,31.8]]) {
+    for(const [a,b] of [[21.2,22.6],[29.75,31.8]]) {
       box(materials.edge,side*(a+b)/2,h+1.13,RAMP_NORTH,b-a,.09,.09);
       for(const xx of [a,b])box(materials.edge,side*xx,h+.56,RAMP_NORTH,.075,1.12,.075);
     }
@@ -64,7 +65,13 @@ export function buildConcourseAccess({group, box, beam, text, materials}) {
   }
   text('ARRIVALS  ⇄  TRANSFERS',0,h-.75,51.2,16,1.0,{color:'#e5c397',size:70});
   text('ALL GATES  /  FOLLOW THE SPINE',0,h-.75,-96.8,17,1.0,{color:'#e5c397',size:70});
-  return {surfaces,landmarks:[
+  // Authored resident itineraries retain their original floor interpretation;
+  // the public lift/cap additions are for the first-person navigation view.
+  const journeySurfaces=surfaces.slice();
+  const upper=buildUpperConcourse({box,beam,materials,colliders});
+  surfaces.push(...upper.surfaces);
+  return {surfaces,journeySurfaces,landmarks:[
     {x:24,z:45,y:h,radius:3.5,title:'A city between departures.',code:'PFC / PUBLIC PROMENADE',hint:'Look out over the concourse',text:['The public promenade joins both sides of the interchange. Follow the long amber ramps near Arrivals to return to the passenger deck.','From here, every queue becomes a small moving constellation. The station processes a million journeys. It keeps very few of their names.']},
-  ],routes:[[[ -24,48],[-24,-100],[24,-100],[24,48]]],stats:{levels:2,ramps:2,bridges:2}};
+    ...upper.landmarks,
+  ],routes:[[[ -24,48],[-24,-100],[24,-100],[24,48]]],stats:{levels:4,ramps:2,bridges:4,publicLifts:2,expressOverlooks:2}};
 }

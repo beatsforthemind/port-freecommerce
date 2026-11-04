@@ -16,6 +16,8 @@ import { createStationLife } from './station-life.js';
 import { createImportedModels } from './imported-models.js';
 import { createNavigation, sectorAt } from './navigation.js';
 import { createStationPlan } from './station-plan.js';
+import { createPublicLifts } from './public-lifts.js';
+import { CONCOURSE_LEVELS, PUBLIC_LIFT_SHAFTS, concourseLevelAt } from './concourse-levels.js';
 import { box, label, panelMaterial, glowMaterial } from './kit.js';
 
 const $ = (selector) => document.querySelector(selector);
@@ -31,11 +33,13 @@ const sectors = {
   market: { name: 'The exchange', description: 'Follow the cloth roofs. Find something strange.', position: [-62, 1.75, 30], yaw: Math.PI / 2 },
   docks: { name: 'Transit docks', description: 'Clear customs. Find your next world.', position: [0, 1.75, -154], yaw: 0 },
   promenade: {name:'Public promenade',description:'Concourse / Deck 02',position:[-24,9.375,48],yaw:-Math.PI/2},
+  galleries: {name:'Lantern galleries',description:'Concourse / Deck 03',position:[-24,19.375,-52],yaw:-Math.PI/2},
+  express: {name:'Express overlook',description:'Concourse / Deck 04',position:[-27,25.11,-58],yaw:-Math.PI/2},
 };
 const terminalData = [
   { x: -10, z: 18, code: 'PFC—001 / PUBLIC ARRIVALS', title: 'Welcome to the in-between.', text: [
     'Port FreeCommerce recognizes all valid transit credentials and no particular allegiance. Please keep your belongings, your contracts, and your opinions close.',
-    'The <strong>Exchange</strong> winds west of the concourse. The <strong>Observation Gallery</strong> rises east toward the rings. Departures branch into three boarding piers at the far end. Long amber ramps near Arrivals lead to the <strong>Deck 02 public promenade</strong>.',
+    'The <strong>Exchange</strong> winds west of the concourse. The <strong>Observation Gallery</strong> rises east toward the rings. Departures branch into three boarding piers at the far end. Long amber ramps near Arrivals lead to the <strong>Deck 02 public promenade</strong>. The <strong>lantern lifts</strong> beside the northern rest bays serve all four concourse decks, including the Lantern Galleries and Express Overlook.',
     'Station notice: the security feed is functioning normally. It has always been functioning normally.',
   ] },
   { x: 89, z: -20, code: 'PFC—029 / ORBITAL OBSERVATION', title: 'Everything keeps moving.', text: [
@@ -66,7 +70,7 @@ const conversations = [
   {sector: 'docks', x: 0, z: -155, radius: 28, speaker: 'DOCK CREW / LOCAL CHANNEL', lines: ['The little crate is heavier. The large crate is angry.', 'Boarding group seven: please stop rejoining boarding group six.', 'The next ship is somebody’s way home. Treat it accordingly.']},
 ];
 
-let scene, camera, renderer, composer, station, districts, controls, audio, atmosphere, furnishings, population, commerce, stationLife, importedModels, navigation, stationPlan;
+let scene, camera, renderer, composer, station, districts, controls, audio, atmosphere, furnishings, population, commerce, stationLife, importedModels, navigation, journeyNavigation, stationPlan, publicLifts;
 let mode = 'arrival';
 let activeSector = '';
 let elapsed = 0;
@@ -105,6 +109,9 @@ let shownConversations = 0;
 let audioToggleRequest = 0;
 let audioVolume = .55;
 let footstepsEnabled = true;
+let selectedLift = null;
+let lastLiftRide = false;
+let lastInteractionLabel = '';
 try {
   const storedVolume = localStorage.getItem('pfc-audio-volume');
   if (storedVolume !== null && Number.isFinite(Number(storedVolume))) audioVolume = Math.max(0,Math.min(1,Number(storedVolume)));
@@ -188,12 +195,47 @@ function showError(error) {
 function canWalk(x, z, feet) {return navigation?.canWalk(x,z,feet) ?? false;}
 
 function updateNearbyInteractable() {
-  const next=mode==='exploring'?interactables.find(t=>(t.x-camera.position.x)**2+(t.z-camera.position.z)**2+((t.y||0)-(camera.position.y-1.75))**2<(t.radius??3.8)**2)||null:null;
-  if(currentTerminal===next)return;
+  const next=mode==='exploring'&&!publicLifts?.riding
+    ?publicLifts?.getInteraction(camera.position)||interactables.find(t=>(t.x-camera.position.x)**2+(t.z-camera.position.z)**2+((t.y||0)-(camera.position.y-1.75))**2<(t.radius??3.8)**2)||null:null;
+  const hint=next?.hint||'Read terminal';
+  if(currentTerminal===next&&lastInteractionLabel===hint)return;
   currentTerminal=next;
+  lastInteractionLabel=hint;
   interactionHint.hidden=!next;
   touchInteract.hidden=!next;
-  interactionLabel.textContent=next?.hint||'Read terminal';
+  interactionLabel.textContent=hint;
+  touchInteract.setAttribute('aria-label',hint);
+}
+
+function liftStateChanged() {
+  if(!publicLifts||!camera||disposed)return;
+  const riding=publicLifts.riding;
+  if(lastLiftRide&&!riding&&mode==='exploring')toast(`LANTERN LIFT / ${concourseLevelAt(camera.position.y-1.75).label.toUpperCase()}`);
+  lastLiftRide=riding;
+  currentTerminal=null;
+  if(ready)updateNearbyInteractable();
+}
+
+function cancelPublicRide() {
+  selectedLift=null;lastLiftRide=false;
+  publicLifts?.cancelRide(controls);
+}
+
+function useLift(interaction) {
+  if(interaction.action==='call') {
+    const result=publicLifts.call(interaction.shaftId,interaction.levelId,{reducedMotion});
+    toast(result.message);
+    return;
+  }
+  selectedLift={shaftId:interaction.shaftId,levelId:interaction.levelId};
+  $('#lift-title').textContent=PUBLIC_LIFT_SHAFTS.find(shaft=>shaft.id===interaction.shaftId)?.name||'Lantern lift';
+  $('#lift-current').textContent=`YOU ARE ON DECK ${String(CONCOURSE_LEVELS.find(level=>level.id===interaction.levelId)?.number||1).padStart(2,'0')}`;
+  for(const button of document.querySelectorAll('[data-lift-level]')){
+    const current=button.dataset.liftLevel===interaction.levelId;
+    button.disabled=current;
+    if(current)button.setAttribute('aria-current','location');else button.removeAttribute('aria-current');
+  }
+  openDialog('#lift-dialog');
 }
 
 function resizeViewport() {
@@ -290,6 +332,7 @@ function beginExploring() {
   $('#transition').classList.remove('active');
   closeAllDialogs(false);
   mode = 'exploring';
+  cancelPublicRide();
   document.body.classList.add('exploring');
   $('#arrival').hidden = true;
   $('#exploration').hidden = false;
@@ -304,6 +347,7 @@ function returnToArrival() {
   clearTimeout(transitTimer);
   $('#transition').classList.remove('active');
   mode = 'arrival';
+  cancelPublicRide();
   effectContext.sector='concourse';
   closeAllDialogs(false);
   releaseMouse();
@@ -340,6 +384,7 @@ function openDialog(id) {
 
 function interact() {
   if (mode !== 'exploring' || !currentTerminal) return;
+  if(currentTerminal.shaftId){useLift(currentTerminal);return;}
   $('#terminal-code').textContent = currentTerminal.code;
   $('#terminal-title').textContent = currentTerminal.title;
   $('#terminal-body').innerHTML = currentTerminal.text.map(p => `<p>${p}</p>`).join('');
@@ -373,7 +418,11 @@ async function init() {
 
   station = createStation();
   districts = createDistricts();
-  navigation = createNavigation({surfaces:[...station.surfaces,...districts.layouts.flatMap(layout=>layout.surfaces.map(surface=>({...surface,sector:layout.id})))],colliders});
+  publicLifts=createPublicLifts({onStateChange:liftStateChanged});
+  colliders.push(...publicLifts.colliders);
+  const districtSurfaces=districts.layouts.flatMap(layout=>layout.surfaces.map(surface=>({...surface,sector:layout.id})));
+  navigation = createNavigation({surfaces:[...station.surfaces,...publicLifts.surfaces,...districtSurfaces],colliders});
+  journeyNavigation=createNavigation({surfaces:[...(station.journeySurfaces||station.surfaces),...districtSurfaces],colliders});
   for (const layout of districts.layouts) {
     if(layout.spawn)Object.assign(sectors[layout.id],layout.spawn);
     if(layout.terminal)Object.assign(terminalData[layout.id==='market'?2:layout.id==='docks'?3:1],layout.terminal);
@@ -392,7 +441,7 @@ async function init() {
       speaker: event.caption.slice(0, divider), lines: [event.caption.slice(divider + 3)],
     });
   }
-  scene.add(station.group, districts.group, furnishings.group, atmosphere.group, commerce.group, stationLife.group, importedModels.group);
+  scene.add(station.group, districts.group, furnishings.group, atmosphere.group, commerce.group, stationLife.group, importedModels.group, publicLifts.group);
   colliders.push(...station.colliders, ...districts.colliders, ...furnishings.colliders, ...commerce.colliders, ...stationLife.colliders, ...importedModels.colliders);
   const tradeNotices = {
     'Night Market Tea': 'Six mismatched cups wait beside a pressure-sealed kettle. The handwritten price is crossed out in three different scripts. The seller appears to accept stories as a fourth currency.',
@@ -411,7 +460,7 @@ async function init() {
     text:Array.isArray(landmark.text)?landmark.text:[landmark.text],
   });
   buildTerminals({importedComputer: importedModels.loaded.computer});
-  population = createPopulation({districtLayouts:districts.layouts,promenadeRoutes:station.routes,navigation});
+  population = createPopulation({districtLayouts:districts.layouts,promenadeRoutes:station.routes,navigation:journeyNavigation});
   scene.add(population.group);
   stationPlan=createStationPlan(navigation);
   audio = createAmbientAudio({volume:audioVolume,footstepsEnabled,onStateChange:syncAudioControls});
@@ -441,6 +490,7 @@ async function init() {
     previousTime = now;
     if (document.hidden) return;
     elapsed += dt;
+    publicLifts.update(dt,{camera,controls,mode,reducedMotion});
     if (mode === 'arrival') {
       const drift = reducedMotion ? 0 : Math.sin(elapsed * .075);
       camera.position.set(12.5 + drift * .65, 10.5 + drift * .2, 66);
@@ -451,7 +501,8 @@ async function init() {
         updateSector();
         updateNearbyInteractable();
         if (frameCount % 8 === 0) {
-          const deck=activeSector==='concourse'&&camera.position.y>7?'DECK 02 / PUBLIC PROMENADE':activeSector==='observation'&&camera.position.x>64?'PANORAMIC TERRACE':activeSector==='market'?'EXCHANGE STREETS':activeSector==='docks'?'BOARDING PIERS':'DECK 01 / PUBLIC DECK';
+          const level=concourseLevelAt(camera.position.y-1.75);
+          const deck=publicLifts.riding?'LANTERN LIFT / LOOK AROUND':activeSector==='concourse'?`DECK ${String(level.number).padStart(2,'0')} / ${level.short}`:activeSector==='observation'&&camera.position.x>64?'PANORAMIC TERRACE':activeSector==='market'?'EXCHANGE STREETS':activeSector==='docks'?'BOARDING PIERS':'DECK 01 / PUBLIC DECK';
           if(deck!==lastDeckLabel){$('#deck-name').textContent=`PORT FREECOMMERCE / ${deck}`;lastDeckLabel=deck;}
           const heading = ((-THREE.MathUtils.radToDeg(controls.yaw) % 360) + 360) % 360;
           const cardinal = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'][Math.round(heading / 45) % 8];
@@ -467,7 +518,7 @@ async function init() {
     importedModels.update(dt, elapsed, effectContext);
     atmosphere.update(dt, elapsed, effectContext);
     updateConversations(dt);
-    effectContext.mode = mode;
+    effectContext.mode = publicLifts.riding?'riding':mode;
     effectContext.yaw = mode === 'arrival' ? camera.rotation.y : controls.yaw;
     effectContext.serviceTime = stationLife.serviceTime;
     audio.update(camera.position, elapsed, effectContext);
@@ -501,6 +552,9 @@ async function init() {
     get state() { return {ready, mode, sector: activeSector, visited: [...visited], position: camera.position.toArray(), yaw: controls.yaw, floorHeight:navigation.heightAt(camera.position.x,camera.position.z,camera.position.y-1.75), drawCalls: renderer.info.render.calls, triangles: renderer.info.render.triangles, points: renderer.info.render.points, textures: renderer.info.memory.textures, geometries: renderer.info.memory.geometries, resolution:{pixelRatio:renderer.getPixelRatio(),width:canvas.width,height:canvas.height,composerWidth:composer.renderTarget1.width,composerHeight:composer.renderTarget1.height}, atmosphere: atmosphere.stats, furnishings: furnishings.stats, population: population.stats, commerce: commerce.stats, stationLife: stationLife.stats, importedModels: importedModels.stats, architecture:districts.layouts.map(({id,stats})=>({id,...stats})), concourse:station.stats, conversations: shownConversations, sound: audio.enabled, audio:audio.stats}; },
     get places() { return interactables.map(item => ({name: item.title || item.code, x: item.x, z: item.z, radius: item.radius || 3.8})); },
     get npcBehavior() { return {population:population.behaviorSnapshot ?? [], commuters:districts.behaviorSnapshot ?? []}; },
+    get lifts() { return publicLifts.snapshot; },
+    get publicLiftStats() { return publicLifts.stats; },
+    get concourseLevels() { return CONCOURSE_LEVELS.map(level=>({...level})); },
     canWalk,
     heightAt:navigation.heightAt,
     get floors(){return navigation.surfaces.map(s=>({...s}));},
@@ -538,6 +592,7 @@ document.querySelectorAll('[data-sector]').forEach(button => button.addEventList
   $('#transition').classList.add('active');
   clearTimeout(transitTimer);
   transitTimer = setTimeout(() => {
+    cancelPublicRide();
     controls.teleport(sector.position, sector.yaw);
     mode = 'exploring';
     controls.setActive(true);
@@ -546,6 +601,19 @@ document.querySelectorAll('[data-sector]').forEach(button => button.addEventList
     $('#transition').classList.remove('active');
     toast(`STATION TRANSIT / ${sector.name.toUpperCase()}`);
   }, reducedMotion ? 20 : 380);
+}));
+
+document.querySelectorAll('[data-lift-level]').forEach(button=>button.addEventListener('click',()=>{
+  if(!selectedLift||!publicLifts)return;
+  const shaftId=selectedLift.shaftId,levelId=button.dataset.liftLevel;
+  closeAllDialogs();
+  const result=publicLifts.startRide(shaftId,levelId,controls,{reducedMotion});
+  selectedLift=null;
+  if(result.ok&&reducedMotion){$('#transition').classList.add('active');clearTimeout(transitTimer);transitTimer=setTimeout(()=>$('#transition').classList.remove('active'),180);}
+  lastLiftRide=publicLifts.riding;
+  updateNearbyInteractable();
+  toast(result.message);
+  if(!isTouch)controls.requestLock();
 }));
 
 $('#sound-button').addEventListener('click', () => toggleAudio(!audio?.enabled));
@@ -607,6 +675,9 @@ window.addEventListener('pagehide', event => {
   pixelRatioQuery?.removeEventListener('change',handlePixelRatioChange);
   clearTimeout(toastTimer);
   clearTimeout(transitTimer);
+  publicLifts?.cancelRide(controls);
+  publicLifts?.dispose();
+  stationPlan?.dispose?.();
   controls?.dispose();
   audio?.dispose();
   atmosphere?.dispose();

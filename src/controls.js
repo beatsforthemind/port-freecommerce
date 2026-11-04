@@ -28,6 +28,7 @@ export function createFirstPersonControls(camera, canvas, {
   let joystickY = 0;
   let disposed = false;
   let reducedMotionOverride = null;
+  let ride = null;
 
   const keys = new Set();
   const removeListeners = [];
@@ -174,6 +175,11 @@ export function createFirstPersonControls(camera, canvas, {
   const api = {
     update(dt) {
       if (!active || disposed) return;
+      if (ride) {
+        camera.position.set(ride.x,ride.height+baseHeight,ride.z);
+        moving=false;
+        return;
+      }
       const delta = Math.min(0.05, Math.max(0, dt));
       let strafe = Number(keys.has('KeyD') || keys.has('ArrowRight')) -
         Number(keys.has('KeyA') || keys.has('ArrowLeft')) + joystickX;
@@ -233,6 +239,7 @@ export function createFirstPersonControls(camera, canvas, {
     },
     teleport(position, nextYaw = 0) {
       clearInput();
+      ride=null;
       baseHeight = 1.75;
       const requestedFloor = Number.isFinite(position[1]) ? position[1] - baseHeight : 0;
       const floor = heightAt(position[0],position[2],requestedFloor);
@@ -242,6 +249,26 @@ export function createFirstPersonControls(camera, canvas, {
       pitch = 0;
       camera.rotation.set(0, yaw, 0, 'YXZ');
     },
+    beginRide({x=camera.position.x,z=camera.position.z,height=groundHeight}={}) {
+      if(disposed||![x,z,height].every(Number.isFinite))return false;
+      clearInput();ride={x,z,height};groundHeight=height;
+      camera.position.set(x,height+baseHeight,z);
+      return true;
+    },
+    setRideHeight(height) {
+      if(disposed||!ride||!Number.isFinite(height))return false;
+      ride.height=height;groundHeight=height;moving=false;
+      // Carry remains exact while a pause/menu has disabled ordinary controls.
+      camera.position.set(ride.x,height+baseHeight,ride.z);
+      return true;
+    },
+    endRide({height=ride?.height??groundHeight}={}) {
+      if(!Number.isFinite(height))return false;
+      clearInput();groundHeight=height;
+      if(ride)camera.position.set(ride.x,height+baseHeight,ride.z);
+      ride=null;return true;
+    },
+    cancelRide() { return api.endRide(); },
     setActive(value) {
       active = Boolean(value) && !disposed;
       if (!active) api.unlock();
@@ -251,12 +278,14 @@ export function createFirstPersonControls(camera, canvas, {
     },
     dispose() {
       api.unlock();
+      ride=null;
       disposed = true;
       removeListeners.forEach(remove => remove());
     },
     get yaw() { return yaw; },
     get moving() { return moving; },
     get locked() { return locked; },
+    get riding() { return Boolean(ride); },
   };
   return api;
 }

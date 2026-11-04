@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { applyIndustrialSurface, createSurfaceLibrary } from './surfaces.js';
 import { buildConcourseAccess, RAMP_NORTH, RAMP_SOUTH } from './concourse-access.js';
+import { PUBLIC_LIFT_SHAFTS } from './concourse-levels.js';
 
 // Multiple station instances can share the cached atlas during previews/tests.
 const surfaceUsers = new Map();
@@ -143,11 +144,19 @@ export function createStation() {
       const first = level === 7.2;
       const spans = first ? [[-130,RAMP_NORTH],[RAMP_SOUTH,100]] : [[-130,100]];
       for (const [a,b] of spans) {
-        box(materials.rib,side*26.5,level,(a+b)/2,11,.85,b-a);
-        box(materials.dark,side*26.5,level-.5,(a+b)/2,11,.32,b-a);
+        const shaft=PUBLIC_LIFT_SHAFTS.find(item=>item.side===side);
+        function slab(material,y,thickness) {
+          const before=Math.min(b,shaft.minZ),after=Math.max(a,shaft.maxZ);
+          if(before>a)box(material,side*26.5,y,(a+before)/2,11,thickness,before-a);
+          if(b>after)box(material,side*26.5,y,(after+b)/2,11,thickness,b-after);
+          const low=Math.max(a,shaft.minZ),high=Math.min(b,shaft.maxZ);
+          if(high>low)for(const [inner,outer]of[[21,26.7],[30.3,32]])box(material,side*(inner+outer)/2,y,(low+high)/2,outer-inner,thickness,high-low);
+        }
+        slab(materials.rib,level,.85);
+        slab(materials.dark,level-.5,.32);
         box(materials.amber,side*20.9,level+.05,(a+b)/2,.1,.14,b-a);
       }
-      const rails = first ? [[-130,-103],[-97,45],[51,RAMP_NORTH],[RAMP_SOUTH,100]] : [[-130,100]];
+      const rails = first ? [[-130,-103],[-97,45],[51,RAMP_NORTH],[RAMP_SOUTH,100]] : [[-130,-87],[-81,17],[23,100]];
       for (const [a,b] of rails) {
         box(materials.edge,side*21.2,level+1.5,(a+b)/2,.11,.11,b-a);
         box(materials.edge,side*21.2,level+.75,(a+b)/2,.07,.07,b-a);
@@ -348,7 +357,7 @@ export function createStation() {
   const starGeometry=new THREE.BufferGeometry(); starGeometry.setAttribute('position',new THREE.Float32BufferAttribute(starPositions,3));
   group.add(new THREE.Points(starGeometry,new THREE.PointsMaterial({color:'#c0d0cc',size:1.0,sizeAttenuation:true,transparent:true,opacity:.7,depthWrite:false,fog:false})));
 
-  const access = buildConcourseAccess({group,box,beam,text,materials});
+  const access = buildConcourseAccess({group,box,beam,text,materials,colliders});
   for (const [mat, transforms] of batches) {
     const mesh = new THREE.InstancedMesh(new THREE.BoxGeometry(1,1,1), mat, transforms.length);
     transforms.forEach((matrix, i) => mesh.setMatrixAt(i,matrix));
@@ -361,7 +370,7 @@ export function createStation() {
     const light = new THREE.PointLight(color,power,45,1.3); light.position.set(x,5,z); group.add(light); driftLights.push(light);
   }
   return {
-    group, colliders, surfaces:access.surfaces, landmarks:access.landmarks, routes:access.routes, stats:access.stats,
+    group, colliders, surfaces:access.surfaces, journeySurfaces:access.journeySurfaces, landmarks:access.landmarks, routes:access.routes, stats:access.stats,
     update(dt,_time,context = {}) {
       if (disposed || context.reducedMotion) return;
       // A local clock pauses motion rather than jumping to wall time on resume.

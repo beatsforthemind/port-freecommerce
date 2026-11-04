@@ -32,6 +32,7 @@ From this folder, run `vercel` for a preview deployment, then `vercel --prod` wh
 - **WASD / arrows:** walk. **Shift:** move faster.
 - **Mouse:** look around. If pointer lock is unavailable, click and drag the scene.
 - **E:** read nearby public information terminals.
+- **E by a lantern lift:** call it; step inside and press **E** again to choose a deck. The touch interaction button does the same.
 - **E near independent traders:** inspect their wares and discover short environmental stories.
 - **M:** open the sector map and transit between sectors.
 - **H / ?:** controls and reduced camera motion.
@@ -43,7 +44,7 @@ Four physically connected sectors are walkable: the monumental concourse, the pl
 
 The sectors now have distinct architecture and circulation:
 
-- **Concourse:** two long amber-edged ramps climb to the public promenade, 7.625 m above the main deck. Two bridges connect the side galleries. The map also offers transit directly upstairs.
+- **Concourse:** panoramic lantern lifts connect four public decks, from street-level arrivals to the express overlook. Amber ramps climb to the promenade, outer sunwalks reach the Arrivals balconies, and two new skybridges connect the Lantern Galleries. The map offers direct transit to every deck.
 - **Observation:** a narrow vestibule opens into a faceted fan with reading alcoves, roof petals, and panoramic glazing. A broad ramp rises 2.8 m toward the planet-facing terrace.
 - **Exchange:** low overlapping canopies shelter a winding street around irregular shop islands. Follow the bends to the common table, food stalls, and repair lane.
 - **Docks:** customs opens into a tall octagonal holding hall. Three glazed piers branch toward the local shuttle, long-haul liner, and freight tender.
@@ -61,6 +62,9 @@ Travelers follow each area's real routes; readers sit on both observation levels
 | `src/district-market.js` | Irregular bazaar, winding streets, canopies, shop islands, and common court |
 | `src/district-docks.js` | Octagonal departure hall, branching boarding piers, pressure locks, and ships |
 | `src/concourse-access.js` | Public promenade ramps, bridges, railings, and upper-level floor metadata |
+| `src/concourse-upper.js` | Lantern galleries, skybridges, express overlooks, and Arrivals sunwalks |
+| `src/concourse-levels.js` | Shared public floor heights and lift-shaft layout |
+| `src/public-lifts.js` | Rideable panoramic lift cars, landing gates, calls, and travel state |
 | `src/navigation.js` | Shared polygon floors, height sampling, vertical collisions, and sector classification |
 | `src/station-plan.js` | Station map generated from the real public floors |
 | `src/surfaces.js` | Cached procedural panel albedo/normal atlases with physically scaled UVs |
@@ -93,6 +97,8 @@ The traffic pass gives the overhead freight train a coupled three-wagon consist 
 The audio pass gives the concourse long reflections, the exchange a closer social atmosphere, the gallery a quiet bed, and the docks heavier ventilation and hull texture. Nearby freight, express cabins, service lifts, repair tools, and a market kettle change direction and level as you move. Footsteps follow actual movement and change with the deck surface. Transport cues share the visible service clock; muted and hidden pages suspend audio processing. Sound stays opt-in, with no recordings, network requests, or speech services. See [the audio experience](docs/audio-experience.md) for controls, resource budgets, and validation.
 
 The journey pass gives the existing inhabitants destinations and activities: passengers meet arrivals and wait at the docks, shoppers visit real counters, gallery visitors stop to watch the planet, and messengers make handovers. Four service units perform small station errands. Fourteen journeys connect sectors and two use the public promenade ramps. Walking follows continuous return paths, with acceleration, braking, turns, and strides paced by distance. Separate market lanes and coordinated timetables keep through traffic clear of waiting customers. The population retains its seven batches and the other commuters retain four; no assets or dependencies are added. See [NPC behavior](docs/npc-behavior.md) for routines, performance measurements, and validation.
+
+The vertical-access pass opens every concourse floor: the public deck, promenade, Lantern Galleries, and Express Overlook. Two rideable lantern lifts beside the northern rest bays provide continuous first-person travel with free look. New bridges and guarded walks connect the upper galleries and the formerly isolated southern balcony caps. Reduced motion offers quick travel, and the floor-aware map provides direct deck transit. Existing NPC routes and timings remain identical. See [concourse access](docs/concourse-access.md) for routes, controls, safety checks, and rendering costs.
 
 The imported foreground models are **Animated Robot**, **Scifi Computer**, **Tree Spiral**, and **Cooking Pot** by Quaternius, downloaded from Poly Pizza under CC0. The service unit uses its supplied idle animation. Repeated consoles, plants, and pots share geometry and materials. Selected terminal bodies, planter growth, specimen branches, and cookware proxies are omitted only after their replacement asset loads successfully; otherwise the procedural versions remain available. Creator/source links and exact file inspection records are in [model assets](docs/model-assets.md), [machine-readable metadata](docs/model-assets.json), and the in-app Controls credits link. Run `node scripts/inspect-glb.mjs public/models/poly-pizza/*.glb` to inspect the original files again.
 

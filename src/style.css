@@ -29,3 +29,30 @@
 .audio-volume:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
 .audio-note{margin:6px 0 0;font-size:10px;line-height:1.7;color:#aebfaf}
 .touch-device .audio-volume{height:44px}
+
+.deck-filters{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:18px 0 14px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.deck-filters button{min-width:36px;min-height:34px;padding:8px;color:#b9c9bc;font-size:10px;border:1px solid transparent}
+.deck-filters button[aria-pressed=true]{border-color:#d7b48688;background:#d7b48612;color:#edc898}
+.deck-filters>span{margin-left:auto;font-size:8px;letter-spacing:1px;color:#c9bda7}
+.concourse-decks{margin-top:22px;padding-top:16px;border-top:1px solid var(--line)}
+.concourse-decks>p{font-size:8px;margin:0 0 10px;color:#cdb18d}
+.deck-transit-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 24px}
+.deck-transit-list button{display:flex;align-items:center;gap:10px;min-height:48px;text-align:left;border-bottom:1px solid var(--line)}
+.deck-transit-list button>span{font-size:9px;color:#cba77f}
+.deck-transit-list strong{font-size:11px;font-weight:400;line-height:1.5}
+.deck-transit-list b{margin-left:auto;color:var(--amber);font-size:17px;font-weight:400}
+.deck-transit-list button:hover strong{color:var(--amber)}
+.lift-dialog{width:540px}
+.lift-current{font-size:9px;letter-spacing:1.2px;color:#d5b48c;margin:16px 0}
+.lift-destinations button{display:flex;align-items:center;gap:18px;width:100%;min-height:80px;padding:16px 0;text-align:left;border-bottom:1px solid var(--line)}
+.lift-destinations button>span:first-child{font-size:13px;color:#cfaf86}
+.lift-destinations strong{display:block;font-size:14px;font-weight:400;color:#e1e5d7}
+.lift-destinations small{display:block;font-size:10px;line-height:1.6;margin-top:5px;color:#adbdaf}
+.lift-destinations b{margin-left:auto;color:var(--amber);font-size:20px;font-weight:400}
+.lift-destinations button:hover strong{color:var(--amber)}
+.lift-destinations button:disabled{cursor:default;opacity:.45}
+.lift-note{font-size:10px;line-height:1.7;color:#b5c5b6;margin:20px 0 0}
+.touch-device .deck-filters button{min-width:44px;min-height:44px}
+.station-map .station-plan-live .plan-lift-label{font-size:4px}
+@media(min-width:701px){.map-dialog .station-plan-live{height:300px;max-height:300px}}
+@media(max-width:700px){.map-dialog .station-map{display:block}.map-dialog .station-plan-live{height:220px;max-height:220px}.deck-filters>span{width:100%;margin:5px 0 0}.deck-transit-list{gap:0 14px}.deck-transit-list strong{font-size:10px}.lift-destinations button{gap:13px}.lift-destinations strong{font-size:13px}.lift-destinations small{font-size:9px}}
