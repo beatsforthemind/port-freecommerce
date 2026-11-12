@@ -55,7 +55,7 @@ export function buildConcourseAccess({group, box, beam, text, materials,collider
   ramps.forEach(g=>g.dispose()); deck.name='Two public promenade ramps';group.add(deck);
   for (const z of [48,-100]) {
     box(materials.rib,0,h-.22,z,45,.44,6);
-    box(materials.dark,0,h-.56,z,45,.24,5.7);
+    box(materials.soffit,0,h-.56,z,45,.24,5.7);
     surfaces.push({sector:'concourse',minX:-23.1,maxX:23.1,minZ:z-2.72,maxZ:z+2.72,height:h});
     for (const edge of [-1,1]) {
       box(materials.edge,0,h+1.15,z+edge*2.85,43,.1,.1);
@@ -64,7 +64,7 @@ export function buildConcourseAccess({group, box, beam, text, materials,collider
     }
     for (const x of [-18,18]) beam(materials.rib,[x,h-.45,z],[Math.sign(x)*25,h-2.7,z],.34);
   }
-  text('ARRIVALS  ⇄  TRANSFERS',0,h-.75,51.2,16,1.0,{color:'#e5c397',size:70});
+  const arrivalsFascia=text('ARRIVALS  ⇄  TRANSFERS',0,h-.75,51.2,16,1.0,{color:'#e5c397',size:70});
   text('ALL GATES  /  FOLLOW THE SPINE',0,h-.75,-96.8,17,1.0,{color:'#e5c397',size:70});
   // Authored resident itineraries retain their original floor interpretation;
   // the public lift/cap additions are for the first-person navigation view.
@@ -73,7 +73,7 @@ export function buildConcourseAccess({group, box, beam, text, materials,collider
   surfaces.push(...upper.surfaces);
   const escalators=buildEscalatorAccess({box,beam,materials,colliders});
   surfaces.push(...escalators.surfaces);
-  return {surfaces,journeySurfaces,landmarks:[
+  return {surfaces,journeySurfaces,titleCardHidden:[arrivalsFascia],landmarks:[
     {x:24,z:45,y:h,radius:3.5,title:'A city between departures.',code:'PFC / PUBLIC PROMENADE',hint:'Look out over the concourse',text:['The public promenade joins both sides of the interchange. Follow the long amber ramps near Arrivals to return to the passenger deck.','From here, every queue becomes a small moving constellation. The station processes a million journeys. It keeps very few of their names.']},
     ...upper.landmarks,
     ...escalators.landmarks,
@@ -101,7 +101,7 @@ function buildEscalatorAccess({box,beam,materials:m,colliders}) {
     // New balconies touch the existing slab at x +/-21 without coplanar faces.
     const floorX=side*(17.3+21)/2;
     box(m.rib,floorX,height-.12,topZ-1.4,3.7,.24,2.8);
-    box(m.dark,floorX,height-.30,topZ-1.4,3.5,.12,2.6);
+    box(m.soffit,floorX,height-.30,topZ-1.4,3.5,.12,2.6);
     surfaces.push({sector:'concourse',level:'promenade',escalatorLanding:flight.id,...landing});
     box(m.rib,supportX,(height-.24)/2,topZ-1.4,.22,height-.24,.24);
     solid(supportX,topZ-1.4,.25,.27,0,height-.24);

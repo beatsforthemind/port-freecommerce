@@ -2,7 +2,9 @@ import * as THREE from 'three';
 import { sectorAt } from './navigation.js';
 import {createHumanHeadGeometry,createHumanTorsoGeometry,createHumanLimbGeometry,HUMAN_PALETTE,HUMAN_PROFILE} from './humanoid.js';
 import {createJourneyPlanner,sampleJourney} from './population-behavior.js';
-import {applyPopulationTimetable} from './population-timetable.js';
+import {applyPopulationTimetable,CROWD_PACE} from './population-timetable.js';
+import {createContactShadows} from './contact-shadows.js';
+import {castsRealShadow} from './lighting.js';
 import {TRAVEL_PACK_PARTS,travelPackPieceColor} from './travel-gear.js';
 
 /**
@@ -44,6 +46,10 @@ export function createPopulation({districtLayouts = [], promenadeRoutes = [], na
   const journeys=[];
   const invalidJourneys=[];
   let travelPacks=0;
+  // Radians of gait per metre: a 0.68 m step, about 115 steps a minute at walking pace.
+  const STRIDE=4.6;
+  // The body root leans in its own frame, so idle sway never fights the heading.
+  const root=new THREE.Object3D();root.rotation.order='YXZ';
 
   function actor(x, z, options = {}) {
     // Standing visitors belong in public aisles, seated readers in their seats.
@@ -56,7 +62,10 @@ export function createPopulation({districtLayouts = [], promenadeRoutes = [], na
     const record = {id:`resident-${actors.length}`,x, z, baseX: x, baseZ: z, yaw: options.yaw || 0, scale: options.scale || .89 + random() * .24,
       height: options.height || .94 + random() * .13, phase: random() * Math.PI * 2,
       speed: .43 + random() * .37, ...options, matrix: new THREE.Matrix4(), parts: [],
-      sector: sectorIndex(x,z), detailed: true};
+      sector: sectorIndex(x,z), detailed: true,
+      // Awareness of the visitor: hold is the pace multiplier, owed is timetable
+      // time to win back, look is the head turn, lively marks nearby idle motion.
+      hold: 1, owed: 0, waited: 0, ignore: 0, look: 0, lively: false};
     actors.push(record);
     return record;
   }
@@ -92,7 +101,7 @@ export function createPopulation({districtLayouts = [], promenadeRoutes = [], na
     const shift=a.seatedShift;
     const breadth=workwear?1.055:1;
     part(a,'torso',coat,0,HUMAN_PROFILE.torsoY+shift,0,.49*breadth,.55,.29,seated?.06:0);
-    part(a,'head',face,0,HUMAN_PROFILE.headY+shift,seated?.032:0,...HUMAN_PROFILE.headScale,seated?.14:0,(index%5-2)*.035);
+    a.headPart=part(a,'head',face,0,HUMAN_PROFILE.headY+shift,seated?.032:0,...HUMAN_PROFILE.headScale,seated?.14:0,(index%5-2)*.035);
     // A short exposed neck connects the shaped collar to the jaw. Main heads,
     // necks and endpoint pieces are essential at every accessory LOD.
     part(a,'limb',face,0,1.49+shift,0,.096,.10,.096);
@@ -139,8 +148,8 @@ export function createPopulation({districtLayouts = [], promenadeRoutes = [], na
     for(let limb=0;limb<2;limb++) {
       const side=limb===0?-1:1,base=limb*18;
       const swing=a.route?gait*side:0;
-      const thigh=swing*.27;
-      const calf=thigh+.035+Math.max(0,swing)*.36;
+      const thigh=swing*.35;
+      const calf=thigh+.035+Math.max(0,swing)*.47;
       const hip=.88+shift;
       setJoint(j,base,side*.105,hip,0);
       let kneeY,kneeZ,ankleY,ankleZ;
@@ -175,7 +184,7 @@ export function createPopulation({districtLayouts = [], promenadeRoutes = [], na
         setJoint(j,base+12,-.285,1.105,.08);
         setJoint(j,base+15,-.24,1.22+gesture,.285);
       } else {
-        const upper=-swing*.21,lower=upper-.13;
+        const upper=-swing*.27,lower=upper-.13;
         const elbowY=1.38-Math.cos(upper)*.285;
         const elbowZ=-Math.sin(upper)*.285;
         setJoint(j,base+12,side*.282,elbowY,elbowZ);
@@ -379,6 +388,12 @@ export function createPopulation({districtLayouts = [], promenadeRoutes = [], na
     group.add(mesh);
   }
 
+  // People outside the shadow map (or all of them, without it) get a soft blob.
+  const contact=createContactShadows(actors.length,'Passing lives / contact shadows');
+  group.add(contact.mesh);
+  const LEVELS=[0,2.8,7.625,17.625,23.36];
+  const onIncline=level=>!LEVELS.some(height=>Math.abs(level-height)<.02);
+
   let simulationTime = 0;
   let uploadTime = 0;
   let lastUpdate = -Infinity;
@@ -432,12 +447,52 @@ export function createPopulation({districtLayouts = [], promenadeRoutes = [], na
       p.matrix.copy(transform.matrix);
     }
   }
+  /**
+   * Residents stop for a visitor standing in their way, then make the time up.
+   * The return value scales their own clock, so the timetable they share with
+   * everyone else is left only briefly and rejoined exactly.
+   */
+  function paceAround(a, visitor, visitorFloor, dt) {
+    let blocked=false;
+    if(visitor&&a.walkWeight>.15&&a.ignore<=0&&Math.abs((a.floor||0)-visitorFloor)<1.2) {
+      const dx=visitor.x-a.x,dz=visitor.z-a.z;
+      if(dx*dx+dz*dz<3.4) {
+        const fx=Math.sin(a.yaw),fz=Math.cos(a.yaw),ahead=dx*fx+dz*fz;
+        blocked=ahead>.05&&ahead<1.7&&Math.abs(dx*fz-dz*fx)<.62;
+      }
+    }
+    if(blocked) {
+      // Patience runs out: after a few seconds they edge past regardless.
+      a.waited+=dt;
+      if(a.waited>4.5){a.ignore=4;a.waited=0;blocked=false;}
+    } else a.waited=Math.max(0,a.waited-dt*2);
+    if(a.ignore>0)a.ignore-=dt;
+    a.hold+=((blocked?0:1)-a.hold)*(1-Math.exp(-dt*7));
+    if(a.hold>.999)a.hold=1;
+    if(a.hold===1&&a.owed<=0)return 1;
+    // Lost time is repaid at up to thirty per cent over the usual pace.
+    const rate=a.hold*(1+Math.min(.3,a.owed));
+    a.owed=Math.max(0,a.owed+dt*(1-rate));
+    return rate;
+  }
+  /** A visitor cannot walk through someone, but can always step away from them. */
+  function obstructs(x, z, feet, fromX, fromZ) {
+    for(const a of actors) {
+      if(a.pose==='seated')continue;
+      const dx=x-a.x,dz=z-a.z,distance=dx*dx+dz*dz;
+      if(distance>.3||Math.abs((a.floor||0)-feet)>1.2)continue;
+      const px=fromX-a.x,pz=fromZ-a.z;
+      if(distance<px*px+pz*pz)return true;
+    }
+    return false;
+  }
   function update(dt, _time, context = {}) {
     if (disposed) return;
     const delta = Math.max(0, Math.min(dt, .1));
     uploadTime += delta;
     if (!context.reducedMotion) simulationTime += delta;
     if (initialized && uploadTime - lastUpdate < .05) return;
+    const step = Math.min(.25, Math.max(0, uploadTime - lastUpdate));
     lastUpdate = uploadTime;
     const eye = context.camera?.position;
     if (initialized && context.reducedMotion && lastReduced
@@ -448,36 +503,76 @@ export function createPopulation({districtLayouts = [], promenadeRoutes = [], na
     lastCameraZ = eye?.z ?? NaN;
     const view = eye ? sectorIndex(eye.x,eye.z) : -1;
     const behaviorDelta=simulationTime-lastBehaviorTime;lastBehaviorTime=simulationTime;
+    // The visitor is only a presence once they are walking the station.
+    const visitor = eye && context.mode && context.mode !== 'arrival' ? eye : null;
+    const visitorFloor = visitor ? visitor.y - 1.75 : 0;
+    const lively = !context.reducedMotion;
+    const ease = 1 - Math.exp(-step * 5);
     visibleActors = detailedActors = submittedTriangles = 0;
     for (const type of renderTypes) {type.count = 0; type.colorChanged = false;}
+    contact.begin();
     for (const a of actors) {
-      if(a.journey){a.journeyClock+=behaviorDelta;sampleJourney(a.journey,a.journeyClock,a);}
+      if(a.journey){
+        a.journeyClock+=behaviorDelta*CROWD_PACE*paceAround(a,visitor,visitorFloor,behaviorDelta);
+        sampleJourney(a.journey,a.journeyClock,a);
+      }
       a.sector=sectorIndex(a.x,a.z);
       // Height and behavior keep advancing while a room is hidden. Reappearing
       // on the public ramp must not choose the lower floor under the balcony.
       const floor=navigation?.heightAt(a.x,a.z,a.floor)??0;
       if(Number.isFinite(floor))a.floor=floor;
-      const gait = a.journey?Math.sin(a.travelDistance*6.6+a.phase)*a.walkWeight:0;
+      // A walker who stops for someone brings their feet together as they slow.
+      const gait = a.journey?Math.sin(a.travelDistance*STRIDE+a.phase)*a.walkWeight*Math.min(1,a.hold):0;
       a.gait=gait;
       if (eye && !visibleFromRoom(a, view, eye.x, eye.z)) continue;
       visibleActors++;
+      if(a.pose!=='seated'&&(!context.shadows||!castsRealShadow(a.x,a.z))) {
+        const level=a.floor||0;
+        let tiltX=0,tiltZ=0;
+        if(navigation&&onIncline(level)) {
+          // Lay the blob on the ramp instead of letting the ramp cut through it.
+          const rise=navigation.heightAt(a.x+.4,a.z,level)-navigation.heightAt(a.x-.4,a.z,level);
+          const run=navigation.heightAt(a.x,a.z+.4,level)-navigation.heightAt(a.x,a.z-.4,level);
+          if(Number.isFinite(rise)&&Number.isFinite(run)){tiltZ=Math.atan2(rise,.8);tiltX=-Math.atan2(run,.8);}
+        }
+        contact.add(a.x,level,a.z,tiltX||tiltZ?0:a.yaw,.95*a.scale,1.15*a.scale,tiltX,tiltZ);
+      }
+      let distanceSquared = Infinity;
       if (eye) {
-        const distanceSquared = (eye.x - a.x) ** 2 + (eye.z - a.z) ** 2;
+        distanceSquared = (eye.x - a.x) ** 2 + (eye.z - a.z) ** 2;
         // Accessories disappear only at a sub-pixel distance, with hysteresis
         // to avoid repeated color repacking when someone stands near the cutoff.
         if (distanceSquared > 4900) a.detailed = false;
         else if (distanceSquared < 3600) a.detailed = true;
       } else a.detailed = true;
       if (a.detailed) detailedActors++;
+      // Within about thirty metres nobody is a statue: resting people shift
+      // their weight, and anyone the visitor comes close to may glance over.
+      a.lively = lively && distanceSquared < (a.lively ? 900 : 676);
+      const resting=(!a.route&&(a.pose==='seated'||a.pose==='standing'))||Boolean(a.journey&&a.walkWeight===0);
+      if(a.headPart) {
+        let target=0;
+        if(a.lively&&visitor&&distanceSquared<20.25&&Math.abs((a.floor||0)-visitorFloor)<1.5) {
+          const bearing=Math.atan2(eye.x-a.x,eye.z-a.z)-a.yaw,offset=Math.atan2(Math.sin(bearing),Math.cos(bearing));
+          if(Math.abs(offset)<1.25)target=Math.max(-.7,Math.min(.7,offset))*(a.walkWeight>.2?.55:1);
+        }
+        a.look+=(target-a.look)*ease;
+        if(!target&&Math.abs(a.look)<.003)a.look=0;
+      }
       const cache=a.poseCache;
-      const staticPose=Boolean(cache&&((!a.route&&(a.pose==='seated'||a.pose==='standing'))||(a.journey&&a.walkWeight===0)));
+      const staticPose=Boolean(cache&&resting&&!a.lively);
       if(cache&&!staticPose)cache.valid=false;
       if(!staticPose||!sameStaticPose(a,cache)) {
         if(staticPose)refreshSeatedLocals(a);
         const bob = a.joints?posePerson(a,gait,simulationTime):0;
         const seatOffset=a.seatOffset||0;
-        transform.position.set(a.x+Math.sin(a.yaw)*seatOffset,(a.floor||0)+bob,a.z+Math.cos(a.yaw)*seatOffset); transform.rotation.set(0,a.yaw,0); transform.scale.set(a.scale,a.scale*a.height,a.scale); transform.updateMatrix();
-        a.matrix.copy(transform.matrix);
+        let lean=0,nod=0;
+        if(a.lively&&a.joints&&(resting||a.pose==='talking')) {
+          lean=Math.sin(simulationTime*.9+a.phase*3.1)*.013;
+          nod=Math.sin(simulationTime*.63+a.phase*1.7)*.009;
+        }
+        root.position.set(a.x+Math.sin(a.yaw)*seatOffset,(a.floor||0)+bob,a.z+Math.cos(a.yaw)*seatOffset); root.rotation.set(nod,a.yaw,lean); root.scale.set(a.scale,a.scale*a.height,a.scale); root.updateMatrix();
+        a.matrix.copy(root.matrix);
         if(staticPose) {
           // Compute every accessory too, so later visibility/LOD repacking can
           // reuse the exact pose without leaving a newly shown slot at identity.
@@ -501,8 +596,9 @@ export function createPopulation({districtLayouts = [], promenadeRoutes = [], na
         else if (a.route && p.motion.startsWith('arm')) angle = gait * (p.motion === 'arm0' ? -.17 : .17);
         else if (a.route && p.motion.startsWith('shoe')) angle = gait * (p.motion === 'shoe0' ? .12 : -.12);
         else if (p.motion === 'gesture') angle = Math.sin(simulationTime * .75 + a.phase) * .13;
-        if (angle) {
-          transform.position.set(p.x,p.y,p.z); transform.rotation.set(p.rx+angle,p.ry,p.rz); transform.scale.set(p.sx,p.sy,p.sz); transform.updateMatrix();
+        const turn = p === a.headPart ? a.look : 0;
+        if (angle || turn) {
+          transform.position.set(p.x,p.y,p.z); transform.rotation.set(p.rx+angle,p.ry+turn,p.rz); transform.scale.set(p.sx,p.sy,p.sz); transform.updateMatrix();
           combined.multiplyMatrices(a.matrix,transform.matrix);
         } else combined.multiplyMatrices(a.matrix,p.matrix);
         type.mesh.setMatrixAt(slot,combined);
@@ -514,14 +610,15 @@ export function createPopulation({districtLayouts = [], promenadeRoutes = [], na
       if (type.colorChanged) type.mesh.instanceColor.needsUpdate = true;
       submittedTriangles += type.triangleCost * type.count;
     }
+    contact.end();
   }
   update(0,0);
   const stats = Object.freeze({actors:actors.length, travelers:56, seated:8, social:12, serviceUnits:4,pathRoutes,upperDeckTravelers:10, drawCalls:batches.size, triangles:triangleCount, updateHz:20, textures:0, lights:0, humanStyle:'tailored adult proportions / understated faces', humanHeadHeight:.26,travelPacks,accessoryStyle:'fitted upper-back packs / connected shoulder straps',
     get behavior(){const states={};for(const a of actors){const state=a.state||a.pose||'standing';states[state]=(states[state]||0)+1;}return{scheduledResidents:journeys.length,crossSectorJourneys:14,crossDeckJourneys:2,destinationStops:journeys.reduce((n,p)=>n+p.stops.length,0),invalidRoutes:[...invalidJourneys],states,planner:planner.stats,timetable};},
     get visibleActors(){return visibleActors;}, get submittedTriangles(){return submittedTriangles;}, get detailedActors(){return detailedActors;}});
   group.userData.population = stats;
-  return {group,update,stats,
-    get behaviorSnapshot(){return actors.map(a=>({id:a.id,journeyId:a.journey?.id||null,role:a.role||(a.pose==='seated'?'reader':a.pose==='talking'?'conversation partner':'local visitor'),state:a.state||a.pose||'standing',intent:a.intent||(a.pose==='seated'?'Reading while waiting':a.pose==='talking'?'Talking with a companion':'Looking over the nearby display'),x:a.x,z:a.z,floor:a.floor||0,yaw:a.yaw,speed:a.journey?a.speed:0,cruiseSpeed:a.journey?.speed||0,gait:a.gait||0,walkWeight:a.walkWeight||0,travelDistance:a.travelDistance||0,cycleDuration:a.journey?.duration||0,localTime:a.localTime||0,goal:a.goal?{x:a.goal.point[0],z:a.goal.point[1],intent:a.goal.intent,facing:a.goal.facing}:null}));},
+  return {group,update,stats,obstructs,
+    get behaviorSnapshot(){return actors.map(a=>({id:a.id,journeyId:a.journey?.id||null,role:a.role||(a.pose==='seated'?'reader':a.pose==='talking'?'conversation partner':'local visitor'),state:a.state||a.pose||'standing',intent:a.intent||(a.pose==='seated'?'Reading while waiting':a.pose==='talking'?'Talking with a companion':'Looking over the nearby display'),x:a.x,z:a.z,floor:a.floor||0,yaw:a.yaw,speed:a.journey?a.speed*CROWD_PACE*a.hold:0,cruiseSpeed:(a.journey?.speed||0)*CROWD_PACE,gait:a.gait||0,walkWeight:a.walkWeight||0,travelDistance:a.travelDistance||0,cycleDuration:a.journey?.duration||0,localTime:a.localTime||0,goal:a.goal?{x:a.goal.point[0],z:a.goal.point[1],intent:a.goal.intent,facing:a.goal.facing}:null}));},
     get behaviorPlans(){return journeys.map(p=>structuredClone(p));},
-    dispose(){if(disposed)return;disposed=true;for(const type of renderTypes){type.mesh.dispose();type.geometry.dispose();}for(const material of [cloth,skin,equipment,lights])material.dispose();group.clear();}};
+    dispose(){if(disposed)return;disposed=true;contact.dispose();for(const type of renderTypes){type.mesh.dispose();type.geometry.dispose();}for(const material of [cloth,skin,equipment,lights])material.dispose();group.clear();}};
 }

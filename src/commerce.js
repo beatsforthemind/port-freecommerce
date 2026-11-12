@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 
 /** Small independent traders make the port feel like a place people actually use. */
-export function createCommerce({importedTree = false, importedPot = false} = {}) {
+export function createCommerce({importedTree = false, importedPot = false, glow = null} = {}) {
   const group = new THREE.Group();
   group.name = 'FreeCommerce / independent traders';
   const colliders = [];
@@ -15,7 +15,7 @@ export function createCommerce({importedTree = false, importedPot = false} = {})
   const m = {
     dark: standard('#223236'), metal: standard('#768580'), clay: standard('#ac6f47'),
     green: standard('#697d70'), bone: standard('#c8bb98'),
-    glow: track(new THREE.MeshBasicMaterial({vertexColors: true, toneMapped: false})),
+    glow: track(new THREE.MeshBasicMaterial({vertexColors: true})),
   };
   m.glow.onBeforeCompile = shader => {
     shader.uniforms.uLife = time;
@@ -114,6 +114,7 @@ export function createCommerce({importedTree = false, importedPot = false} = {})
     for (const yy of [-.45, .45]) cylinder(m.dark, x, y + yy * size, z, .3 * size, .3 * size, .07, 8);
     sign(tile, x, y, z + .39 * size, .57 * size, .57 * size);
     sphere(m.glow, x, y - .51 * size, z, .11 * size, '#deb279');
+    glow?.point([x, y - .51 * size, z], .62 * size, '#deb279', .5);
   }
 
   // A migratory tea cart, assembled from mismatched freight parts and woven cloth.
@@ -148,6 +149,7 @@ export function createCommerce({importedTree = false, importedPot = false} = {})
   }
   for (const dx of [-2.35, 2.35]) lantern(teaX + dx, 3.3, teaZ + 2.03, .72, 4, 4.65);
   sign(0, teaX, 3.7, teaZ - 2.06, 4.2, 1.45, Math.PI);
+  glow?.pool(teaX, 0, teaZ + 3.3, 2.8, '#e8aa6a', .12, 1.7, .4);
   // A trail of high woven lanterns advertises the caravan before it comes into view.
   rod(m.dark, [-22, 6.7, 43], [-12, 6.7, 43], .025);
   for (let i = 0; i < 5; i++) lantern(-21 + i * 2, 5.7 + (i % 2) * .3, 43, .82, i % 2 ? 7 : 4, 6.7);
@@ -186,7 +188,11 @@ export function createCommerce({importedTree = false, importedPot = false} = {})
   for (const dx of [-1.95, 1.95]) {
     cylinder(m.dark, sporeX + dx, 1.4, sporeZ + 1.4, .23, .3, .85, 8);
     sphere(m.glow, sporeX + dx, 1.86, sporeZ + 1.4, .12, '#ddb27a');
+    glow?.point([sporeX + dx, 1.86, sporeZ + 1.4], .5, '#ddb27a', .5);
   }
+  // The culture itself is the brightest thing under this balcony.
+  glow?.point([sporeX, 3, sporeZ], 2.1, '#b6c294', .13);
+  glow?.pool(sporeX, 0, sporeZ + 3.1, 2.6, '#b6c294', .07, 1.4, .3);
 
   // An open repair bench displays a dismantled service unit and a dubious salvage piece.
   const repairX = -79, repairZ = 36.2;
@@ -228,6 +234,7 @@ export function createCommerce({importedTree = false, importedPot = false} = {})
   ring(m.metal, orchardX, 4.25, orchardZ, 2.45, .045, .4, .1, .3);
   ring(m.clay, orchardX, 4.25, orchardZ, 1.8, .06, 1.0, .5, -.2);
   sphere(m.glow, orchardX, 4.25, orchardZ, .42, '#c1c695', .015);
+  glow?.point([orchardX, 4.25, orchardZ], 1.4, '#c1c695', .3);
   for (let i = 0; i < 9; i++) {
     const angle = i / 9 * Math.PI * 2;
     const x = orchardX + Math.cos(angle) * 2.2;

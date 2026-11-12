@@ -1,13 +1,14 @@
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { createHumanHeadGeometry, createHumanTorsoGeometry, createHumanLimbGeometry, HUMAN_PALETTE, HUMAN_PROFILE } from './humanoid.js';
+import { applyIndustrialSurface } from './surfaces.js';
 
 /**
  * The Exchange is an accreted neighbourhood rather than a shopping corridor.
  * Alternating islands turn the public street twice before it reaches the
  * common table; its two loops also give the population a useful place to go.
  */
-export function buildMarketDistrict({box, solid, footprint:registerFootprint, sign, mesh, decal, m}) {
+export function buildMarketDistrict({box, solid, footprint:registerFootprint, sign, mesh, decal, m, glow}) {
   const footprint = [
     [-32,18],[-43,18],[-43,12],[-65,12],[-65,10],[-91,10],
     [-91,14],[-99,14],[-99,36],[-94,36],[-94,49],[-69,49],
@@ -15,6 +16,7 @@ export function buildMarketDistrict({box, solid, footprint:registerFootprint, si
   ];
   const resources = [];
   const deck = new THREE.MeshStandardMaterial({color:'#625242',roughness:.96,metalness:.1});
+  applyIndustrialSurface(deck, {surface: 'paving'});
   const fabric = new THREE.MeshStandardMaterial({color:'#ffffff',vertexColors:true,roughness:1,metalness:0,side:THREE.DoubleSide});
   resources.push(deck,fabric);
   let boxes = 0, solids = 0, labels = 0, customTriangles = 0, customDrawCalls = 0;
@@ -226,7 +228,10 @@ export function buildMarketDistrict({box, solid, footprint:registerFootprint, si
       B(m.dark,x,(6.8+y)/2,z,.025,6.8-y,.025);
       piece(new THREE.CylinderGeometry(.14,.21,.42,6),i%2?m.cloth:m.cream,x,y,z);
       B(m.warm,x,y-.24,z,.14,.035,.14);
+      glow?.point([x,y-.3,z],.55,'#e2cfab',.5);
     }
+    // Each string of lanterns warms the paving beneath it.
+    glow?.pool(-90.5,0,z,2.7,'#e0b47c',.1,5.6,.3);
   }
   // A high clerestory over the court is the market's only open-feeling ceiling.
   for(const x of [-97,-94,-91,-88,-85]){

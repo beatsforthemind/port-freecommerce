@@ -1,3 +1,5 @@
+import {strideLength} from './gait.js';
+
 const clamp=(value,min,max)=>Math.max(min,Math.min(max,value));
 const wrap=(value,period)=>((value%period)+period)%period;
 const smooth=value=>{const t=clamp(value,0,1);return t*t*(3-2*t);};
@@ -231,12 +233,12 @@ export function createSpatialStationAudio({context,dryInput,reverbInput,noiseBuf
     previousX=x;previousZ=z;previousTime=time;
     if(distance>2.5||dt<=0||dt>.5) {stepDistance=0;teleportsSuppressed++;return;}
     if(distance<.002)return;
-    const speed=distance/dt,stride=1.1+Math.min(1,speed/10)*.9;
+    const speed=distance/dt,stride=strideLength(speed);
     stepDistance+=distance;
     if(stepDistance<stride||now-lastStep<.245)return;
     stepDistance%=stride;lastStep=now;footSide=-footSide;
     const surface=listenerRoom==='market'?1:listenerRoom==='observation'?2:0;
-    const level=(surface===1?.026:.031)*(speed>8?1.12:1);
+    const level=(surface===1?.026:.031)*(speed>5.5?1.12:1);
     if(play({buffer:footBuffers[surface],duration:footBuffers[surface].duration,level,pan:footSide*.12,cutoff:surface===1?850:surface===2?1700:2100,send:surface===0?.17:.10,rate:.94+random()*.1}))footsteps++;
   }
 

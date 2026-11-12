@@ -56,8 +56,14 @@ Travelers follow each area's real routes; readers sit on both observation levels
 
 | File | Purpose |
 | --- | --- |
-| `src/main.js` | Renderer, lighting, bloom, interface, sectors, transit, interaction |
-| `src/world.js` | Batched concourse architecture, balconies, floor, navigation sculpture, space |
+| `src/main.js` | Renderer, frame loop, interface, sectors, transit, interaction |
+| `src/lighting.js` | Light rig, the concourse shadow map, per-sector reflection probes, detail tiers |
+| `src/render-governor.js` | Adaptive pixel ratio that holds the frame budget, then sheds lighting detail |
+| `src/glow.js` | Fixture halos, lit-panel surrounds, and floor light pools in two instanced draws |
+| `src/contact-shadows.js` | Soft blobs under people the shadow map does not reach |
+| `src/sky.js` | Stars, the ringed giant Pelagos, and its moon, placed at infinity with one sun |
+| `src/world.js` | Batched concourse architecture, balconies, floor, navigation sculpture |
+| `src/storefronts.js` | Backlit deck-level shop windows from one shared sheet |
 | `src/districts.js` | Shared district batching, signs, travelers, and drones |
 | `src/district-observation.js` | Fan-shaped observatory, ramp, terrace, ringed planet, and quiet alcoves |
 | `src/district-market.js` | Irregular bazaar, winding streets, canopies, shop islands, and common court |
@@ -71,9 +77,9 @@ Travelers follow each area's real routes; readers sit on both observation levels
 | `src/promenade-directory.js` | Original business catalog and a shared atlas for storefront signs and counter notices |
 | `src/promenade-shops.js` | Eleven types of stocked shops and stalls along both promenade walls |
 | `src/promenade-keepers.js` | Stationary merchants in one mesh, sharing the established human proportions |
-| `src/navigation.js` | Shared polygon floors, height sampling, vertical collisions, and sector classification |
+| `src/navigation.js` | Shared polygon floors, height sampling, vertical collisions, sector classification, and a cell index for fast queries |
 | `src/station-plan.js` | Station map generated from the real public floors |
-| `src/surfaces.js` | Cached procedural panel albedo/normal atlases with physically scaled UVs |
+| `src/surfaces.js` | Cached procedural panel albedo/normal atlases and district paving, with physically scaled UVs |
 | `src/furnishings.js` | Batched seating, planters, departure boards, decals, baked contact shadows |
 | `src/atmosphere.js` | GPU dust, vent steam, light shafts, route chevrons, exterior traffic |
 | `src/population.js` | Diverse travelers, readers, social groups, workers, and service units |
@@ -86,12 +92,13 @@ Travelers follow each area's real routes; readers sit on both observation levels
 | `src/station-life.js` | Scheduled freight and express services, staff lifts, cleaners, repair cell, dock winch |
 | `src/imported-models.js` | Local GLB loading, scale/origin normalization, static instancing, animated service robot |
 | `src/controls.js` | First-person movement, collision queries, pointer lock, mouse/touch fallback |
+| `src/gait.js` | The visitor's walking and sprinting pace, and the step length shared by camera and footsteps |
 | `src/audio.js` | Optional room ambience, shared reflections, PA cues, volume, and audio lifecycle |
 | `src/audio-sources.js` | Directional machinery, synchronized transport cues, and movement-paced footsteps |
 | `src/kit.js` | Shared geometry, signs, and material helpers |
 | `src/style.css` | Arrival view, exploration HUD, dialogs, responsive touch interface |
 
-Architecture and repeated props use material-based instancing. The renderer caps pixel density, uses inexpensive unshadowed lighting, and pauses rendering in background tabs. It respects the system reduced-motion setting, with an in-app override for camera motion. To extend a district, add geometry, vertically bounded colliders, floor polygons or ramp surfaces, and population routes to its builder. Walking, crowd placement, terminal heights, and the station plan share that floor metadata.
+Architecture and repeated props use material-based instancing. The renderer draws straight to an anti-aliased canvas, adapts pixel density to hold its frame budget, keeps one shadow map for the concourse, and pauses rendering in background tabs. It respects the system reduced-motion setting, with an in-app override for camera motion. To extend a district, add geometry, vertically bounded colliders, floor polygons or ramp surfaces, and population routes to its builder. Walking, crowd placement, terminal heights, and the station plan share that floor metadata.
 
 The detail pass adds worn metal panels, grilles, surface relief, service equipment, passenger rest areas, stocked counters, vendor displays, cargo labels, and orbital instruments. Four shared 1024² textures supply the new surface/print detail. Atmospheric motion runs in shaders on immutable geometry; contact shadows are baked decals. No additional lights, shadow maps, or full-screen effects are introduced. Crowd matrix uploads are limited to 30 Hz, and HUD text changes only when its value changes. See [the performance comparison](docs/performance.md) for measured rendering costs and test limitations.
 
@@ -112,6 +119,10 @@ The vertical-access pass opens every concourse floor: the public deck, promenade
 The promenade trading street adds thirty-two original businesses across both walls of Deck 02: atmosphere tasting, alien botany, memory jewelry, pressure-suit repair, multi-form tailoring, navigation, food, and other interstellar services. Distinct counters, canopies, instruments, plants, specimens, fabric, and machinery give the windows physical depth. Inspect any shop with **E** or the touch button for its story; sage marks on the floor map locate the traders. The existing lift landings, bridge approaches, ramp entries, and sunwalks remain clear. See [promenade shops](docs/promenade-shops.md) for the directory and measured costs.
 
 The escalator pass adds three paired banks at Arrivals, Interchange, and Departures. Six flights connect the public deck to the trading promenade with automatic boarding, free look, and optional walking assistance. Side guards and new landings join the promenade without cutting its shopping lane. Moving treads use shared instance buffers and shader motion; reduced motion freezes the mechanism while keeping the steps walkable. The old ramps and four-level lifts remain available. See [escalator access](docs/escalators.md) for routes, controls, measured costs, and verification.
+
+The lighting and rendering pass replaces the bloom chain with direct, anti-aliased rendering, and spends the time it frees on things the station lacked. An overhead key light casts the hall's only shadow map, so balconies, bridges, kiosks, and people are grounded; people in the side districts get soft contact shadows instead. One reflection probe per sector, captured once at load, gives the metal something to reflect. Light strips, lanterns, and shop windows gain halos and floor pools from two instanced draws, with no added lights; three point lights that had no fixture are gone. The side districts share the concourse's panel surfaces and get their own paving. Outside, a single sky replaces two unrelated gas giants: Pelagos to the east and its moon to the north, both at infinity and lit by one sun. Signs now read correctly from behind, stencilled print is no longer mirrored on half the walls, and the sign typeface is loaded before any sign is drawn.
+
+The same pass makes the station feel inhabited at walking pace. The visitor walks at 3.6 m/s and sprints at 7.5, with camera bob and footsteps driven by one step length. Residents walk at about 1.3 m/s on the same calibrated timetables, played half as fast again. Nearby residents shift their weight, glance at a visitor who comes close, stop for someone standing in their path and then make the time up, and can no longer be walked through. Frame time on the test machine fell by 23–42% with all of this enabled, and the load is about a quarter faster. Touch devices start without the shadow map and probes, and a governor lowers resolution, then lighting detail, on hardware that cannot hold the budget. See [lighting and rendering](docs/lighting-and-rendering.md) for the measurements, budgets, and limits.
 
 The imported foreground models are **Animated Robot**, **Scifi Computer**, **Tree Spiral**, and **Cooking Pot** by Quaternius, downloaded from Poly Pizza under CC0. The service unit uses its supplied idle animation. Repeated consoles, plants, and pots share geometry and materials. Selected terminal bodies, planter growth, specimen branches, and cookware proxies are omitted only after their replacement asset loads successfully; otherwise the procedural versions remain available. Creator/source links and exact file inspection records are in [model assets](docs/model-assets.md), [machine-readable metadata](docs/model-assets.json), and the in-app Controls credits link. Run `node scripts/inspect-glb.mjs public/models/poly-pizza/*.glb` to inspect the original files again.
 

@@ -1,5 +1,11 @@
 /** Shared floor geometry for walking, crowds, and the station plan. */
 const BODY_PROBES = [[-.27,0],[.27,0],[0,-.27],[0,.27]];
+// Floors and colliders are bucketed into four-metre cells. A query then tests
+// the handful of shapes near a point instead of every shape in the station.
+const CELL = 4;
+const COLLIDER_REACH = .28;
+const NONE = Object.freeze([]);
+const cellKey = (cx, cz) => (cx + 4096) + (cz + 4096) * 8192;
 
 export function containsPoint(surface, x, z) {
   if (surface.minX !== undefined && (x < surface.minX - 1e-6 || x > surface.maxX + 1e-6 || z < surface.minZ - 1e-6 || z > surface.maxZ + 1e-6)) return false;
@@ -29,24 +35,56 @@ export function sectorAt(x, z) {
   return 'concourse';
 }
 
+function insert(cells, item, minX, maxX, minZ, maxZ) {
+  const x0 = Math.floor(minX / CELL), x1 = Math.floor(maxX / CELL), z0 = Math.floor(minZ / CELL), z1 = Math.floor(maxZ / CELL);
+  for (let cz = z0; cz <= z1; cz++) for (let cx = x0; cx <= x1; cx++) {
+    const key = cellKey(cx, cz), list = cells.get(key);
+    if (list) list.push(item); else cells.set(key, [item]);
+  }
+}
+
 export function createNavigation({surfaces, colliders}) {
   // Precompute coarse bounds once; polygon tests only run near that floor.
   const floors = surfaces.map(surface => {
     if (!surface.polygon) return surface;
     return {...surface, minX:Math.min(...surface.polygon.map(p=>p[0])), maxX:Math.max(...surface.polygon.map(p=>p[0])), minZ:Math.min(...surface.polygon.map(p=>p[1])), maxZ:Math.max(...surface.polygon.map(p=>p[1]))};
   });
+  // Cells keep floors in their authored order, so equal candidates resolve
+  // exactly as a full scan would. Heights stay live: a lift floor is the same
+  // object here as in its owner.
+  const floorCells = new Map(), unbounded = [];
+  for (const floor of floors) {
+    if (floor.minX === undefined) unbounded.push(floor);
+    else insert(floorCells, floor, floor.minX - .001, floor.maxX + .001, floor.minZ - .001, floor.maxZ + .001);
+  }
+  // Colliders are appended after construction (props, terminals, models), so
+  // the index follows the live array. Only vertical extents ever change.
+  let colliderCells = new Map(), indexed = 0;
+  function indexColliders() {
+    if (colliders.length < indexed) { colliderCells = new Map(); indexed = 0; }
+    for (; indexed < colliders.length; indexed++) {
+      const c = colliders[indexed];
+      insert(colliderCells, c, c.minX - COLLIDER_REACH, c.maxX + COLLIDER_REACH, c.minZ - COLLIDER_REACH, c.maxZ + COLLIDER_REACH);
+    }
+  }
   function heightAt(x, z, reference) {
     if (!Number.isFinite(x) || !Number.isFinite(z)) return NaN;
     let best = NaN, distance = Infinity, bestPriority = 0;
-    for (const surface of floors) {
-      if (!containsPoint(surface, x, z)) continue;
-      const height = surfaceHeight(surface, x, z);
-      const delta = Number.isFinite(reference) ? Math.abs(height - reference) : height;
-      // Transport inclines can overlap the public floor beneath them. Capture
-      // only a continuous walking step; a high flight stays an underpass.
-      const priority = Number.isFinite(reference) && delta <= .32 ? Math.max(0,surface.priority || 0) : 0;
-      if (priority > bestPriority || (priority === bestPriority && delta < distance)) {
-        distance = delta; best = height; bestPriority = priority;
+    const referenced = Number.isFinite(reference);
+    const local = floorCells.get(cellKey(Math.floor(x / CELL), Math.floor(z / CELL))) || NONE;
+    for (let pass = 0; pass < 2; pass++) {
+      const list = pass ? unbounded : local;
+      for (let i = 0; i < list.length; i++) {
+        const surface = list[i];
+        if (!containsPoint(surface, x, z)) continue;
+        const height = surfaceHeight(surface, x, z);
+        const delta = referenced ? Math.abs(height - reference) : height;
+        // Transport inclines can overlap the public floor beneath them. Capture
+        // only a continuous walking step; a high flight stays an underpass.
+        const priority = referenced && delta <= .32 ? Math.max(0,surface.priority || 0) : 0;
+        if (priority > bestPriority || (priority === bestPriority && delta < distance)) {
+          distance = delta; best = height; bestPriority = priority;
+        }
       }
     }
     return best;
@@ -59,7 +97,10 @@ export function createNavigation({surfaces, colliders}) {
       const edge = heightAt(x + dx, z + dz, height);
       if (!Number.isFinite(edge) || Math.abs(edge - height) > .32) return false;
     }
-    for (const c of colliders) {
+    if (colliders.length !== indexed) indexColliders();
+    const near = colliderCells.get(cellKey(Math.floor(x / CELL), Math.floor(z / CELL))) || NONE;
+    for (let i = 0; i < near.length; i++) {
+      const c = near[i];
       if (x <= c.minX-.28 || x >= c.maxX+.28 || z <= c.minZ-.28 || z >= c.maxZ+.28) continue;
       const slopeHeight = c.sloped ? surfaceHeight(c,x,z) : 0;
       const bottom = c.sloped ? slopeHeight+c.minYOffset : c.minY ?? 0;

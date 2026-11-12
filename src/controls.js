@@ -1,3 +1,5 @@
+import {WALK_SPEED,SPRINT_SPEED,strideLength} from './gait.js';
+
 /**
  * First-person station navigation. Pointer lock is an enhancement: embedded
  * browsers that decline it still support click-and-drag look and keyboard input.
@@ -196,7 +198,7 @@ export function createFirstPersonControls(camera, canvas, {
       const length = Math.hypot(strafe, forward);
       if (length > 1) { strafe /= length; forward /= length; }
       const sprint = keys.has('ShiftLeft') || keys.has('ShiftRight');
-      const speed = sprint ? 11 : 6.3;
+      const speed = sprint ? SPRINT_SPEED : WALK_SPEED;
       const damping = 1 - Math.exp(-12 * delta);
       const targetX = (Math.cos(yaw) * strafe - Math.sin(yaw) * forward) * speed;
       const targetZ = (-Math.sin(yaw) * strafe - Math.cos(yaw) * forward) * speed;
@@ -228,9 +230,12 @@ export function createFirstPersonControls(camera, canvas, {
       }
       // Conveyor motion carries the view without pretending that the rider took
       // a footstep. Walking input still produces ordinary bob and walking cues.
-      moving = Math.hypot(velocityX,velocityZ) > .01 && Math.hypot(camera.position.x - oldX, camera.position.z - oldZ) > 0.0001;
-      if (moving) bobPhase += delta * (sprint ? 12 : 8.5);
-      const bob = moving && !reduceMotion ? Math.sin(bobPhase) * 0.022 : 0;
+      const pace = Math.hypot(velocityX,velocityZ);
+      moving = pace > .01 && Math.hypot(camera.position.x - oldX, camera.position.z - oldZ) > 0.0001;
+      // One bob per step, from ground actually covered: the same stride the
+      // footstep sounds use, so the two cannot drift apart.
+      if (moving) bobPhase += pace * delta / strideLength(pace) * Math.PI * 2;
+      const bob = moving && !reduceMotion ? Math.sin(bobPhase) * (.018 + .014 * Math.min(1, pace / SPRINT_SPEED)) : 0;
       camera.position.y += (groundHeight + baseHeight + bob - camera.position.y) * (1 - Math.exp(-14 * delta));
     },
     requestLock() {

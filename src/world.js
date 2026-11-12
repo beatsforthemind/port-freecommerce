@@ -6,13 +6,16 @@ import {PROMENADE_SHOPS,createPromenadeSigns} from './promenade-directory.js';
 import {buildPromenadeShops} from './promenade-shops.js';
 import {buildPromenadeKeepers} from './promenade-keepers.js';
 import {splitPromenadeRail} from './escalator-layout.js';
+import {readableFromBothSides,applyGlassSheen} from './kit.js';
+import {createStorefrontDisplays} from './storefronts.js';
+import {createSky} from './sky.js';
 
 // Multiple station instances can share the cached atlas during previews/tests.
 const surfaceUsers = new Map();
 
 // Architecture is assembled into material batches: the scale comes from repetition,
 // without making each rib, shop shutter, or handrail a separate draw call.
-export function createStation() {
+export function createStation({glow = null} = {}) {
   const group = new THREE.Group();
   group.name = 'Port FreeCommerce / main concourse';
   const colliders = [];
@@ -26,18 +29,23 @@ export function createStation() {
     edge: new THREE.MeshStandardMaterial({ color: '#768080', roughness: .48, metalness: .5 }),
     dark: new THREE.MeshStandardMaterial({ color: '#131e23', roughness: .8, metalness: .2 }),
     rust: new THREE.MeshStandardMaterial({ color: '#aa5533', roughness: .66, metalness: .3 }),
+    // Painted shopfront metal: a lit counterpart to the `dim` light colour.
+    sage: new THREE.MeshStandardMaterial({ color: '#7d9a92', roughness: .72, metalness: .18 }),
+    // Undersides of balconies and bridges. The darkest hull paint reflects
+    // about one per cent and reads as a void from below, whatever lights it.
+    soffit: new THREE.MeshStandardMaterial({ color: '#35454b', roughness: .84, metalness: .2 }),
     amber: new THREE.MeshBasicMaterial({ color: '#ffb65e' }),
     warm: new THREE.MeshBasicMaterial({ color: '#f5dec0' }),
     cool: new THREE.MeshBasicMaterial({ color: '#c2d7cf' }),
     dim: new THREE.MeshBasicMaterial({ color: '#536b67' }),
-    glass: new THREE.MeshBasicMaterial({ color: '#172e32', transparent: true, opacity: .18, side: THREE.DoubleSide, depthWrite: false }),
+    glass: applyGlassSheen(new THREE.MeshBasicMaterial({ color: '#172e32', transparent: true, opacity: .18, side: THREE.DoubleSide, depthWrite: false })),
   };
   // The atlas is shared by every structural batch. Detail has a physical scale,
   // so long balcony slabs do not stretch a single panel over hundreds of metres.
   const surfaces = createSurfaceLibrary();
   surfaceUsers.set(surfaces, (surfaceUsers.get(surfaces) || 0) + 1);
-  for (const key of ['shell', 'rib', 'rust']) applyIndustrialSurface(materials[key]);
-  for (const key of ['edge', 'dark']) applyIndustrialSurface(materials[key], {relief: false});
+  for (const key of ['shell', 'rib', 'rust', 'soffit']) applyIndustrialSurface(materials[key]);
+  for (const key of ['edge', 'dark', 'sage']) applyIndustrialSurface(materials[key], {relief: false});
 
   function box(mat, x, y, z, w, h, d, ry = 0, rz = 0) {
     const transforms = batches.get(mat) || [];
@@ -65,13 +73,16 @@ export function createStation() {
     const ctx = canvas.getContext('2d');
     if (background) { ctx.fillStyle = background; ctx.fillRect(0, 0, canvas.width, canvas.height); }
     ctx.fillStyle = color;
-    ctx.font = `600 ${size}px "Arial", sans-serif`;
+    ctx.font = `600 ${size}px "Space Grotesk", "Arial", sans-serif`;
     ctx.textAlign = align;
     ctx.textBaseline = 'middle';
     ctx.fillText(value, align === 'center' ? 512 : 48, canvas.height / 2, 944);
     const texture = new THREE.CanvasTexture(canvas);
     texture.colorSpace = THREE.SRGBColorSpace;
-    const mesh = new THREE.Mesh(new THREE.PlaneGeometry(width, height), new THREE.MeshBasicMaterial({ map: texture, transparent: !background, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -1 }));
+    texture.anisotropy = 4;
+    // Lettering without a backing must not write depth: its empty rectangle
+    // would otherwise cut a hole in the dust and light shafts behind it.
+    const mesh = new THREE.Mesh(new THREE.PlaneGeometry(width, height), readableFromBothSides(new THREE.MeshBasicMaterial({ map: texture, transparent: !background, depthWrite: Boolean(background), polygonOffset: true, polygonOffsetFactor: -1 })));
     mesh.position.set(x, y, z);
     mesh.rotation.y = rotation;
     group.add(mesh);
@@ -128,8 +139,9 @@ export function createStation() {
   deckTexture.anisotropy = 8;
   const deckMat = new THREE.MeshStandardMaterial({ map: deckTexture, color: '#a1aaa5', roughness: .66, metalness: .28 });
   const deck = new THREE.Mesh(new THREE.PlaneGeometry(64, 230), deckMat);
-  deck.rotation.x = -Math.PI / 2; deck.position.set(0, 0, -15); deck.receiveShadow = true; group.add(deck);
+  deck.rotation.x = -Math.PI / 2; deck.position.set(0, 0, -15); deck.receiveShadow = true; deck.userData.castShadow = false; group.add(deck);
 
+  const shopWindows = [];
   // Layered pressure hull and the long, continuous vaulted roof.
   box(materials.dark, 0, 35.5, -15, 72, 2, 234);
   box(materials.shell, 0, 34.3, -15, 38, .65, 232);
@@ -157,7 +169,7 @@ export function createStation() {
           if(high>low)for(const [inner,outer]of[[21,26.7],[30.3,32]])box(material,side*(inner+outer)/2,y,(low+high)/2,outer-inner,thickness,high-low);
         }
         slab(materials.rib,level,.85);
-        slab(materials.dark,level-.5,.32);
+        slab(materials.soffit,level-.5,.32);
         box(materials.amber,side*20.9,level+.05,(a+b)/2,.1,.14,b-a);
       }
       const rails = first ? [[-130,-103],[-97,45],[51,RAMP_NORTH],[RAMP_SOUTH,100]] : [[-130,-87],[-81,17],[23,100]];
@@ -196,6 +208,9 @@ export function createStation() {
       box(materials.rust, side * 31.7, 2.65, z, .28, 5.3, 12.6);
       box(materials.dark, side * 31.4, 2.5, z, .3, 4.7, 11.8);
       box(materials.warm, side * 31.17, 2.8, z - 2, .08, 2.8, 5.8);
+      shopWindows.push({x: side * 31.12, y: 2.8, z: z - 2, width: 5.8, height: 2.8, facing: -side});
+      // Lit glazing spills onto the deck in front of it.
+      glow?.pool(side * 28.3, 0, z - 2, 2.5, '#f5dec0', .17, .8, 2.6);
       for (let k = 0; k < 4; k++) box(materials.dark, side * 31.03, 2.7, z - 4.3 + k * 1.5, .1, 3.1, .15);
       box(materials.shell, side * 31.06, 1.35, z - 2, .12, 1.2, 6.2);
       box(materials.dark, side * 30.95, 3.6, z + 4, .14, 1.8, 2.3);
@@ -277,6 +292,10 @@ export function createStation() {
     tick.position.set(Math.sin(a) * 7.6, Math.cos(a) * 7.6, .5); tick.rotation.z = -a; halo.add(tick);
   }
   group.add(halo);
+  if (glow) for (let i = 0; i < 48; i++) {
+    const a = i / 48 * Math.PI * 2, b = (i + 1) / 48 * Math.PI * 2;
+    glow.beam([Math.sin(a) * 6.8, 18 + Math.cos(a) * 6.8, -25], [Math.sin(b) * 6.8, 18 + Math.cos(b) * 6.8, -25], .55, '#ffb65e', .42, false);
+  }
   for (const x of [-6.5, 6.5]) beam(materials.dark, [x, 23.4, -25], [x, 34, -25], .12);
   text('P / F C', 0, 19.2, -24.35, 9.4, 2.2, { background: null, color: '#e8e6d6', size: 125 });
   text('FREE TRADE. EVERY ORBIT.', 0, 16.5, -24.35, 9.8, .8, { background: null, color: '#dfb77c', size: 58 });
@@ -338,29 +357,12 @@ export function createStation() {
   }
   group.userData.detailStats = {extraDrawCalls: 0, extraTriangles: extraDetailBoxes * 12, atlasTextures: 2, atlasSize: 1024};
 
-  // A distant original planet texture, generated locally. No asset download needed.
-  const planetCanvas = document.createElement('canvas');
-  planetCanvas.width = 1024; planetCanvas.height = 512;
-  const pc = planetCanvas.getContext('2d');
-  const gradient = pc.createLinearGradient(0, 0, 0, 512);
-  gradient.addColorStop(0, '#8b9f9c'); gradient.addColorStop(.35, '#aab1a0'); gradient.addColorStop(.5, '#6b8588'); gradient.addColorStop(.72, '#b2ab8d'); gradient.addColorStop(1, '#6b8b90');
-  pc.fillStyle = gradient; pc.fillRect(0,0,1024,512);
-  for (let i=0;i<85;i++) {
-    const y=rand()*512; pc.strokeStyle = `rgba(${i%3 ? '220,211,182':'40,70,77'},${.06+rand()*.18})`; pc.lineWidth=2+rand()*12;
-    pc.beginPath(); pc.moveTo(0,y);
-    for(let x=0;x<=1024;x+=16) pc.lineTo(x,y+Math.sin(x*.012+i)*7+Math.sin(x*.026+i)*3);
-    pc.stroke();
-  }
-  const planetMap = new THREE.CanvasTexture(planetCanvas); planetMap.colorSpace = THREE.SRGBColorSpace;
-  const planet = new THREE.Mesh(new THREE.SphereGeometry(285, 64, 48), new THREE.MeshStandardMaterial({map:planetMap, roughness:1, metalness:0, emissive:'#334446', emissiveIntensity:.2, fog:false}));
-  planet.position.set(-75,140,-850); planet.rotation.z=-.22; group.add(planet);
-  const atmosphere = new THREE.Mesh(new THREE.SphereGeometry(289,48,32),new THREE.MeshBasicMaterial({color:'#b4d9d3',transparent:true,opacity:.07,side:THREE.BackSide,depthWrite:false,fog:false}));
-  atmosphere.position.copy(planet.position); group.add(atmosphere);
-  const starPositions=[];
-  for(let i=0;i<1400;i++) { const a=rand()*Math.PI*2,u=rand()*2-1,r=1100; starPositions.push(Math.cos(a)*Math.sqrt(1-u*u)*r,u*r,Math.sin(a)*Math.sqrt(1-u*u)*r); }
-  const starGeometry=new THREE.BufferGeometry(); starGeometry.setAttribute('position',new THREE.Float32BufferAttribute(starPositions,3));
-  group.add(new THREE.Points(starGeometry,new THREE.PointsMaterial({color:'#c0d0cc',size:1.0,sizeAttenuation:true,transparent:true,opacity:.7,depthWrite:false,fog:false})));
+  // The view outside: one sky shared with the gallery and the docks.
+  const sky = createSky();
+  group.add(sky.group);
 
+  const storefronts = createStorefrontDisplays(shopWindows);
+  group.add(storefronts.mesh);
   const access = buildConcourseAccess({group,box,beam,text,materials,colliders});
   const promenade=buildPromenadeShops({group,box,beam,materials,colliders,shops:PROMENADE_SHOPS,height:PROMENADE_HEIGHT});
   const promenadeSigns=createPromenadeSigns({group,shops:PROMENADE_SHOPS,height:PROMENADE_HEIGHT});
@@ -378,22 +380,37 @@ export function createStation() {
     mesh.receiveShadow=true;
     group.add(mesh);
   }
-  const driftLights = [];
-  for (const [x,z,color,power] of [[-22,55,0xffae62,80],[22,-25,0x97c4c5,90],[0,-98,0xc8d9d0,100]]) {
-    const light = new THREE.PointLight(color,power,45,1.3); light.position.set(x,5,z); group.add(light); driftLights.push(light);
+  let glowFixtures = 0;
+  if (glow) {
+    // Every light strip and lit panel in the box batches gets its halo. Small
+    // inlays (comb teeth, numerals, counter details) are below the size test.
+    for (const [material, value, strength] of [
+      [materials.amber, '#ffb65e', {strip: .46, panel: .3}],
+      [materials.warm, '#f5dec0', {strip: .24, panel: .15}],
+      [materials.cool, '#c2d7cf', {strip: .5, panel: .3}],
+    ]) for (const matrix of batches.get(material) || []) if (glow.box(matrix, value, strength)) glowFixtures++;
+    // Three broad pools replace point lights that had no fixture: the tea
+    // caravan's lanterns, the gallery doorway, and the dock sign.
+    glow.pool(-20, 0, 51, 15, '#ffae62', .26);
+    glow.pool(22, 0, -24, 16, '#97c4c5', .22);
+    glow.pool(0, 0, -102, 17, '#c8d9d0', .2);
+    for (const shop of PROMENADE_SHOPS) glow.pool(shop.side * 26.1, PROMENADE_HEIGHT, shop.z, 1.6, shop.accent, .14, .45, Math.max(.4, shop.width / 2 - .8));
   }
   return {
     group, colliders, surfaces:access.surfaces, journeySurfaces:access.journeySurfaces,
     shops:PROMENADE_SHOPS,promenadeStats,
     landmarks:[...access.landmarks,...shopLandmarks], routes:access.routes,
-    stats:{...access.stats,promenadeShops:PROMENADE_SHOPS.length},
+    // Shown once the visitor is inside: on the arrival title it sits behind the copy.
+    titleCardHidden:access.titleCardHidden,
+    stats:{...access.stats,promenadeShops:PROMENADE_SHOPS.length,glowFixtures,storefronts:storefronts.stats,sky:sky.stats},
     update(dt,_time,context = {}) {
-      if (disposed || context.reducedMotion) return;
+      if (disposed) return;
+      // Following the eye is placement, so it continues under reduced motion.
+      if (context.camera) sky.follow(context.camera);
+      if (context.reducedMotion) return;
       // A local clock pauses motion rather than jumping to wall time on resume.
       motionTime += Math.max(0,Math.min(dt,.1));
       inner.rotation.z=-.5+motionTime*.018;
-      planet.rotation.y=motionTime*.003;
-      driftLights[0].intensity=80+Math.sin(motionTime*.65)*3;
     },
     dispose() {
       if (disposed) return;
@@ -412,6 +429,7 @@ export function createStation() {
       geometries.forEach(geometry=>geometry.dispose());
       ownedMaterials.forEach(material=>material.dispose());
       textures.forEach(texture=>texture.dispose());
+      sky.dispose();
       const users = surfaceUsers.get(surfaces) - 1;
       if (users > 0) surfaceUsers.set(surfaces,users);
       else {surfaceUsers.delete(surfaces);surfaces.dispose();}

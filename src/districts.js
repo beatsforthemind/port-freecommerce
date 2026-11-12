@@ -1,14 +1,17 @@
 import * as THREE from 'three';
-import { label } from './kit.js';
+import { label, applyGlassSheen } from './kit.js';
 import { createHumanHeadGeometry, createHumanTorsoGeometry, createHumanLimbGeometry, HUMAN_PALETTE, HUMAN_PROFILE } from './humanoid.js';
 import { buildObservationDistrict } from './district-observation.js';
 import { buildMarketDistrict } from './district-market.js';
 import { buildDocksDistrict } from './district-docks.js';
 import { createCommuterBehavior } from './commuter-behavior.js';
 import {TRAVEL_PACK_BODY,TRAVEL_PACK_STRAPS,TRAVEL_PACK_TRIM,travelPackPieceColor} from './travel-gear.js';
+import {applyIndustrialSurface,createSurfaceLibrary,createPavingSurface} from './surfaces.js';
+import {createContactShadows} from './contact-shadows.js';
+import {CROWD_PACE} from './population-timetable.js';
 
 /** Connected station districts, all built locally without model downloads. */
-export function createDistricts() {
+export function createDistricts({glow = null} = {}) {
   const group = new THREE.Group();
   group.name = 'FreeCommerce · outer districts';
   const colliders = [];
@@ -23,13 +26,21 @@ export function createDistricts() {
     amber: new THREE.MeshBasicMaterial({ color: '#edb96c' }),
     warm: new THREE.MeshBasicMaterial({ color: '#e2cfab' }),
     soft: new THREE.MeshBasicMaterial({ color: '#8aafa1' }),
-    glass: new THREE.MeshBasicMaterial({ color: '#69989a', transparent: true, opacity: .045, side: THREE.DoubleSide, depthWrite: false }),
+    glass: applyGlassSheen(new THREE.MeshBasicMaterial({ color: '#69989a', transparent: true, opacity: .045, side: THREE.DoubleSide, depthWrite: false }), {edge: .34}),
   };
+  // The districts share the concourse's panel language instead of flat paint.
+  for (const key of ['wall', 'rust', 'sage']) applyIndustrialSurface(m[key]);
+  for (const key of ['floor', 'dark', 'steel', 'cream', 'red']) applyIndustrialSurface(m[key], {relief: false});
+  // Boxes are batched per district as well as per material, so a district
+  // that is out of view is culled instead of riding along with the others.
+  let district = 'shared';
   function box(material, x, y, z, w, h, d, ry = 0) {
     transform.position.set(x, y, z); transform.rotation.set(0, ry, 0); transform.scale.set(w, h, d);
     transform.updateMatrix();
-    if (!batches.has(material)) batches.set(material, []);
-    batches.get(material).push(transform.matrix.clone());
+    let byMaterial = batches.get(district);
+    if (!byMaterial) batches.set(district, byMaterial = new Map());
+    if (!byMaterial.has(material)) byMaterial.set(material, []);
+    byMaterial.get(material).push(transform.matrix.clone());
   }
   function footprint(x, y, z, w, h, d) {
     colliders.push({ minX: x - w / 2 - .25, maxX: x + w / 2 + .25, minZ: z - d / 2 - .25, maxZ: z + d / 2 + .25, minY:y-h/2,maxY:y+h/2 });
@@ -103,15 +114,22 @@ export function createDistricts() {
     }
   }
 
-  const context={box,solid,footprint,sign,mesh,decal,m};
-  const layouts=[buildObservationDistrict(context),buildMarketDistrict(context),buildDocksDistrict(context)];
+  const context={box,solid,footprint,sign,mesh,decal,m,glow};
+  const layouts=[];
+  for (const [id, build] of [['observation',buildObservationDistrict],['market',buildMarketDistrict],['docks',buildDocksDistrict]]) {
+    district = id; layouts.push(build(context));
+  }
+  district = 'shared';
 
-  // Repeated static box work becomes one draw call per material.
+  // Repeated static box work becomes one draw call per district and material.
   const unitCube = new THREE.BoxGeometry(1, 1, 1);
-  for (const [material, matrices] of batches) {
+  const lit = new Map([[m.amber, '#edb96c'], [m.warm, '#e2cfab'], [m.soft, '#8aafa1']]);
+  for (const [id, byMaterial] of batches) for (const [material, matrices] of byMaterial) {
     const instances = new THREE.InstancedMesh(unitCube, material, matrices.length);
+    instances.name = `District ${id} / boxes`;
     matrices.forEach((matrix, i) => instances.setMatrixAt(i, matrix));
     instances.computeBoundingSphere(); group.add(instances);
+    if (glow && lit.has(material)) for (const matrix of matrices) glow.box(matrix, lit.get(material), {strip: .38, panel: .2});
   }
   if (decalPositions.length) {
     const geometry = new THREE.BufferGeometry();
@@ -176,12 +194,50 @@ export function createDistricts() {
   function placePackPiece(object,index,piece){place(object,index,piece.x,piece.y,piece.z,piece.sx,piece.sy,piece.sz,piece.rx,piece.ry,piece.rz);}
   const crowdTriangles=crowdMeshes.reduce((sum,object)=>sum+(object.geometry.index?.count??object.geometry.attributes.position.count)/3*object.count,0);
   group.userData.commuters=Object.freeze({actors:crowdCount,drawCalls:4,triangles:crowdTriangles,updateHz:30,adultHeight:HUMAN_PROFILE.height,purposefulJourneys:crowdCount,travelPacks:packCount,accessoryStyle:'fitted upper-back packs / connected shoulder straps',
-    get activities(){return commuterBehavior.counts(motionTime);}});
+    get activities(){return commuterBehavior.counts(motionTime*CROWD_PACE);}});
+  // Without the shadow map, a soft blob keeps each commuter on the deck.
+  const contact = createContactShadows(crowdCount, 'Commuters / contact shadows');
+  group.add(contact.mesh);
   const crowdBounds = new THREE.Box3(new THREE.Vector3(-30,-.5,-124),new THREE.Vector3(30,2.6,91));
   const crowdFrustum = new THREE.Frustum();
   const crowdProjection = new THREE.Matrix4();
   let lastCrowdUpdate = -Infinity;
   let motionTime = 0;
+  // Each commuter can fall behind the shared timetable to let the visitor pass,
+  // then win the time back. `lag` is timetable seconds; `hold` is their pace.
+  const lag=new Float32Array(crowdCount),hold=new Float32Array(crowdCount).fill(1),waited=new Float32Array(crowdCount),ignore=new Float32Array(crowdCount);
+  const probe={};
+  function yieldPace(i,record,visitor,dt) {
+    let blocked=false;
+    if(visitor&&record.speed>.1&&ignore[i]<=0&&visitor.y<3.2) {
+      const dx=visitor.x-record.x,dz=visitor.z-record.z;
+      if(dx*dx+dz*dz<3.4) {
+        const fx=Math.sin(record.yaw),fz=Math.cos(record.yaw),ahead=dx*fx+dz*fz;
+        blocked=ahead>.05&&ahead<1.7&&Math.abs(dx*fz-dz*fx)<.62;
+      }
+    }
+    if(blocked){waited[i]+=dt;if(waited[i]>4.5){ignore[i]=4;waited[i]=0;blocked=false;}}
+    else waited[i]=Math.max(0,waited[i]-dt*2);
+    if(ignore[i]>0)ignore[i]-=dt;
+    hold[i]+=((blocked?0:1)-hold[i])*(1-Math.exp(-dt*7));
+    if(hold[i]>.999)hold[i]=1;
+    if(hold[i]===1&&lag[i]<=0)return;
+    const rate=hold[i]*(1+Math.min(.3,lag[i]));
+    lag[i]=Math.max(0,lag[i]+dt*(1-rate));
+  }
+  /** A visitor cannot walk through a commuter, but can always step away from one. */
+  function obstructs(x,z,feet,fromX,fromZ) {
+    if(Math.abs(feet)>1.2||Math.abs(x)>31||z<-126||z>93)return false;
+    const clock=motionTime*CROWD_PACE;
+    for(let i=0;i<crowdCount;i++) {
+      commuterBehavior.sample(i,clock-lag[i],probe);
+      const dx=x-probe.x,dz=z-probe.z,distance=dx*dx+dz*dz;
+      if(distance>.3)continue;
+      const px=fromX-probe.x,pz=fromZ-probe.z;
+      if(distance<px*px+pz*pz)return true;
+    }
+    return false;
+  }
   let initialized = false;
   let wasCrowdVisible = true;
   function update(dt, _time, context = {}) {
@@ -199,6 +255,7 @@ export function createDistricts() {
     const justShown = crowdVisible && !wasCrowdVisible;
     wasCrowdVisible = crowdVisible;
     for (const mesh of crowdMeshes) mesh.visible = crowdVisible;
+    contact.mesh.visible = crowdVisible;
     if (!context.reducedMotion || !initialized) {
       for (let i = 0; i < drones.length; i++) {
         const drone = drones[i];
@@ -212,11 +269,17 @@ export function createDistricts() {
     // frozen crowd that should be visible, or uploads its unchanged matrices.
     if (!crowdVisible) return;
     if (time - lastCrowdUpdate < 1 / 30 && !(justShown && time > lastCrowdUpdate)) return;
+    const elapsed=Number.isFinite(lastCrowdUpdate)?Math.min(.2,Math.max(0,time-lastCrowdUpdate)):0;
     lastCrowdUpdate = time;
-    commuterBehavior.update(time);
+    const visitor=camera&&context.mode&&context.mode!=='arrival'?camera.position:null;
+    contact.begin();
     for(let i=0;i<crowdCount;i++) {
-      const commuter=commuterBehavior.records[i],x=commuter.x,z=commuter.z;
-      const phase=commuter.gait,motion=smoothWalk(commuter.speed/commuter.cruiseSpeed),gait=Math.sin(phase)*motion,cadence=Math.cos(phase)*motion;
+      const commuter=commuterBehavior.records[i];
+      yieldPace(i,commuter,visitor,elapsed*CROWD_PACE);
+      commuterBehavior.sample(i,time*CROWD_PACE-lag[i]);
+      const x=commuter.x,z=commuter.z;
+      if(!context.shadows)contact.add(x,0,z,commuter.yaw);
+      const phase=commuter.gait,motion=smoothWalk(commuter.speed/commuter.cruiseSpeed)*hold[i],gait=Math.sin(phase)*motion,cadence=Math.cos(phase)*motion;
       const stature=.972+(i%5)*.014,breadth=.95+(i%4)*.03;
       let minimumFoot=Infinity;
       for(let side=0;side<2;side++) {
@@ -256,15 +319,20 @@ export function createDistricts() {
       }
     }
     bodies.instanceMatrix.needsUpdate = heads.instanceMatrix.needsUpdate = legs.instanceMatrix.needsUpdate = bags.instanceMatrix.needsUpdate = true;
+    contact.end();
     initialized = true;
   }
   update(0, 0);
   function smoothWalk(value){const t=Math.max(0,Math.min(1,value));return t*t*(3-2*t);}
-  return {group,colliders,layouts,update,get behaviorSnapshot(){return commuterBehavior.snapshot(motionTime);},dispose(){
+  return {group,colliders,layouts,update,obstructs,get behaviorSnapshot(){return commuterBehavior.snapshot(motionTime*CROWD_PACE);},dispose(){
     if(disposed)return;disposed=true;
+    contact.mesh.removeFromParent();contact.dispose();
     const geometries=new Set(),materials=new Set(Object.values(m)),textures=new Set([atlas]);
     group.traverse(node=>{if(!node.isMesh&&!node.isPoints)return;node.dispose?.();geometries.add(node.geometry);for(const material of Array.isArray(node.material)?node.material:[node.material])materials.add(material);});
     for(const material of materials)for(const item of Object.values(material))if(item?.isTexture)textures.add(item);
+    // The panel atlas belongs to the station; the paving sheet is used only here.
+    const panels=createSurfaceLibrary();textures.delete(panels.albedo);textures.delete(panels.normal);
+    createPavingSurface().dispose();
     geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());textures.forEach(t=>t.dispose());batches.clear();drones.length=0;group.clear();
   }};
 }

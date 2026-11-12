@@ -34,7 +34,7 @@ export function createEscalators({routes=ESCALATORS,speed=ESCALATOR_SPEED,flat=E
   for(const geometry of[bodyGeometry,edgeGeometry])for(const [name,attribute]of Object.entries(attributes))geometry.setAttribute(name,attribute);
 
   const bodyMaterial=new THREE.MeshStandardMaterial({color:'#59696a',roughness:.68,metalness:.46});
-  const edgeMaterial=new THREE.MeshBasicMaterial({color:'#e1bd83',toneMapped:false,side:THREE.DoubleSide});
+  const edgeMaterial=new THREE.MeshBasicMaterial({color:'#e1bd83',side:THREE.DoubleSide});
   function animateMaterial(material,grooves){
     material.onBeforeCompile=shader=>{
       shader.uniforms.uEscTravel=uniform;
@@ -78,6 +78,9 @@ diffuseColor.rgb*=mix(1.0,0.76+0.24*treadGroove,vEscTop);`);
     for(let i=0;i<count;i++)mesh.setMatrixAt(i,identity);
     mesh.instanceMatrix.needsUpdate=true;
     mesh.boundingBox=bounds.clone();mesh.boundingSphere=bounds.getBoundingSphere(new THREE.Sphere());
+    // The steps are placed in the vertex shader; a depth pass would draw them
+    // all at the origin. Their static trusses and balustrades cast instead.
+    mesh.userData.castShadow=false;
     mesh.matrixAutoUpdate=false;group.add(mesh);
   }
 

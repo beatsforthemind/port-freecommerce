@@ -12,11 +12,29 @@ const SOURCES = Object.freeze({
 });
 
 /**
+ * Start the downloads before the station is built, so the network overlaps the
+ * construction instead of following it. Failures surface when each model is
+ * installed, exactly as a late fetch would.
+ */
+export function prefetchImportedModels() {
+  const files = {};
+  for (const [key, descriptor] of Object.entries(SOURCES)) {
+    const request = fetch(`${MODEL_ROOT}${descriptor.file}`, {credentials:'same-origin'}).then(response => {
+      if (!response.ok) throw new Error(`${descriptor.title} could not load (HTTP ${response.status}).`);
+      return response.arrayBuffer();
+    });
+    request.catch(() => {});
+    files[key] = request;
+  }
+  return files;
+}
+
+/**
  * Imported foreground detail is deliberately bounded. Static copies share both
  * geometry and materials through instancing; one service unit owns one mixer.
  * Each load can fail independently without hiding the procedural station.
  */
-export async function createImportedModels({renderer, camera, floorHeight = () => 0, loadTimeoutMs = 8000} = {}) {
+export async function createImportedModels({renderer, camera, floorHeight = () => 0, loadTimeoutMs = 8000, prefetched = null} = {}) {
   const group = new THREE.Group();
   group.name = 'Port FreeCommerce / Poly Pizza models';
   const colliders = [];
@@ -79,15 +97,19 @@ export async function createImportedModels({renderer, camera, floorHeight = () =
     gltf.scene.clear();
   }
 
-  function loadAsset(descriptor) {
+  function loadAsset(descriptor, started = null) {
     const url = `${MODEL_ROOT}${descriptor.file}`;
     const controller = new AbortController();
     const timeoutError = new Error(`${descriptor.title} exceeded its ${deadlineMs} ms loading deadline.`);
     let expired = false, timer;
     const work = (async () => {
-      const response = await fetch(url, {signal:controller.signal, credentials:'same-origin'});
-      if (!response.ok) throw new Error(`${descriptor.title} could not load (HTTP ${response.status}).`);
-      const data = await response.arrayBuffer();
+      let data;
+      if (started) data = await started;
+      else {
+        const response = await fetch(url, {signal:controller.signal, credentials:'same-origin'});
+        if (!response.ok) throw new Error(`${descriptor.title} could not load (HTTP ${response.status}).`);
+        data = await response.arrayBuffer();
+      }
       if (expired) throw timeoutError;
       const gltf = await loader.parseAsync(data, MODEL_ROOT);
       if (expired) {discardLoadedAsset(gltf); throw timeoutError;}
@@ -212,6 +234,18 @@ export async function createImportedModels({renderer, camera, floorHeight = () =
 
   function addRobot(gltf) {
     collectResources(gltf.scene);
+    // The supplied shell is a saturated toy orange with a glossy finish. Bring
+    // it into the port's worn service palette; the packaged file is unchanged.
+    gltf.scene.traverse(node => {
+      if (!node.isMesh) return;
+      for (const material of Array.isArray(node.material) ? node.material : [node.material]) {
+        if (material.userData.portFinish) continue;
+        material.userData.portFinish = true;
+        if (material.name === 'Main') material.color.set('#9f8658');
+        material.roughness = Math.max(material.roughness, .62);
+        material.metalness = Math.min(material.metalness, .3);
+      }
+    });
     const model = cloneSkeleton(gltf.scene);
     batchRigidRobot(model);
     const idle = gltf.animations.find(clip => /idle|stand|breath/i.test(clip.name));
@@ -316,7 +350,7 @@ export async function createImportedModels({renderer, camera, floorHeight = () =
   const results = await Promise.allSettled(definitions.map(async ([key, install]) => {
     const descriptor = SOURCES[key];
     const url = `${MODEL_ROOT}${descriptor.file}`;
-    const gltf = await loadAsset(descriptor);
+    const gltf = await loadAsset(descriptor, prefetched?.[key]);
     const before = {children: group.children.length, instances: instances.length, colliders: colliders.length, locations: locations.length,
       triangles: submittedTriangles, calls: submittedDrawCalls, count: instanceCount, robot, mixer};
     let dimensions;

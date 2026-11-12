@@ -12,7 +12,9 @@ export function buildPromenadeShops({group,box,beam,materials,colliders,shops,he
   for(const [index,shop]of shops.entries()){
     const {side,z,width,type}=shop,span=width/2-.35;
     const variant=shop.variant??index%4;
-    const accent=type==='botany'||type==='sensory'?m.dim:type==='tailoring'||type==='food'?m.rust:m.edge;
+    // Structure is always a lit material. `m.dim` is a light colour and stays
+    // on fixtures; used on walls it rendered them flat and self-luminous.
+    const accent=type==='botany'||type==='sensory'?m.sage:type==='tailoring'||type==='food'?m.rust:m.edge;
     typeCounts[type]=(typeCounts[type]||0)+1;
     function b(material,x,y,v,w,h,d,ry=0,rz=0){
       box(material,side*x,height+y,z+v,w,h,d,side*ry,side*rz);boxInstances++;
@@ -88,14 +90,14 @@ export function buildPromenadeShops({group,box,beam,materials,colliders,shops,he
         }
       }
     }else if(type==='botany'){
-      counter(m.dim,.82,1.55);
+      counter(m.sage,.82,1.55);
       b(m.dark,30.85,1.80,0,.48,2.75,width-.4);
       for(const y of[1.15,2.03])b(m.edge,29.95,y,0,2.1,.10,width-.55);
       for(let i=0;i<4;i++){
         const v=-span*.74+i*span*.48,x=i%2?30.25:28.38,y=i%2?2.1:.93;
         cylinder(m.edge,x,y+.13,v,.22,.26,.28);
-        rod(m.dim,[x,y+.2,v],[x,y+1.10,v],.06);
-        for(let leaf=0;leaf<3;leaf++)curve(new THREE.ConeGeometry(.20,.64,3),m.dim,x+(leaf-1)*.14,y+.50+leaf*.19,v+(leaf%2?.12:-.10),.35,leaf*1.4,.8);
+        rod(m.sage,[x,y+.2,v],[x,y+1.10,v],.06);
+        for(let leaf=0;leaf<3;leaf++)curve(new THREE.ConeGeometry(.20,.64,3),m.sage,x+(leaf-1)*.14,y+.50+leaf*.19,v+(leaf%2?.12:-.10),.35,leaf*1.4,.8);
         crystal(x,y+1.13,v,.13);
       }
       for(const v of[-span,span])rod(m.edge,[28.1,.9,v],[28.1,2.75,v],.035);
@@ -125,10 +127,10 @@ export function buildPromenadeShops({group,box,beam,materials,colliders,shops,he
       rod(m.edge,[30.40,2.85,-span],[30.40,2.85,span],.075);
       for(let i=0;i<3;i++){
         const v=-span*.65+i*span*.64;
-        b(i%2?m.dim:m.rust,30.42,1.93,v,.15,1.66,Math.min(.72,width*.14),0,(i-1)*.04);
+        b(i%2?m.sage:m.rust,30.42,1.93,v,.15,1.66,Math.min(.72,width*.14),0,(i-1)*.04);
         b(m.warm,30.29,1.30,v,.055,.06,.55);
       }
-      for(let i=0;i<3;i++)b(i%2?m.dim:m.rust,27.97,1.10+i*.15,span*.55,.70,.13,.88);
+      for(let i=0;i<3;i++)b(i%2?m.sage:m.rust,27.97,1.10+i*.15,span*.55,.70,.13,.88);
       cylinder(m.edge,29.90,.35,-span*.55,.32,.12);
       rod(m.edge,[29.90,.42,-span*.55],[29.90,2.15,-span*.55],.07);
       b(m.warm,29.90,1.76,-span*.55,.47,.79,.65);
@@ -153,7 +155,7 @@ export function buildPromenadeShops({group,box,beam,materials,colliders,shops,he
         rod(m.edge,[28.08,.96,-span*.65],[28.08,1.45,-span*.65],.055);
         for(const [v,r]of[[0,.23],[span*.65,.17]]){
           cylinder(m.edge,28.12,1.18,v,r*.75,.12,r);
-          cylinder(m.dim,28.12,1.247,v,r*.78,.018,r*.78);
+          cylinder(m.sage,28.12,1.247,v,r*.78,.018,r*.78);
           curve(new THREE.TorusGeometry(r,.025,3,12),m.edge,28.12,1.26,v,Math.PI/2);
         }
         ring(30.30,2.18,-span*.14,.58);
@@ -177,7 +179,7 @@ export function buildPromenadeShops({group,box,beam,materials,colliders,shops,he
       b(m.cool,27.58,1.48,span*.52,.035,.14,.35);
       for(let i=0;i<3;i++)b(m.edge,30.63,1.61+i*.32,-span*.63,.10,.12,.47);
     }else if(type==='sensory'){
-      counter(m.dim,.87,1.45);
+      counter(m.sage,.87,1.45);
       // Individually pressure-rated tasting columns and an angular listening horn.
       for(let i=0;i<3;i++){
         const v=-span*.62+i*span*.62;
@@ -195,14 +197,14 @@ export function buildPromenadeShops({group,box,beam,materials,colliders,shops,he
       b(m.rib,30.10,1.50,v,1.85,2.72,w);
       b(m.dark,29.11,1.62,v,.12,1.91,w-.34);
       b(m.warm,29.04,1.25,v,.06,.44,w-.50);
-      b(m.dim,29.03,1.52,v+w*.27,.065,.22,.62);
+      b(m.sage,29.03,1.52,v+w*.27,.065,.22,.62);
       b(m.amber,29.01,2.55,v,.035,.055,w-.38);
-      for(let i=0;i<3;i++)b(m.dim,27.98,1.02+i*.16,span*.60,.60,.13,.86);
+      for(let i=0;i<3;i++)b(m.sage,27.98,1.02+i*.16,span*.60,.60,.13,.86);
     }else if(type==='luggage'){
       counter(m.rib,.92,1.5);
       const v=-span*.58;
       for(let i=0;i<3;i++){
-        b(i%2?m.rust:m.dim,30.45,.44+i*.65,v,.95,.58,1.15-i*.12,0,0);
+        b(i%2?m.rust:m.sage,30.45,.44+i*.65,v,.95,.58,1.15-i*.12,0,0);
         b(m.edge,29.94,.42+i*.65,v,.06,.07,.45);
       }
       for(let i=0;i<2;i++){
@@ -212,7 +214,7 @@ export function buildPromenadeShops({group,box,beam,materials,colliders,shops,he
         rod(m.edge,[28.03,1.88,vv-.14],[28.03,1.88,vv+.14],.035);
       }
     }else if(type==='pharmacy'){
-      counter(m.dim,1.08,1.60);
+      counter(m.sage,1.08,1.60);
       shelves();
       for(let i=0;i<4;i++){
         const v=-span*.74+i*span*.49;

@@ -162,7 +162,7 @@ export function createPromenadeSigns({group,shops=PROMENADE_SHOPS,height=7.625})
     panel(index,1,shop.side*27.025,height+.65,shop.z,fasciaWidth,.7,rotation);
   });
   const atlas=new THREE.CanvasTexture(canvas);atlas.colorSpace=THREE.SRGBColorSpace;atlas.anisotropy=4;
-  const material=new THREE.MeshBasicMaterial({map:atlas,toneMapped:false});
+  const material=new THREE.MeshBasicMaterial({map:atlas});
   const geometry=mergeGeometries(geometries);geometries.forEach(item=>item.dispose());
   const mesh=new THREE.Mesh(geometry,material);mesh.name='Deck 02 / thirty-two independent shop signs';mesh.matrixAutoUpdate=false;group.add(mesh);
   let disposed=false;

@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 
 /** Six static material batches, including all printed details and soft contact shadows. */
-export function createFurnishings({importedTrees = false} = {}) {
+export function createFurnishings({importedTrees = false, glow = null} = {}) {
   const group = new THREE.Group();
   group.name = 'Concourse / passenger infrastructure';
   const colliders = [];
@@ -47,7 +47,8 @@ export function createFurnishings({importedTrees = false} = {}) {
   });
   tile(3, () => {
     const gradient = ctx.createRadialGradient(256, 128, 8, 256, 128, 123);
-    gradient.addColorStop(0, 'rgba(2,12,15,.66)'); gradient.addColorStop(.35, 'rgba(2,12,15,.4)'); gradient.addColorStop(1, 'rgba(2,12,15,0)');
+    // Blended on the display, and now beneath a real shadow in the concourse.
+    gradient.addColorStop(0, 'rgba(2,12,15,.44)'); gradient.addColorStop(.35, 'rgba(2,12,15,.25)'); gradient.addColorStop(1, 'rgba(2,12,15,0)');
     ctx.translate(256, 128); ctx.scale(2, 1); ctx.translate(-256, -128);
     ctx.fillStyle = gradient; ctx.fillRect(120, 0, 272, 256);
   });
@@ -123,6 +124,7 @@ export function createFurnishings({importedTrees = false} = {}) {
         box(materials.metal, x - side * .25, .79, z + i * 2.1 + 1, 1.7, .11, .1);
       }
       box(materials.warm, x - side * 1.06, .5, z, .035, .055, 5.9);
+      glow?.beam([x - side * 1.06, .5, z - 2.95], [x - side * 1.06, .5, z + 2.95], .3, '#dfb67e', .3);
       colliders.push({minX: x - 1.25, maxX: x + 1.25, minZ: z - 3.6, maxZ: z + 3.6});
       const pz = z + 5.3;
       shadow(x, pz, 4, 4);
@@ -147,6 +149,7 @@ export function createFurnishings({importedTrees = false} = {}) {
       box(materials.metal, bx, 2.8, z, .25, 5, .4);
       box(materials.dark, bx, 4.6, z, .3, 3.05, 8.1);
       box(materials.warm, bx - side * .18, 6.05, z, .04, .06, 8.1);
+      glow?.beam([bx - side * .18, 6.05, z - 4.05], [bx - side * .18, 6.05, z + 4.05], .4, '#dfb67e', .36);
       decal(0, bx - side * .17, 4.6, z, 7.8, 2.8, 0, ry);
       decal(5, bx + side * .17, 4.6, z, 7.8, 2.8, 0, -ry);
       colliders.push({minX: bx - 1, maxX: bx + 1, minZ: z - 1, maxZ: z + 1});

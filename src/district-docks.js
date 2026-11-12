@@ -1,10 +1,12 @@
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+import { applyIndustrialSurface } from './surfaces.js';
 
 /** A public departure head with three pressure piers around a separate freight well. */
 export function buildDocksDistrict({box, solid, sign, mesh, decal, m}) {
   const hub = [[-15,-139],[15,-139],[22,-146],[22,-164],[15,-171],[-15,-171],[-22,-164],[-22,-146]];
   const deck = new THREE.MeshStandardMaterial({color:'#4d5b67',roughness:.83,metalness:.34});
+  applyIndustrialSurface(deck, {surface: 'paving'});
   const custom = new Map();
   const signs = [];
   let boxCount = 0, solidCount = 0, signCount = 0, customTriangles = 0;
@@ -266,9 +268,18 @@ export function buildDocksDistrict({box, solid, sign, mesh, decal, m}) {
   shipBox(m.soft,43.15,10.1,-159,.08,.7,4.6);
   // Offset berths are seen through the side glazing instead of being hidden
   // directly behind each sealed lock. Closed transfer couplings reach their hulls.
-  for (const [a,end] of [[[0,3.1,-201],[10,6,-215]],[[-38,3.1,-159],[-43,3.1,-173]],[[38,3.1,-159],[44,3.1,-171]]]) {
-    beam(m.dark,a,end,3.2,3.2);
-    beam(m.steel,[a[0],a[1]-1.65,a[2]],[end[0],end[1]-1.65,end[2]],3.4,.25);
+  // Each coupling leaves its lock squarely before turning toward the berth,
+  // so the angled tunnel's end never crosses the door it serves.
+  for (const [lock,out,end] of [
+    [[0,3.1,-200.95],[0,-1],[10,6,-215]],
+    [[-38.15,3.1,-159],[-1,0],[-43,3.1,-173]],
+    [[38.15,3.1,-159],[1,0],[44,3.1,-171]],
+  ]) {
+    const elbow=[lock[0]+out[0]*2.6,lock[1],lock[2]+out[1]*2.6];
+    for (const [a,b] of [[lock,elbow],[elbow,end]]) {
+      beam(m.dark,a,b,3.2,3.2);
+      beam(m.steel,[a[0],a[1]-1.65,a[2]],[b[0],b[1]-1.65,b[2]],3.4,.25);
+    }
   }
 
   // Every custom structure shares a material draw instead of one object per rib.
@@ -308,7 +319,7 @@ export function buildDocksDistrict({box, solid, sign, mesh, decal, m}) {
     }
   });
   const atlas = new THREE.CanvasTexture(canvas); atlas.colorSpace=THREE.SRGBColorSpace; atlas.anisotropy=4;
-  const print = new THREE.MeshBasicMaterial({map:atlas,side:THREE.DoubleSide,toneMapped:false});
+  const print = new THREE.MeshBasicMaterial({map:atlas,side:THREE.DoubleSide});
   const signGeometry = new THREE.BufferGeometry();
   signGeometry.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));
   signGeometry.setAttribute('uv',new THREE.Float32BufferAttribute(uvs,2));

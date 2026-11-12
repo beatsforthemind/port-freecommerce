@@ -3,6 +3,10 @@ import * as THREE from 'three';
 /**
  * Five small GPU batches add movement and depth without extra lights, texture
  * uploads, simulation loops, or full-screen passes. All geometry is immutable.
+ *
+ * The frame is drawn straight to the display, so these translucent layers are
+ * blended after tone mapping. Their opacities are set for that: the same
+ * values blended before tone mapping would read several times stronger.
  */
 export function createAtmosphere({ renderer, camera, reducedMotion = false } = {}) {
   const group = new THREE.Group();
@@ -63,7 +67,7 @@ export function createAtmosphere({ renderer, camera, reducedMotion = false } = {
         p.z += cos(uTime * .07 + aPhase) * .2;
         vec4 mv = modelViewMatrix * vec4(p, 1.);
         float distanceToEye = length(mv.xyz);
-        vAlpha = (.12 + .1 * sin(aPhase) * sin(aPhase))
+        vAlpha = (.27 + .2 * sin(aPhase) * sin(aPhase))
           * (1. - smoothstep(55., 145., distanceToEye))
           * smoothstep(.6, 2.5, distanceToEye);
         vTint = mix(vec3(.57,.66,.59), vec3(.82,.67,.43), sin(aPhase) * .5 + .5);
@@ -111,7 +115,7 @@ export function createAtmosphere({ renderer, camera, reducedMotion = false } = {
         );
         vec4 mv = modelViewMatrix * vec4(p, 1.);
         float distanceToEye = length(mv.xyz);
-        vAlpha = sin(progress * 3.14159265) * .082
+        vAlpha = sin(progress * 3.14159265) * .17
           * (1. - smoothstep(45., 110., distanceToEye));
         float size = .14 + progress * .7;
         gl_PointSize = clamp(size * uProjectionScale / max(1., -mv.z), 1., 64.);
@@ -174,7 +178,7 @@ export function createAtmosphere({ renderer, camera, reducedMotion = false } = {
         float across = sin(vUv.x * 3.14159265);
         float lengthFade = smoothstep(0., .08, vUv.y) * (1. - smoothstep(.65, 1., vUv.y));
         float air = .9 + .1 * sin(vUv.y * 13. + uTime * .15);
-        float alpha = across * across * lengthFade * air * .036;
+        float alpha = across * across * lengthFade * air * .1;
         alpha *= 1. - smoothstep(90., 200., vDistance);
         gl_FragColor = vec4(.55, .65, .57, alpha);
         ${fragmentOutput}
@@ -218,7 +222,7 @@ export function createAtmosphere({ renderer, camera, reducedMotion = false } = {
       uniform float uTime; varying float vPath; varying float vDistance;
       void main() {
         float pulse = pow(max(0., sin(vPath * .055 + uTime * .42)), 8.);
-        float alpha = (.12 + pulse * .28) * (1. - smoothstep(50., 140., vDistance));
+        float alpha = (.17 + pulse * .34) * (1. - smoothstep(50., 140., vDistance));
         gl_FragColor = vec4(.64, .41, .19, alpha);
         ${fragmentOutput}
       }`,

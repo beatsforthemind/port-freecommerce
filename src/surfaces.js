@@ -117,13 +117,65 @@ export function createSurfaceLibrary() {
   return surfaceLibrary;
 }
 
-/** Stable metre-scaled UVs for stretched, instanced architectural boxes. */
-export function applyIndustrialSurface(material, {relief = true, scale = .125} = {}) {
-  const surfaces = createSurfaceLibrary();
-  material.map = surfaces.albedo;
-  if (relief) {
-    material.normalMap = surfaces.normal;
-    material.normalScale = new THREE.Vector2(.3, .3);
+let pavingLibrary;
+
+/**
+ * Neutral public paving for the side districts: two-metre slabs, worn joints
+ * and foot traffic, with no lettering. The district's own floor colour tints it.
+ */
+export function createPavingSurface() {
+  if (pavingLibrary) return pavingLibrary;
+  const size = 512, canvas = document.createElement('canvas');
+  canvas.width = canvas.height = size;
+  const ctx = canvas.getContext('2d');
+  let seed = 7411;
+  const random = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; };
+  ctx.fillStyle = '#dedcd2'; ctx.fillRect(0, 0, size, size);
+  for (let row = 0; row < 2; row++) for (let col = 0; col < 2; col++) {
+    const x = col * 256, y = row * 256, shade = 212 + Math.floor(random() * 24);
+    ctx.fillStyle = `rgb(${shade},${shade - 1},${shade - 7})`;
+    ctx.fillRect(x + 2, y + 2, 252, 252);
+    // Dirt gathers along the joints and the slab centres are rubbed pale.
+    const worn = ctx.createRadialGradient(x + 128, y + 128, 30, x + 128, y + 128, 190);
+    worn.addColorStop(0, 'rgba(255,252,240,.10)'); worn.addColorStop(1, 'rgba(22,30,28,.16)');
+    ctx.fillStyle = worn; ctx.fillRect(x, y, 256, 256);
+    ctx.strokeStyle = 'rgba(40,48,46,.62)'; ctx.lineWidth = 3; ctx.strokeRect(x + 1.5, y + 1.5, 253, 253);
+    ctx.strokeStyle = 'rgba(250,247,232,.32)'; ctx.lineWidth = 1; ctx.strokeRect(x + 5.5, y + 5.5, 245, 245);
+  }
+  for (let i = 0; i < 9000; i++) {
+    ctx.fillStyle = `rgba(${random() > .5 ? '250,246,230' : '18,26,25'},${random() * .09})`;
+    ctx.fillRect(random() * size, random() * size, 1 + random() * 2.5, 1 + random() * 1.5);
+  }
+  for (let i = 0; i < 26; i++) {
+    // Old spills and scuffs, kept soft so the tiling does not announce itself.
+    const x = random() * size, y = random() * size, r = 8 + random() * 34;
+    const stain = ctx.createRadialGradient(x, y, 1, x, y, r);
+    stain.addColorStop(0, `rgba(24,30,28,${.05 + random() * .08})`); stain.addColorStop(1, 'rgba(24,30,28,0)');
+    ctx.fillStyle = stain; ctx.fillRect(x - r, y - r, r * 2, r * 2);
+  }
+  const albedo = new THREE.CanvasTexture(canvas);
+  albedo.colorSpace = THREE.SRGBColorSpace;
+  albedo.wrapS = albedo.wrapT = THREE.RepeatWrapping;
+  albedo.anisotropy = 8;
+  pavingLibrary = {albedo, dispose() {albedo.dispose(); pavingLibrary = undefined;}};
+  return pavingLibrary;
+}
+
+/**
+ * Stable metre-scaled UVs for stretched, instanced architectural boxes.
+ * `surface: 'paving'` swaps the panel atlas for plain public paving.
+ */
+export function applyIndustrialSurface(material, {relief = true, scale = .125, surface = 'panel'} = {}) {
+  if (surface === 'paving') {
+    material.map = createPavingSurface().albedo;
+    relief = false; scale = .25;
+  } else {
+    const surfaces = createSurfaceLibrary();
+    material.map = surfaces.albedo;
+    if (relief) {
+      material.normalMap = surfaces.normal;
+      material.normalScale = new THREE.Vector2(.3, .3);
+    }
   }
   material.onBeforeCompile = shader => {
     shader.vertexShader = shader.vertexShader.replace('#include <worldpos_vertex>', `
@@ -133,9 +185,13 @@ export function applyIndustrialSurface(material, {relief = true, scale = .125} =
         pfcWorld = instanceMatrix * pfcWorld;
       #endif
       pfcWorld = modelMatrix * pfcWorld;
-      vec3 pfcAxis = abs(inverseTransformDirection(transformedNormal, viewMatrix));
-      vec2 pfcUv = pfcAxis.y > max(pfcAxis.x, pfcAxis.z) ? pfcWorld.xz
-        : (pfcAxis.x > pfcAxis.z ? pfcWorld.zy : pfcWorld.xy);
+      vec3 pfcNormal = inverseTransformDirection(transformedNormal, viewMatrix);
+      vec3 pfcAxis = abs(pfcNormal);
+      // Project along the dominant axis and mirror by the way the face looks,
+      // so stencilled print reads left to right from the side it is seen from.
+      vec2 pfcUv = pfcAxis.y > max(pfcAxis.x, pfcAxis.z) ? vec2(pfcNormal.y < 0. ? -pfcWorld.x : pfcWorld.x, -pfcWorld.z)
+        : (pfcAxis.x > pfcAxis.z ? vec2(pfcNormal.x < 0. ? pfcWorld.z : -pfcWorld.z, pfcWorld.y)
+          : vec2(pfcNormal.z < 0. ? -pfcWorld.x : pfcWorld.x, pfcWorld.y));
       vMapUv = pfcUv * ${scale.toFixed(5)};
       #ifdef USE_NORMALMAP
         vNormalMapUv = pfcUv * ${scale.toFixed(5)};
@@ -147,7 +203,7 @@ export function applyIndustrialSurface(material, {relief = true, scale = .125} =
       roughnessFactor = clamp(roughnessFactor + (.7 - sampledDiffuseColor.r) * .16, .35, 1.0);
     `);
   };
-  material.customProgramCacheKey = () => `pfc-industrial-surface-v1-${scale}-${relief}`;
+  material.customProgramCacheKey = () => `pfc-industrial-surface-v2-${scale}-${relief}`;
   material.needsUpdate = true;
   return material;
 }

@@ -1,9 +1,5 @@
 import './style.css';
 import * as THREE from 'three';
-import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
-import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
-import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
-import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { createStation } from './world.js';
 import { createDistricts } from './districts.js';
 import { createFirstPersonControls } from './controls.js';
@@ -13,7 +9,10 @@ import { createFurnishings } from './furnishings.js';
 import { createPopulation } from './population.js';
 import { createCommerce } from './commerce.js';
 import { createStationLife } from './station-life.js';
-import { createImportedModels } from './imported-models.js';
+import { createImportedModels, prefetchImportedModels } from './imported-models.js';
+import { createLighting } from './lighting.js';
+import { createGlow } from './glow.js';
+import { createRenderGovernor } from './render-governor.js';
 import { createNavigation, sectorAt } from './navigation.js';
 import { createStationPlan } from './station-plan.js';
 import { createPublicLifts } from './public-lifts.js';
@@ -71,7 +70,7 @@ const conversations = [
   {sector: 'docks', x: 0, z: -155, radius: 28, speaker: 'DOCK CREW / LOCAL CHANNEL', lines: ['The little crate is heavier. The large crate is angry.', 'Boarding group seven: please stop rejoining boarding group six.', 'The next ship is somebody’s way home. Treat it accordingly.']},
 ];
 
-let scene, camera, renderer, composer, station, districts, controls, audio, atmosphere, furnishings, population, commerce, stationLife, importedModels, navigation, journeyNavigation, stationPlan, publicLifts, escalators;
+let scene, camera, renderer, lighting, governor, glowLayer, station, districts, controls, audio, atmosphere, furnishings, population, commerce, stationLife, importedModels, navigation, journeyNavigation, stationPlan, publicLifts, escalators;
 let mode = 'arrival';
 let activeSector = '';
 let elapsed = 0;
@@ -193,7 +192,16 @@ function showError(error) {
   $('#enter-button').disabled = true;
 }
 
-function canWalk(x, z, feet) {return navigation?.canWalk(x,z,feet) ?? false;}
+function canWalk(x, z, feet) {
+  if(!navigation?.canWalk(x,z,feet))return false;
+  // People are solid to a visitor on foot, though never a trap: a step that
+  // moves away from someone is always allowed.
+  if(mode==='exploring'&&camera) {
+    const fromX=camera.position.x,fromZ=camera.position.z;
+    if(population?.obstructs(x,z,feet,fromX,fromZ)||districts?.obstructs(x,z,feet,fromX,fromZ))return false;
+  }
+  return true;
+}
 
 function updateNearbyInteractable() {
   let next=null;
@@ -251,13 +259,32 @@ function useLift(interaction) {
 function resizeViewport() {
   if(disposed||!renderer||!camera)return;
   const width=Math.max(1,innerWidth),height=Math.max(1,innerHeight);
-  const ratio=Math.min(devicePixelRatio||1,isTouch?1.25:1.6);
+  // The device sets the ceiling; the governor may hold a lower ratio beneath it.
+  const ratio=governor.setLimit(Math.min(devicePixelRatio||1,isTouch?1.25:1.6));
   if(renderer.getPixelRatio()!==ratio)renderer.setPixelRatio(ratio);
   renderer.setSize(width,height);
   camera.aspect=width/height;
   camera.updateProjectionMatrix();
-  if(composer){composer.setPixelRatio(ratio);composer.setSize(width,height);}
+  governor.reset();
   lastSceneRender=-Infinity;
+}
+
+/** The sign typeface must be in before any sign is drawn: a canvas silently falls back. */
+async function signTypeReady() {
+  if(!document.fonts?.load)return;
+  try {
+    await Promise.race([
+      document.fonts.load('600 48px "Space Grotesk"'),
+      new Promise(resolve=>setTimeout(resolve,1500)),
+    ]);
+  } catch { /* The local fallback face still gives readable signs. */ }
+}
+
+/** Last resort once the lowest resolution still misses the frame budget. */
+function relieveLighting() {
+  if(disposed||!lighting)return;
+  lighting.setDetail(false);
+  effectContext.shadows=lighting.detail;
 }
 
 function watchPixelRatio() {
@@ -411,23 +438,22 @@ async function init() {
   scene.background = new THREE.Color('#17272d');
   scene.fog = new THREE.FogExp2('#1a2a2e', .004);
   camera = new THREE.PerspectiveCamera(64, innerWidth / innerHeight, .1, 2000);
+  governor = createRenderGovernor({limit:Math.min(devicePixelRatio||1,isTouch?1.25:1.6),onRatio:resizeViewport,onRelief:relieveLighting});
   window.addEventListener('resize',resizeViewport);
   resizeViewport();
   watchPixelRatio();
   effectContext.camera = camera;
-  scene.add(new THREE.HemisphereLight('#c4d5cc', '#2b3330', 2.25));
-  const sun = new THREE.DirectionalLight('#e1d4b3', 3.1);
-  sun.position.set(-18, 45, -60);
-  scene.add(sun);
-  const fill = new THREE.DirectionalLight('#9bbbc0', 1.3);
-  fill.position.set(70, 20, 30);
-  scene.add(fill);
-  const warm = new THREE.PointLight('#edaa6c', 220, 85, 1.6);
-  warm.position.set(0, 14, -25);
-  scene.add(warm);
+  // Touch hardware starts without the shadow map and probes; contact shadows stand in.
+  lighting = createLighting({scene, renderer, detail:!isTouch});
+  effectContext.shadows = lighting.detail;
+  // Model downloads and the sign typeface overlap the wait, then the build.
+  const modelFiles = prefetchImportedModels();
+  await signTypeReady();
+  if(disposed)return;
 
-  station = createStation();
-  districts = createDistricts();
+  const glow = createGlow();
+  station = createStation({glow});
+  districts = createDistricts({glow});
   publicLifts=createPublicLifts({onStateChange:liftStateChanged});
   escalators=createEscalators();
   colliders.push(...publicLifts.colliders,...escalators.colliders);
@@ -438,12 +464,13 @@ async function init() {
     if(layout.spawn)Object.assign(sectors[layout.id],layout.spawn);
     if(layout.terminal)Object.assign(terminalData[layout.id==='market'?2:layout.id==='docks'?3:1],layout.terminal);
   }
-  importedModels = await createImportedModels({renderer, camera, floorHeight:navigation.heightAt});
+  importedModels = await createImportedModels({renderer, camera, floorHeight:navigation.heightAt, prefetched:modelFiles});
   if(disposed){importedModels.dispose();return;}
-  furnishings = createFurnishings({importedTrees: importedModels.loaded.tree});
+  furnishings = createFurnishings({importedTrees: importedModels.loaded.tree, glow});
   atmosphere = createAtmosphere({renderer, camera, reducedMotion});
-  commerce = createCommerce({importedTree: importedModels.loaded.tree, importedPot: importedModels.loaded.pot});
+  commerce = createCommerce({importedTree: importedModels.loaded.tree, importedPot: importedModels.loaded.pot, glow});
   stationLife = createStationLife();
+  glowLayer = glow.build();
   for (const event of stationLife.events) {
     const divider = event.caption.indexOf(' / ');
     conversations.push({
@@ -452,7 +479,7 @@ async function init() {
       speaker: event.caption.slice(0, divider), lines: [event.caption.slice(divider + 3)],
     });
   }
-  scene.add(station.group, districts.group, furnishings.group, atmosphere.group, commerce.group, stationLife.group, importedModels.group, publicLifts.group, escalators.group);
+  scene.add(station.group, districts.group, furnishings.group, atmosphere.group, commerce.group, stationLife.group, importedModels.group, publicLifts.group, escalators.group, glowLayer.group);
   colliders.push(...station.colliders, ...districts.colliders, ...furnishings.colliders, ...commerce.colliders, ...stationLife.colliders, ...importedModels.colliders);
   const tradeNotices = {
     'Night Market Tea': 'Six mismatched cups wait beside a pressure-sealed kettle. The handwritten price is crossed out in three different scripts. The seller appears to accept stories as a fourth currency.',
@@ -486,11 +513,15 @@ async function init() {
     onInteract: interact,
   });
 
-  composer = new EffectComposer(renderer);
-  composer.addPass(new RenderPass(scene, camera));
-  const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), .24, .55, .92);
-  composer.addPass(bloom);
-  composer.addPass(new OutputPass());
+  // Shadows and reflections are settled before the first frame. Shaders link
+  // off the main thread first, so the probe capture and the opening frames do
+  // not stall on them.
+  lighting.configureShadows();
+  lighting.reserveEnvironment();
+  await renderer.compileAsync(scene, camera);
+  await lighting.compileForCapture(camera);
+  if(disposed)return;
+  lighting.captureProbes();
   resizeViewport();
   let previousTime = performance.now();
   let frameCount = 0;
@@ -498,9 +529,10 @@ async function init() {
   function animate() {
     animationFrame = requestAnimationFrame(animate);
     const now = performance.now();
-    const dt = Math.min((now - previousTime) / 1000, .05);
+    const interval = now - previousTime;
+    const dt = Math.min(interval / 1000, .05);
     previousTime = now;
-    if (document.hidden) return;
+    if (document.hidden) { governor.reset(); return; }
     elapsed += dt;
     publicLifts.update(dt,{camera,controls,mode,reducedMotion});
     escalators.update(dt,{camera,controls,mode,reducedMotion});
@@ -523,6 +555,8 @@ async function init() {
         }
       }
     }
+    // One fascia sits directly behind the arrival copy; it belongs to the walk-through.
+    for(const sign of station.titleCardHidden||[])sign.visible=mode!=='arrival';
     station.update?.(dt, elapsed, effectContext);
     districts.update?.(dt, elapsed, effectContext);
     population.update(dt, elapsed, effectContext);
@@ -539,6 +573,8 @@ async function init() {
     const blend=1-Math.exp(-dt*1.8);
     scene.fog.color.lerp(room.color,blend);
     scene.fog.density+=(room.density-scene.fog.density)*blend;
+    lighting.update(dt,mode==='arrival'?'concourse':activeSector||'concourse');
+    glowLayer.update(scene.fog.density);
     terminalScreens.forEach((marker, i) => {
       if (!reducedMotion) marker.position.y = 2.8 + Math.sin(elapsed * 1.5 + i) * .1;
       marker.quaternion.copy(marker.userData.inverseParent).multiply(camera.quaternion);
@@ -547,7 +583,9 @@ async function init() {
     if(mode==='paused'&&now-lastSceneRender<1000/15)return;
     lastSceneRender=now;
     renderer.info.reset();
-    composer.render();
+    renderer.render(scene,camera);
+    // Menus render at a deliberate 15 Hz, which says nothing about the hardware.
+    if(mode==='paused')governor.reset();else governor.sample(interval);
     frameCount++;
     if (frameCount === 3) {
       ready = true;
@@ -562,7 +600,7 @@ async function init() {
 
   // A small read-only bridge makes local smoke tests and future development easy.
   window.stationExperience = {
-    get state() { return {ready, mode, sector: activeSector, visited: [...visited], position: camera.position.toArray(), yaw: controls.yaw, floorHeight:navigation.heightAt(camera.position.x,camera.position.z,camera.position.y-1.75), drawCalls: renderer.info.render.calls, triangles: renderer.info.render.triangles, points: renderer.info.render.points, textures: renderer.info.memory.textures, geometries: renderer.info.memory.geometries, resolution:{pixelRatio:renderer.getPixelRatio(),width:canvas.width,height:canvas.height,composerWidth:composer.renderTarget1.width,composerHeight:composer.renderTarget1.height}, atmosphere: atmosphere.stats, furnishings: furnishings.stats, population: population.stats, commerce: commerce.stats, stationLife: stationLife.stats, importedModels: importedModels.stats, architecture:districts.layouts.map(({id,stats})=>({id,...stats})), concourse:station.stats, conversations: shownConversations, sound: audio.enabled, audio:audio.stats}; },
+    get state() { return {ready, mode, sector: activeSector, visited: [...visited], position: camera.position.toArray(), yaw: controls.yaw, floorHeight:navigation.heightAt(camera.position.x,camera.position.z,camera.position.y-1.75), drawCalls: renderer.info.render.calls, triangles: renderer.info.render.triangles, points: renderer.info.render.points, textures: renderer.info.memory.textures, geometries: renderer.info.memory.geometries, resolution:{pixelRatio:renderer.getPixelRatio(),width:canvas.width,height:canvas.height}, quality:{...governor.stats,lighting:lighting.stats,glow:glowLayer.stats}, atmosphere: atmosphere.stats, furnishings: furnishings.stats, population: population.stats, commerce: commerce.stats, stationLife: stationLife.stats, importedModels: importedModels.stats, architecture:districts.layouts.map(({id,stats})=>({id,...stats})), concourse:station.stats, conversations: shownConversations, sound: audio.enabled, audio:audio.stats}; },
     get places() { return interactables.map(item => ({name: item.title || item.code, x: item.x, z: item.z, radius: item.radius || 3.8})); },
     get npcBehavior() { return {population:population.behaviorSnapshot ?? [], commuters:districts.behaviorSnapshot ?? []}; },
     get lifts() { return publicLifts.snapshot; },
@@ -706,8 +744,8 @@ window.addEventListener('pagehide', event => {
   districts?.dispose();
   station?.dispose();
   disposeTerminals();
-  composer?.passes.forEach(pass=>pass.dispose?.());
-  composer?.dispose();
+  glowLayer?.dispose();
+  lighting?.dispose();
   renderer?.dispose();
 });
 

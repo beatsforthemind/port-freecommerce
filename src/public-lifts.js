@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {CONCOURSE_LEVELS,PUBLIC_LIFT_SHAFTS,PUBLIC_LIFT_LAYOUT} from './concourse-levels.js';
+import {applyGlassSheen} from './kit.js';
 
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
 const ease=t=>{t=clamp(t,0,1);return t*t*t*(t*(t*6-15)+10);};
@@ -18,6 +19,7 @@ export function createPublicLifts({onStateChange}={}) {
     glass:new THREE.MeshBasicMaterial({color:'#b4cfc0',transparent:true,opacity:.095,depthWrite:false,side:THREE.DoubleSide}),
   };
   materials.glass.forceSinglePass=true;
+  applyGlassSheen(materials.glass,{edge:.36});
   const unit=new THREE.BoxGeometry(1,1,1);geometries.add(unit);
   const object=new THREE.Object3D(),staticBoxes={steel:[],amber:[]};
   let disposed=false,rider=null,lastCamera=null,lastControls=null,matrixUploads=0,rides=0,calls=0;

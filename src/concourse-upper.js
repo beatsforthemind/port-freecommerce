@@ -47,7 +47,7 @@ export function buildUpperConcourse({box,beam,materials,colliders}) {
     const shaft=PUBLIC_LIFT_SHAFTS.find(item=>item.side===side);
     for(const[a,b]of[[-122,shaft.minZ],[shaft.maxZ,92]])box(materials.rib,side*27.5,express-.15,(a+b)/2,5,.3,b-a);
     box(materials.rib,side*25.85,express-.15,-52,1.7,.3,4);
-    for(const[a,b]of[[-122,-54],[-50,92]])box(materials.dark,side*27.5,express-.39,(a+b)/2,4.7,.18,b-a);
+    for(const[a,b]of[[-122,-54],[-50,92]])box(materials.soffit,side*27.5,express-.39,(a+b)/2,4.7,.18,b-a);
     surfaces.push({sector:'concourse',level:'express',minX:side<0?-29.25:25.5,maxX:side<0?-25.5:29.25,minZ:-120,maxZ:90,height:express});
     rail(side*25.2,-15,.12,210.8,express);
     for(const[a,b]of[[-120.4,shaft.minZ],[shaft.maxZ,90.4]])rail(side*29.7,(a+b)/2,.12,b-a,express);
@@ -72,7 +72,7 @@ export function buildUpperConcourse({box,beam,materials,colliders}) {
 
   for(const z of[-84,20]){
     box(materials.rib,0,gallery-.22,z,45,.44,6);
-    box(materials.dark,0,gallery-.56,z,45,.24,5.7);
+    box(materials.soffit,0,gallery-.56,z,45,.24,5.7);
     surfaces.push({sector:'concourse',level:'galleries',minX:-23.1,maxX:23.1,minZ:z-2.72,maxZ:z+2.72,height:gallery});
     for(const side of[-1,1]){
       rail(0,z+side*2.85,43,.12,gallery);

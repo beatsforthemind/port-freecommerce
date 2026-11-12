@@ -2,6 +2,11 @@
 // its 720-second subdivision. Phase offsets are validated against both groups.
 export const POPULATION_TIMETABLE_SECONDS=1440;
 
+// Both crowds play their timetables at this rate. Scaling time, rather than
+// editing speeds, turns a 0.9 m/s stroll into a natural 1.3 m/s walk while
+// every calibrated meeting, queue and crossing keeps its relative timing.
+export const CROWD_PACE=1.5;
+
 // Calibrated offline across the full 24-minute window against all commuters.
 const PHASE_OFFSETS_SECONDS=Object.freeze({
   "connection-0": 43.25,
