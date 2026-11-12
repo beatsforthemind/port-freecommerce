@@ -8,6 +8,8 @@ export const SUN_DIRECTION = Object.freeze(new THREE.Vector3(-.8, .65, .35).norm
 // holds in the north aperture and above the docks.
 const PELAGOS = Object.freeze({offset: [102, 50.45, 0], radius: 45, ringInner: 54, ringOuter: 83});
 const MOON = Object.freeze({offset: [-75, 135, -800], radius: 285});
+/** Where Pelagos hangs: a broad, pale lamp on whatever faces east. */
+export const PELAGOS_DIRECTION = Object.freeze(new THREE.Vector3(...PELAGOS.offset).normalize());
 
 /**
  * One sky for the whole station: stars, the ringed giant Pelagos to the east

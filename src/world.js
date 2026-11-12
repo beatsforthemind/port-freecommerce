@@ -6,18 +6,24 @@ import {PROMENADE_SHOPS,createPromenadeSigns} from './promenade-directory.js';
 import {buildPromenadeShops} from './promenade-shops.js';
 import {buildPromenadeKeepers} from './promenade-keepers.js';
 import {splitPromenadeRail} from './escalator-layout.js';
-import {readableFromBothSides,applyGlassSheen} from './kit.js';
+import {applyGlassSheen} from './kit.js';
+import {createSignage} from './signage.js';
 import {createStorefrontDisplays} from './storefronts.js';
 import {createSky} from './sky.js';
+import {CONCOURSE_INTERIOR} from './visibility.js';
 
 // Multiple station instances can share the cached atlas during previews/tests.
 const surfaceUsers = new Map();
 
 // Architecture is assembled into material batches: the scale comes from repetition,
 // without making each rib, shop shutter, or handrail a separate draw call.
-export function createStation({glow = null} = {}) {
+export function createStation({glow = null, signage = null} = {}) {
   const group = new THREE.Group();
   group.name = 'Port FreeCommerce / main concourse';
+  // The station normally letters its signs on the sheet it is handed; on its
+  // own, in a preview or a test, it keeps one for itself.
+  const ownSignage = signage ? null : createSignage();
+  const lettering = signage || ownSignage;
   const colliders = [];
   const batches = new Map();
   const dummy = new THREE.Object3D();
@@ -66,27 +72,13 @@ export function createStation({glow = null} = {}) {
     transforms.push(dummy.matrix.clone());
     batches.set(mat, transforms);
   }
-  function text(value, x, y, z, width, height, { color = '#e6e2cf', background = '#172329', rotation = 0, align = 'center', size = 90 } = {}) {
-    const canvas = document.createElement('canvas');
-    canvas.width = 1024;
-    canvas.height = Math.max(64, Math.round(1024 * height / width));
-    const ctx = canvas.getContext('2d');
-    if (background) { ctx.fillStyle = background; ctx.fillRect(0, 0, canvas.width, canvas.height); }
-    ctx.fillStyle = color;
-    ctx.font = `600 ${size}px "Space Grotesk", "Arial", sans-serif`;
-    ctx.textAlign = align;
-    ctx.textBaseline = 'middle';
-    ctx.fillText(value, align === 'center' ? 512 : 48, canvas.height / 2, 944);
-    const texture = new THREE.CanvasTexture(canvas);
-    texture.colorSpace = THREE.SRGBColorSpace;
-    texture.anisotropy = 4;
-    // Lettering without a backing must not write depth: its empty rectangle
-    // would otherwise cut a hole in the dust and light shafts behind it.
-    const mesh = new THREE.Mesh(new THREE.PlaneGeometry(width, height), readableFromBothSides(new THREE.MeshBasicMaterial({ map: texture, transparent: !background, depthWrite: Boolean(background), polygonOffset: true, polygonOffsetFactor: -1 })));
-    mesh.position.set(x, y, z);
-    mesh.rotation.y = rotation;
-    group.add(mesh);
-    return mesh;
+  /**
+   * A sign on the shared lettering sheet. `size` is the type size against the
+   * sign's width; `flat` lays the lettering on the deck; a null `background`
+   * leaves it unbacked. Returns the layer's group, for signs shown together.
+   */
+  function text(value, x, y, z, width, height, { color = '#e6e2cf', background = '#172329', rotation = 0, align = 'center', size = 90, flat = false, layer = 'concourse' } = {}) {
+    return lettering.add(value, {x, y, z, width, height, yaw: rotation, pitch: flat ? -Math.PI / 2 : 0, color, background, align, size, layer});
   }
 
   // A subtly worn deck, with seams that remain legible from human eye level.
@@ -152,8 +144,10 @@ export function createStation({glow = null} = {}) {
     box(materials.shell, side * 35, 20.75, -15, 6, 28.5, 230);
     // Ground wall sections intentionally leave broad entries into all districts.
     const gapMin = side < 0 ? 10 : -40, gapMax = side < 0 ? 50 : 0;
+    // The wall meets the shell above it. A half-metre gap here once let the
+    // hall be seen from outside, along its whole length.
     for (const [a, b] of [[-130, gapMin], [gapMax, 100]]) {
-      box(materials.dark, sx + side * .7, 3, (a + b) / 2, 1.4, 6, b - a);
+      box(materials.dark, sx + side * .7, 3.25, (a + b) / 2, 1.4, 6.5, b - a);
     }
     // Elevated commercial decks and their illuminated edges.
     for (const level of [7.2, 17.2]) {
@@ -252,8 +246,7 @@ export function createStation({glow = null} = {}) {
     for (let z = -110; z < 100; z += 32) box(materials.dark, side * 13.2, .02, z, 2.5, .028, 3.2);
   }
   for (const z of [65, 17, -65, -108]) {
-    const decal = text('↑   TRANSIT   /   DOCKS 01–12', 0, .045, z, 10, 1.2, { color: '#b6bab0', background: null, size: 68 });
-    decal.rotation.x = -Math.PI / 2;
+    text('↑   TRANSIT   /   DOCKS 01–12', 0, .045, z, 10, 1.2, { color: '#b6bab0', background: null, size: 68, flat: true });
   }
 
   // North bulkhead: a monumental observation aperture above the dock throat.
@@ -372,13 +365,32 @@ export function createStation({glow = null} = {}) {
     code:`PFC / DECK 02 / ${shop.side<0?'WEST':'EAST'} TRADE WALK`,
     title:shop.name,hint:`Inspect ${shop.name}`,text:shop.description,
   }));
+  if (ownSignage) { ownSignage.build(); group.add(ownSignage.group); }
   const promenadeStats={...promenade.stats,...promenadeSigns.stats,...keepers.stats,shops:PROMENADE_SHOPS.length,types:new Set(PROMENADE_SHOPS.map(shop=>shop.type)).size};
+  // Boxes wholly inside the hall are batched apart from the hull around it,
+  // so the hall can be skipped as a whole while no opening to it is in view.
+  const unitCube = new THREE.BoxGeometry(1,1,1);
+  const corner = new THREE.Vector3(), extent = new THREE.Box3();
+  const inHall = matrix => {
+    extent.makeEmpty();
+    for (const x of [-.5,.5]) for (const y of [-.5,.5]) for (const z of [-.5,.5]) extent.expandByPoint(corner.set(x,y,z).applyMatrix4(matrix));
+    return CONCOURSE_INTERIOR.containsBox(extent);
+  };
+  const batchCounts = {hall: 0, hull: 0};
   for (const [mat, transforms] of batches) {
-    const mesh = new THREE.InstancedMesh(new THREE.BoxGeometry(1,1,1), mat, transforms.length);
-    transforms.forEach((matrix, i) => mesh.setMatrixAt(i,matrix));
-    mesh.instanceMatrix.needsUpdate=true;
-    mesh.receiveShadow=true;
-    group.add(mesh);
+    const parts = {hall: [], hull: []};
+    for (const matrix of transforms) parts[inHall(matrix) ? 'hall' : 'hull'].push(matrix);
+    for (const [part, list] of Object.entries(parts)) {
+      if (!list.length) continue;
+      const mesh = new THREE.InstancedMesh(unitCube, mat, list.length);
+      mesh.name = `Concourse / ${part} boxes`;
+      list.forEach((matrix, i) => mesh.setMatrixAt(i,matrix));
+      mesh.instanceMatrix.needsUpdate=true;
+      mesh.receiveShadow=true;
+      mesh.computeBoundingBox(); mesh.computeBoundingSphere();
+      group.add(mesh);
+      batchCounts[part] += list.length;
+    }
   }
   let glowFixtures = 0;
   if (glow) {
@@ -402,7 +414,7 @@ export function createStation({glow = null} = {}) {
     landmarks:[...access.landmarks,...shopLandmarks], routes:access.routes,
     // Shown once the visitor is inside: on the arrival title it sits behind the copy.
     titleCardHidden:access.titleCardHidden,
-    stats:{...access.stats,promenadeShops:PROMENADE_SHOPS.length,glowFixtures,storefronts:storefronts.stats,sky:sky.stats},
+    stats:{...access.stats,promenadeShops:PROMENADE_SHOPS.length,glowFixtures,storefronts:storefronts.stats,sky:sky.stats,boxes:batchCounts},
     update(dt,_time,context = {}) {
       if (disposed) return;
       // Following the eye is placement, so it continues under reduced motion.
@@ -429,6 +441,7 @@ export function createStation({glow = null} = {}) {
       geometries.forEach(geometry=>geometry.dispose());
       ownedMaterials.forEach(material=>material.dispose());
       textures.forEach(texture=>texture.dispose());
+      ownSignage?.dispose();
       sky.dispose();
       const users = surfaceUsers.get(surfaces) - 1;
       if (users > 0) surfaceUsers.set(surfaces,users);

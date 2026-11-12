@@ -64,7 +64,8 @@ export function buildConcourseAccess({group, box, beam, text, materials,collider
     }
     for (const x of [-18,18]) beam(materials.rib,[x,h-.45,z],[Math.sign(x)*25,h-2.7,z],.34);
   }
-  const arrivalsFascia=text('ARRIVALS  ⇄  TRANSFERS',0,h-.75,51.2,16,1.0,{color:'#e5c397',size:70});
+  // Its own layer: this fascia sits behind the arrival title and is shown on entering.
+  const arrivalsFascia=text('ARRIVALS  ↔  TRANSFERS',0,h-.75,51.2,16,1.0,{color:'#e5c397',size:70,layer:'concourse / arrivals fascia'});
   text('ALL GATES  /  FOLLOW THE SPINE',0,h-.75,-96.8,17,1.0,{color:'#e5c397',size:70});
   // Authored resident itineraries retain their original floor interpretation;
   // the public lift/cap additions are for the first-person navigation view.

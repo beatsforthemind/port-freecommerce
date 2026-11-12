@@ -18,7 +18,9 @@ import { createStationPlan } from './station-plan.js';
 import { createPublicLifts } from './public-lifts.js';
 import {createEscalators} from './escalators.js';
 import { CONCOURSE_LEVELS, PUBLIC_LIFT_SHAFTS, concourseLevelAt } from './concourse-levels.js';
-import { box, label, panelMaterial, glowMaterial } from './kit.js';
+import { box, panelMaterial, glowMaterial } from './kit.js';
+import { createSignage } from './signage.js';
+import { createSectorVisibility } from './visibility.js';
 
 const $ = (selector) => document.querySelector(selector);
 const canvas = $('#station');
@@ -70,7 +72,7 @@ const conversations = [
   {sector: 'docks', x: 0, z: -155, radius: 28, speaker: 'DOCK CREW / LOCAL CHANNEL', lines: ['The little crate is heavier. The large crate is angry.', 'Boarding group seven: please stop rejoining boarding group six.', 'The next ship is somebody’s way home. Treat it accordingly.']},
 ];
 
-let scene, camera, renderer, lighting, governor, glowLayer, station, districts, controls, audio, atmosphere, furnishings, population, commerce, stationLife, importedModels, navigation, journeyNavigation, stationPlan, publicLifts, escalators;
+let scene, camera, renderer, lighting, governor, glowLayer, signage, visibility, station, districts, controls, audio, atmosphere, furnishings, population, commerce, stationLife, importedModels, navigation, journeyNavigation, stationPlan, publicLifts, escalators;
 let mode = 'arrival';
 let activeSector = '';
 let elapsed = 0;
@@ -298,6 +300,8 @@ function handlePixelRatioChange() {resizeViewport();watchPixelRatio();}
 
 function disposeTerminals() {
   const geometries=new Set(),materials=new Set(),textures=new Set();
+  // Markers are lettered on the shared sheet, which the signage releases.
+  for(const marker of terminalScreens)marker.removeFromParent();
   for(const group of terminalGroups){
     group.traverse(node=>{if(!node.isMesh)return;geometries.add(node.geometry);for(const material of Array.isArray(node.material)?node.material:[node.material]){materials.add(material);for(const value of Object.values(material))if(value?.isTexture)textures.add(value);}});
     group.removeFromParent();
@@ -323,11 +327,12 @@ function buildTerminals({importedComputer = false} = {}) {
       box(group, base, 0, .55, 0, 1.15, 1.1, .8);
       box(group, dark, 0, 1.4, 0, 1.65, 1.1, .32);
       box(group, glow, 0, 1.95, .05, 1.65, .04, .35);
-      const screen = label('STATION / INFO', {width: 1.43, height: .61, fontSize: 55, color: '#d0d8b7', background: '#263e3d'});
-      screen.position.set(0, 1.43, .17);
-      group.add(screen);
+      // The screen is a fixed sign, read at arm's length; the terminal only turns it.
+      const turn = group.rotation.y;
+      signage.add('STATION / INFO', {x: data.x + Math.sin(turn) * .17, y: data.y + 1.43, z: data.z + Math.cos(turn) * .17, width: 1.43, height: .61, yaw: turn,
+        scale: 55, density: 360, color: '#d0d8b7', background: '#263e3d', layer: sectorAt(data.x, data.z)});
     }
-    const marker = label('+', {width: .5, height: .5, fontSize: 100, color: '#e7b37e', background: 'transparent'});
+    const marker = signage.sprite('+', {width: .5, height: .5, density: 256, color: '#e7b37e'});
     marker.position.set(0, 2.8, 0);
     group.add(marker);
     terminalScreens.push(marker);
@@ -452,8 +457,10 @@ async function init() {
   if(disposed)return;
 
   const glow = createGlow();
-  station = createStation({glow});
-  districts = createDistricts({glow});
+  // One sheet letters every sign: the builders add to it, then it is drawn once.
+  signage = createSignage({maxSize: renderer.capabilities.maxTextureSize});
+  station = createStation({glow, signage});
+  districts = createDistricts({glow, signage});
   publicLifts=createPublicLifts({onStateChange:liftStateChanged});
   escalators=createEscalators();
   colliders.push(...publicLifts.colliders,...escalators.colliders);
@@ -498,6 +505,8 @@ async function init() {
     text:Array.isArray(landmark.text)?landmark.text:[landmark.text],
   });
   buildTerminals({importedComputer: importedModels.loaded.computer});
+  signage.build();
+  scene.add(signage.group);
   population = createPopulation({districtLayouts:districts.layouts,promenadeRoutes:station.routes,navigation:journeyNavigation});
   scene.add(population.group);
   stationPlan=createStationPlan(navigation,{shops:station.shops});
@@ -522,6 +531,9 @@ async function init() {
   await lighting.compileForCapture(camera);
   if(disposed)return;
   lighting.captureProbes();
+  // Only now are the hall's contents given their own layer: the probes had to see them.
+  visibility = createSectorVisibility({scene, camera, layouts: districts.layouts});
+  visibility.classify();
   resizeViewport();
   let previousTime = performance.now();
   let frameCount = 0;
@@ -555,6 +567,8 @@ async function init() {
         }
       }
     }
+    // The eye is placed: decide whether any opening to the concourse is in view.
+    effectContext.concourseSeen = visibility.update();
     // One fascia sits directly behind the arrival copy; it belongs to the walk-through.
     for(const sign of station.titleCardHidden||[])sign.visible=mode!=='arrival';
     station.update?.(dt, elapsed, effectContext);
@@ -573,7 +587,7 @@ async function init() {
     const blend=1-Math.exp(-dt*1.8);
     scene.fog.color.lerp(room.color,blend);
     scene.fog.density+=(room.density-scene.fog.density)*blend;
-    lighting.update(dt,mode==='arrival'?'concourse':activeSector||'concourse');
+    lighting.update(dt,mode==='arrival'?'concourse':activeSector||'concourse',effectContext.concourseSeen);
     glowLayer.update(scene.fog.density);
     terminalScreens.forEach((marker, i) => {
       if (!reducedMotion) marker.position.y = 2.8 + Math.sin(elapsed * 1.5 + i) * .1;
@@ -600,7 +614,7 @@ async function init() {
 
   // A small read-only bridge makes local smoke tests and future development easy.
   window.stationExperience = {
-    get state() { return {ready, mode, sector: activeSector, visited: [...visited], position: camera.position.toArray(), yaw: controls.yaw, floorHeight:navigation.heightAt(camera.position.x,camera.position.z,camera.position.y-1.75), drawCalls: renderer.info.render.calls, triangles: renderer.info.render.triangles, points: renderer.info.render.points, textures: renderer.info.memory.textures, geometries: renderer.info.memory.geometries, resolution:{pixelRatio:renderer.getPixelRatio(),width:canvas.width,height:canvas.height}, quality:{...governor.stats,lighting:lighting.stats,glow:glowLayer.stats}, atmosphere: atmosphere.stats, furnishings: furnishings.stats, population: population.stats, commerce: commerce.stats, stationLife: stationLife.stats, importedModels: importedModels.stats, architecture:districts.layouts.map(({id,stats})=>({id,...stats})), concourse:station.stats, conversations: shownConversations, sound: audio.enabled, audio:audio.stats}; },
+    get state() { return {ready, mode, sector: activeSector, visited: [...visited], position: camera.position.toArray(), yaw: controls.yaw, floorHeight:navigation.heightAt(camera.position.x,camera.position.z,camera.position.y-1.75), drawCalls: renderer.info.render.calls, triangles: renderer.info.render.triangles, points: renderer.info.render.points, textures: renderer.info.memory.textures, geometries: renderer.info.memory.geometries, resolution:{pixelRatio:renderer.getPixelRatio(),width:canvas.width,height:canvas.height}, quality:{...governor.stats,lighting:lighting.stats,glow:glowLayer.stats,signage:signage.stats,visibility:visibility.stats}, atmosphere: atmosphere.stats, furnishings: furnishings.stats, population: population.stats, commerce: commerce.stats, stationLife: stationLife.stats, importedModels: importedModels.stats, architecture:districts.layouts.map(({id,stats})=>({id,...stats})), concourse:station.stats, conversations: shownConversations, sound: audio.enabled, audio:audio.stats}; },
     get places() { return interactables.map(item => ({name: item.title || item.code, x: item.x, z: item.z, radius: item.radius || 3.8})); },
     get npcBehavior() { return {population:population.behaviorSnapshot ?? [], commuters:districts.behaviorSnapshot ?? []}; },
     get lifts() { return publicLifts.snapshot; },
@@ -744,6 +758,7 @@ window.addEventListener('pagehide', event => {
   districts?.dispose();
   station?.dispose();
   disposeTerminals();
+  signage?.dispose();
   glowLayer?.dispose();
   lighting?.dispose();
   renderer?.dispose();

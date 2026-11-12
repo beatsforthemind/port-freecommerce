@@ -244,6 +244,6 @@ export function buildObservationDistrict({box, solid, footprint: registerFootpri
       [[82,-25],[87,-28],[92,-25],[95,-20],[92,-15],[87,-12],[82,-15],[82,-25]],
       [[42,-25],[60,-25],[76,-26],[86,-28],[94,-24],[96,-20],[94,-16],[86,-12],[76,-14],[60,-20],[42,-25]],
     ],
-    stats:{triangles,points:0,boxCount,customDrawCalls:customDraws,signDrawCalls:signCount,newTextures:signCount,lights:0,maximumRise:2.8,footprint:'faceted fan with a curved panoramic edge'},
+    stats:{triangles,points:0,boxCount,customDrawCalls:customDraws,signs:signCount,newTextures:0,lights:0,maximumRise:2.8,footprint:'faceted fan with a curved panoramic edge'},
   };
 }

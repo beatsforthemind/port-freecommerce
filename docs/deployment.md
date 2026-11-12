@@ -28,9 +28,9 @@ npm run build
 npm run preview
 ```
 
-The build runs `scripts/verify-build.mjs` after Vite. It checks the compiled JavaScript and CSS, requires all four GLBs and `credits.txt`, validates GLB headers, and compares every copied public file with its source. `npm run check:build` repeats verification of an existing build.
+The build runs `scripts/verify-build.mjs` after Vite. It checks the compiled JavaScript and CSS, requires all four GLBs, `credits.txt`, and the typeface licence, validates GLB headers, and compares every copied public file with its source. It also fails if a typeface is missing from the build or if anything still points at a font service. `npm run check:build` repeats verification of an existing build.
 
-In the preview, enter the station, open the map with **M**, and visit observation, the exchange, the docks, and the upper promenade. Check the Controls credits link. Verify mouse movement or the drag fallback, and touch movement on a phone. Fonts use Google Fonts with local fallbacks; model assets are served from the deployment itself.
+In the preview, enter the station, open the map with **M**, and visit observation, the exchange, the docks, and the upper promenade. Check the two credits links at the foot of Controls. Verify mouse movement or the drag fallback, and touch movement on a phone. Typefaces and model assets are served from the deployment itself; nothing is requested from another host.
 
 ## Deploy from this folder
 
@@ -52,7 +52,7 @@ Alternatively, import [beatsforthemind/port-freecommerce](https://github.com/bea
 
 ## Asset delivery and routing
 
-`vercel.json` gives hashed files in `/assets/` a one-year immutable browser cache. HTML and unversioned `/models/` files revalidate, so future model replacements are visible to returning visitors. These values use Vercel's [Cache-Control header support](https://vercel.com/docs/caching/cache-control-headers).
+`vercel.json` gives hashed files in `/assets/`, which now include the typefaces, a one-year immutable browser cache. HTML and unversioned `/models/` files revalidate, so future model replacements are visible to returning visitors. These values use Vercel's [Cache-Control header support](https://vercel.com/docs/caching/cache-control-headers).
 
 All models and their credits are copied from `public/models/poly-pizza/` into the deployment. The station's map changes scene state without changing the URL, so no SPA catch-all rewrite is configured. Missing assets remain ordinary missing files rather than receiving HTML.
 

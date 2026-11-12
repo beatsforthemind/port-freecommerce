@@ -7,9 +7,8 @@
     <meta name="description" content="Step inside Port FreeCommerce. An immense, original first-person space station experience inspired by the Murderbot universe, built with Three.js." />
     <title>Port FreeCommerce — A Station Experience</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect fill='%23e4a06a' width='64' height='64'/%3E%3Cpath d='M18 45V19h27v7H25v7h15v7H25v5z' fill='%23131d20'/%3E%3C/svg%3E" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="preload" href="/src/fonts/space-grotesk-latin-wght.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/src/fonts/barlow-condensed-latin-600.woff2" as="font" type="font/woff2" crossorigin />
   </head>
   <body>
     <canvas id="station" aria-label="Three-dimensional Port FreeCommerce space station"></canvas>
@@ -92,7 +91,7 @@
         <input id="audio-volume" class="audio-volume" type="range" min="0" max="100" step="1" value="55" aria-label="Station sound volume">
         <label class="motion-setting"><input id="footsteps-setting" type="checkbox" checked> Your footsteps</label>
         <p class="audio-note">Headphones reveal nearby machinery and room reflections.</p>
-      </fieldset><p class="model-credit-note"><a href="/models/poly-pizza/credits.txt" target="_blank" rel="noopener noreferrer">Selected models by Quaternius · credits</a></p><button class="enter-button" data-close>BACK TO THE STATION <span>↗</span></button></dialog>
+      </fieldset><p class="model-credit-note"><a href="/models/poly-pizza/credits.txt" target="_blank" rel="noopener noreferrer">Selected models by Quaternius · credits</a> <span aria-hidden="true">·</span> <a href="/fonts/OFL.txt" target="_blank" rel="noopener noreferrer">Typefaces · licence</a></p><button class="enter-button" data-close>BACK TO THE STATION <span>↗</span></button></dialog>
 
     <dialog id="lift-dialog" class="station-dialog lift-dialog" aria-labelledby="lift-title"><div class="dialog-top"><span class="eyebrow">PUBLIC VERTICAL TRANSIT / LANTERN LINE</span><button class="close-button" aria-label="Close lift destinations" data-close>×</button></div><h2 id="lift-title">Lantern lift</h2><p id="lift-current" class="lift-current">YOU ARE ON DECK 01</p><p class="dialog-intro">Choose a deck. Look out over the station as you travel.</p><div class="lift-destinations"><button data-lift-level="concourse"><span>01</span><span><strong>Public concourse</strong><small>Arrivals, independent traders, and all sectors.</small></span><b>↗</b></button><button data-lift-level="promenade"><span>02</span><span><strong>Public promenade</strong><small>Interstellar shops, bridges, and the Arrivals sunwalk.</small></span><b>↗</b></button><button data-lift-level="galleries"><span>03</span><span><strong>Lantern galleries</strong><small>Two skybridges through the upper city.</small></span><b>↗</b></button><button data-lift-level="express"><span>04</span><span><strong>Express overlook</strong><small>Freight views. Cross between sides on Deck 03.</small></span><b>↗</b></button></div><p class="lift-note">Doors open at the landing. Step out when you arrive.</p></dialog>
 

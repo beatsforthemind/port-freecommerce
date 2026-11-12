@@ -1,18 +1,18 @@
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { applyIndustrialSurface } from './surfaces.js';
+import { createDockShips } from './dock-ships.js';
 
 /** A public departure head with three pressure piers around a separate freight well. */
-export function buildDocksDistrict({box, solid, sign, mesh, decal, m}) {
+export function buildDocksDistrict({box, solid, sign, mesh, attach, decal, m, glow}) {
   const hub = [[-15,-139],[15,-139],[22,-146],[22,-164],[15,-171],[-15,-171],[-22,-164],[-22,-146]];
   const deck = new THREE.MeshStandardMaterial({color:'#4d5b67',roughness:.83,metalness:.34});
   applyIndustrialSurface(deck, {surface: 'paving'});
   const custom = new Map();
-  const signs = [];
   let boxCount = 0, solidCount = 0, signCount = 0, customTriangles = 0;
   const b = (...args) => {boxCount++; return box(...args);};
   const s = (...args) => {boxCount++; solidCount++; return solid(...args);};
-  const lettering = (...args) => {signCount++; signs.push(args);};
+  const lettering = (...args) => {signCount++; sign(...args);};
   const vY = new THREE.Vector3(0,1,0);
 
   function geometry(material, source) {
@@ -218,69 +218,11 @@ export function buildDocksDistrict({box, solid, sign, mesh, decal, m}) {
   for (const x of [-18,-15,-12,-9,-6]) b(m.amber,x,13.72,-170.85,1.4,.12,.06);
   lettering('AUTOMATED FREIGHT / KEEP CLEAR',-13,3.5,-169.9,9.3,.6,0,'#d0c3a6','#28333b');
 
-  // Three different craft give each branch a destination. Their repeated
-  // rectangular fittings stay in the common static material batches.
-  let shipOffsetX=18,shipOffsetZ=6;
-  const shipBox=(material,x,y,z,...rest)=>b(material,x+shipOffsetX,y,z+shipOffsetZ,...rest);
-  const shipBeam=(material,a,end,...rest)=>beam(material,[a[0]+shipOffsetX,a[1],a[2]+shipOffsetZ],[end[0]+shipOffsetX,end[1],end[2]+shipOffsetZ],...rest);
-  function hull(material,center,radius,length,axis=[0,0,1]) {
-    const g = new THREE.CylinderGeometry(radius*.72,radius,length,8);
-    g.applyQuaternion(new THREE.Quaternion().setFromUnitVectors(vY,new THREE.Vector3(...axis)));
-    g.translate(center[0]+shipOffsetX,center[1],center[2]+shipOffsetZ); geometry(material,g);
-  }
-  // Long-haul liner: pale pressure hull, habitation windows, twin drive pods.
-  hull(m.steel,[0,8.5,-224],4.7,36);
-  shipBox(m.cream,0,10.3,-220,7.7,5.2,21);
-  shipBox(m.dark,0,8.2,-220,15,1.8,24);
-  shipBox(m.soft,0,12.1,-211.5,5.1,.7,.12);
-  for (const side of [-1,1]) {
-    shipBox(m.rust,side*8,7.5,-228,3.3,4.3,19);
-    shipBox(m.dark,side*8,7.5,-238,2.8,3.8,.4);
-    shipBox(m.soft,side*8,7.5,-238.25,1.8,2.7,.08);
-    for (let z=-213;z>=-230;z-=3.2) shipBox(m.warm,side*3.91,10.2,z,.08,.65,1.2);
-    shipBeam(m.steel,[side*6.2,5.1,-220],[side*11.5,1.3,-235],.48,.9);
-  }
-  // Local shuttle: a compact transverse capsule with landing feet and a
-  // saddle-shaped bridge; visible through the west pier's long windows.
-  shipOffsetX=4;shipOffsetZ=-18;
-  hull(m.sage,[-56,5.2,-159],3.4,26,[1,0,0]);
-  shipBox(m.cream,-55,8.05,-159,9.5,1.9,5.1);
-  shipBox(m.dark,-56,4.3,-159,21,1.3,12.5);
-  shipBox(m.soft,-49.8,7.9,-159,.13,.9,3.9);
-  for (const side of [-1,1]) {
-    hull(m.dark,[-57,3.4,-159+side*7.1],1.4,15,[1,0,0]);
-    shipBox(m.amber,-49.4,3.4,-159+side*7.1,.12,.8,1.3);
-    shipBeam(m.steel,[-54,3.2,-159+side*4.5],[-54,.6,-159+side*8],.32);
-  }
-  // Freight tender: visible skeletal rails around unpressurized containers.
-  shipOffsetX=-4;shipOffsetZ=-18;
-  hull(m.dark,[58,6.8,-159],2.4,30,[1,0,0]);
-  for (const x of [50,56,62,68]) for (const side of [-1,1]) {
-    shipBox((x+side)%3?m.rust:m.sage,x,6.1,-159+side*4.6,4.8,5.2,5.2);
-    for (const dx of [-1.9,1.9]) shipBox(m.cream,x+dx,6.1,-159+side*4.6,.12,5.3,5.3);
-    shipBox(m.dark,x,3.4,-159+side*4.6,5,.25,5.4);
-  }
-  for (const z of [-168,-150]) {
-    shipBeam(m.steel,[45,9.6,z],[73,9.6,z],.4);
-    for (const x of [46,55,64,73]) shipBeam(m.steel,[x,3,z],[x,10,z],.3);
-  }
-  shipBox(m.cream,45.5,9.8,-159,4.6,3.1,5.8);
-  shipBox(m.soft,43.15,10.1,-159,.08,.7,4.6);
-  // Offset berths are seen through the side glazing instead of being hidden
-  // directly behind each sealed lock. Closed transfer couplings reach their hulls.
-  // Each coupling leaves its lock squarely before turning toward the berth,
-  // so the angled tunnel's end never crosses the door it serves.
-  for (const [lock,out,end] of [
-    [[0,3.1,-200.95],[0,-1],[10,6,-215]],
-    [[-38.15,3.1,-159],[-1,0],[-43,3.1,-173]],
-    [[38.15,3.1,-159],[1,0],[44,3.1,-171]],
-  ]) {
-    const elbow=[lock[0]+out[0]*2.6,lock[1],lock[2]+out[1]*2.6];
-    for (const [a,b] of [[lock,elbow],[elbow,end]]) {
-      beam(m.dark,a,b,3.2,3.2);
-      beam(m.steel,[a[0],a[1]-1.65,a[2]],[b[0],b[1]-1.65,b[2]],3.4,.25);
-    }
-  }
+  // Three craft give each branch a destination. They lie off their berths so
+  // that they are seen through the side glazing rather than hidden behind a
+  // sealed lock, and a transfer tunnel reaches each one from its gate.
+  const craft = createDockShips({glow});
+  craft.meshes.forEach(attach);
 
   // Every custom structure shares a material draw instead of one object per rib.
   for (const [material,parts] of custom) {
@@ -290,41 +232,6 @@ export function buildDocksDistrict({box, solid, sign, mesh, decal, m}) {
     const object = mesh(merged,material,0,0,0);
     object.name = 'Departure head / merged structure';
   }
-
-  // Twelve large wayfinding signs share one atlas and one geometry. A cropped
-  // tile preserves each sign's aspect ratio instead of stretching its glyphs.
-  const canvas = document.createElement('canvas');
-  canvas.width = canvas.height = 1024;
-  const context = canvas.getContext('2d');
-  const positions = [], uvs = [];
-  const rows = Math.ceil(signs.length/2), tileHeight = 1024/rows;
-  signs.forEach(([text,x,y,z,width,height,yaw=0,color='#eed2a2',background='#1a2b2d'],i) => {
-    const aspect = width/height;
-    const cropWidth = Math.min(496,(tileHeight-16)*aspect), cropHeight = cropWidth/aspect;
-    const left = (i%2)*512+8, top = Math.floor(i/2)*tileHeight+8;
-    context.fillStyle = background; context.fillRect(left,top,cropWidth,cropHeight);
-    context.fillStyle = color;
-    let fontSize = cropHeight*.62;
-    context.font = `600 ${fontSize}px "Space Grotesk",sans-serif`;
-    const textWidth = context.measureText(text).width;
-    if (textWidth>cropWidth*.93) fontSize*=cropWidth*.93/textWidth;
-    context.font = `600 ${fontSize}px "Space Grotesk",sans-serif`;
-    context.textAlign = 'center'; context.textBaseline = 'middle';
-    context.fillText(text,left+cropWidth/2,top+cropHeight*.53);
-    const u0=(left+.6)/1024,u1=(left+cropWidth-.6)/1024;
-    const v0=1-(top+cropHeight-.6)/1024,v1=1-(top+.6)/1024;
-    for (const [px,py,u,v] of [[-.5,-.5,u0,v0],[.5,-.5,u1,v0],[.5,.5,u1,v1],[-.5,-.5,u0,v0],[.5,.5,u1,v1],[-.5,.5,u0,v1]]) {
-      positions.push(x+Math.cos(yaw)*px*width,y+py*height,z-Math.sin(yaw)*px*width);
-      uvs.push(u,v);
-    }
-  });
-  const atlas = new THREE.CanvasTexture(canvas); atlas.colorSpace=THREE.SRGBColorSpace; atlas.anisotropy=4;
-  const print = new THREE.MeshBasicMaterial({map:atlas,side:THREE.DoubleSide});
-  const signGeometry = new THREE.BufferGeometry();
-  signGeometry.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));
-  signGeometry.setAttribute('uv',new THREE.Float32BufferAttribute(uvs,2));
-  signGeometry.computeBoundingSphere();
-  mesh(signGeometry,print,0,0,0).name = 'Departure head / shared wayfinding atlas';
 
   return {
     id:'docks',
@@ -348,6 +255,7 @@ export function buildDocksDistrict({box, solid, sign, mesh, decal, m}) {
       [[10,-151],[16,-151],[16,-159],[34,-159],[34,-157],[18,-157],[18,-148],[10,-148],[10,-151]],
       [[-15,-152],[-17,-159],[-34,-159],[-34,-157],[-16,-157],[-15,-152]],
     ],
-    stats:{footprint:'octagonal hub with three boarding piers',publicLevels:1,gateCount:3,ships:3,boxInstances:boxCount,solidSegments:solidCount,customDrawCalls:custom.size+1,labels:signCount,triangles:boxCount*12+customTriangles+signCount*2,textures:1,lights:0},
+    dispose(){craft.dispose();},
+    stats:{footprint:'octagonal hub with three boarding piers',publicLevels:1,gateCount:3,ships:3,craft:craft.stats,boxInstances:boxCount,solidSegments:solidCount,customDrawCalls:custom.size,labels:signCount,triangles:boxCount*12+customTriangles+signCount*2,textures:0,lights:0},
   };
 }

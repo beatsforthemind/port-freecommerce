@@ -54,8 +54,9 @@ export function buildMarketDistrict({box, solid, footprint:registerFootprint, si
   }
   // The old hall-sized opening becomes a compressed, legible street entrance.
   // These close its unused edges while leaving the full public route open.
-  for(const z of [14,46]) B(m.wall,-32.5,3.1,z,.85,6.2,8.1);
-  B(m.steel,-32.5,6.2,30,.85,.55,24);
+  // Both meet the concourse shell overhead, leaving no slot above them.
+  for(const z of [14,46]) B(m.wall,-32.5,3.25,z,.85,6.5,8.1);
+  B(m.steel,-32.5,6.2,30,.85,.6,24);
 
   const geometryBatches = new Map();
   const transform = new THREE.Object3D();

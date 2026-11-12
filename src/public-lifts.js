@@ -85,9 +85,9 @@ export function createPublicLifts({onStateChange}={}) {
     const mesh=new THREE.InstancedMesh(unit,materials[key],matrices.length);mesh.name='Lantern lifts / '+key;matrices.forEach((m,i)=>mesh.setMatrixAt(i,m));mesh.computeBoundingSphere();group.add(mesh);meshes.push(mesh);
   }
   const gateMesh=new THREE.InstancedMesh(unit,materials.dark,cars.length*CONCOURSE_LEVELS.length*2);
-  gateMesh.name='Lantern lifts / landing gates';gateMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);gateMesh.frustumCulled=false;group.add(gateMesh);meshes.push(gateMesh);
+  gateMesh.name='Lantern lifts / landing gates';gateMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);gateMesh.frustumCulled=false;gateMesh.userData.concourseInterior=true;group.add(gateMesh);meshes.push(gateMesh);
   const carDoors=new THREE.InstancedMesh(unit,materials.dark,cars.length*2);
-  carDoors.name='Lantern lifts / cabin doors';carDoors.instanceMatrix.setUsage(THREE.DynamicDrawUsage);carDoors.frustumCulled=false;group.add(carDoors);meshes.push(carDoors);
+  carDoors.name='Lantern lifts / cabin doors';carDoors.instanceMatrix.setUsage(THREE.DynamicDrawUsage);carDoors.frustumCulled=false;carDoors.userData.concourseInterior=true;group.add(carDoors);meshes.push(carDoors);
   function emit(){try{onStateChange?.(api.snapshot);}catch{/* Interface errors must not interrupt the lift. */}}
   function syncGeometry(){
     let gate=0,door=0;

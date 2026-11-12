@@ -19,11 +19,11 @@ npm run build
 npm run preview
 ```
 
-The build outputs a static site to `dist/`, suitable for any static host. WebGL 2 and hardware acceleration are required. Fonts are loaded from Google Fonts, with local fallbacks if unavailable. No backend, account, or API key is needed.
+The build outputs a static site to `dist/`, suitable for any static host. WebGL 2 and hardware acceleration are required. The typefaces are served from the site itself, so nothing is requested from another host. No backend, account, or API key is needed.
 
 ## Deploy through Vercel
 
-The project includes Vercel configuration for a static Vite deployment with Node 24, reproducible dependency installation, and asset caching. Every production build checks the compiled files and all four packaged models, including their credits. No environment variables are required.
+The project includes Vercel configuration for a static Vite deployment with Node 24, reproducible dependency installation, and asset caching. Every production build checks the compiled files, the three packaged typefaces, and all four packaged models, including their credits. No environment variables are required.
 
 From this folder, run `vercel` for a preview deployment, then `vercel --prod` when ready to publish to production. See [deployment instructions](docs/deployment.md) for settings, validation, and the Git import alternative. These commands publish to your selected Vercel account; preparing this project does not create a deployment.
 
@@ -62,12 +62,15 @@ Travelers follow each area's real routes; readers sit on both observation levels
 | `src/glow.js` | Fixture halos, lit-panel surrounds, and floor light pools in two instanced draws |
 | `src/contact-shadows.js` | Soft blobs under people the shadow map does not reach |
 | `src/sky.js` | Stars, the ringed giant Pelagos, and its moon, placed at infinity with one sun |
+| `src/signage.js` | One shared lettering sheet for every plain sign, readable from both sides |
+| `src/visibility.js` | Sorts what lies inside the concourse and skips it while no opening to it is in view |
 | `src/world.js` | Batched concourse architecture, balconies, floor, navigation sculpture |
 | `src/storefronts.js` | Backlit deck-level shop windows from one shared sheet |
 | `src/districts.js` | Shared district batching, signs, travelers, and drones |
 | `src/district-observation.js` | Fan-shaped observatory, ramp, terrace, ringed planet, and quiet alcoves |
 | `src/district-market.js` | Irregular bazaar, winding streets, canopies, shop islands, and common court |
-| `src/district-docks.js` | Octagonal departure hall, branching boarding piers, pressure locks, and ships |
+| `src/district-docks.js` | Octagonal departure hall, branching boarding piers, pressure locks, and the berths of three craft |
+| `src/dock-ships.js` | The liner, shuttle, and freight tender: lofted hulls, one mesh each, lit by the star and the planet |
 | `src/concourse-access.js` | Public ramps, escalator housings and landings, bridges, rails, and floor metadata |
 | `src/concourse-upper.js` | Lantern galleries, skybridges, express overlooks, and Arrivals sunwalks |
 | `src/concourse-levels.js` | Shared public floor heights and lift-shaft layout |
@@ -95,8 +98,9 @@ Travelers follow each area's real routes; readers sit on both observation levels
 | `src/gait.js` | The visitor's walking and sprinting pace, and the step length shared by camera and footsteps |
 | `src/audio.js` | Optional room ambience, shared reflections, PA cues, volume, and audio lifecycle |
 | `src/audio-sources.js` | Directional machinery, synchronized transport cues, and movement-paced footsteps |
-| `src/kit.js` | Shared geometry, signs, and material helpers |
+| `src/kit.js` | Shared geometry and material helpers |
 | `src/style.css` | Arrival view, exploration HUD, dialogs, responsive touch interface |
+| `src/fonts/` | The two typefaces as WOFF2 subsets, with their sources and rebuild steps |
 
 Architecture and repeated props use material-based instancing. The renderer draws straight to an anti-aliased canvas, adapts pixel density to hold its frame budget, keeps one shadow map for the concourse, and pauses rendering in background tabs. It respects the system reduced-motion setting, with an in-app override for camera motion. To extend a district, add geometry, vertically bounded colliders, floor polygons or ramp surfaces, and population routes to its builder. Walking, crowd placement, terminal heights, and the station plan share that floor metadata.
 
@@ -124,7 +128,11 @@ The lighting and rendering pass replaces the bloom chain with direct, anti-alias
 
 The same pass makes the station feel inhabited at walking pace. The visitor walks at 3.6 m/s and sprints at 7.5, with camera bob and footsteps driven by one step length. Residents walk at about 1.3 m/s on the same calibrated timetables, played half as fast again. Nearby residents shift their weight, glance at a visitor who comes close, stop for someone standing in their path and then make the time up, and can no longer be walked through. Frame time on the test machine fell by 23–42% with all of this enabled, and the load is about a quarter faster. Touch devices start without the shadow map and probes, and a governor lowers resolution, then lighting detail, on hardware that cannot hold the budget. See [lighting and rendering](docs/lighting-and-rendering.md) for the measurements, budgets, and limits.
 
+The ships, signs, and visibility pass finishes what the lighting pass left open. The liner, the shuttle, and the freight tender are now lofted hulls with cabin windows, glazed bridges, drives, radiators, cargo modules, and stencilled names, lit by the same star as the moon; each lies broadside to its own pier at the end of a ribbed transfer tunnel. Every plain sign is lettered on one shared sheet and reads correctly from both sides, with its arrows turned to match. The two typefaces are served from the site. From a side district, the concourse and its shadow pass are skipped while no doorway to it is in view. See [Ships, signs, typefaces, and sector visibility](docs/ships-signs-and-visibility.md) for measurements and how the culling was shown to be invisible.
+
 The imported foreground models are **Animated Robot**, **Scifi Computer**, **Tree Spiral**, and **Cooking Pot** by Quaternius, downloaded from Poly Pizza under CC0. The service unit uses its supplied idle animation. Repeated consoles, plants, and pots share geometry and materials. Selected terminal bodies, planter growth, specimen branches, and cookware proxies are omitted only after their replacement asset loads successfully; otherwise the procedural versions remain available. Creator/source links and exact file inspection records are in [model assets](docs/model-assets.md), [machine-readable metadata](docs/model-assets.json), and the in-app Controls credits link. Run `node scripts/inspect-glb.mjs public/models/poly-pizza/*.glb` to inspect the original files again.
+
+The interface and the station's signs are set in **Space Grotesk** and **Barlow Condensed**, both under the SIL Open Font License 1.1. They are served from this site as Latin subsets, and the licence is published with them at `/fonts/OFL.txt`.
 
 No game assets, text, or official maps from the books are included. This is an atmospheric exploration, with original names and notices, rather than a canonical reconstruction.
 

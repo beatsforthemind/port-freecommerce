@@ -1,5 +1,6 @@
 import * as THREE from 'three';
-import { label, applyGlassSheen } from './kit.js';
+import { applyGlassSheen, readableTiles } from './kit.js';
+import { createSignage } from './signage.js';
 import { createHumanHeadGeometry, createHumanTorsoGeometry, createHumanLimbGeometry, HUMAN_PALETTE, HUMAN_PROFILE } from './humanoid.js';
 import { buildObservationDistrict } from './district-observation.js';
 import { buildMarketDistrict } from './district-market.js';
@@ -11,9 +12,11 @@ import {createContactShadows} from './contact-shadows.js';
 import {CROWD_PACE} from './population-timetable.js';
 
 /** Connected station districts, all built locally without model downloads. */
-export function createDistricts({glow = null} = {}) {
+export function createDistricts({glow = null, signage = null} = {}) {
   const group = new THREE.Group();
   group.name = 'FreeCommerce · outer districts';
+  const ownSignage = signage ? null : createSignage();
+  const signs = signage || ownSignage;
   const colliders = [];
   const batches = new Map();
   const transform = new THREE.Object3D();
@@ -49,9 +52,9 @@ export function createDistricts({glow = null} = {}) {
     box(material, x, y, z, w, h, d, ry);
     footprint(x,y,z,w,h,d);
   }
+  /** A backed sign on the shared lettering sheet, in the layer of the district being built. */
   function sign(text, x, y, z, width, height = 1, ry = 0, color = '#eed2a2', background = '#1a2b2d') {
-    const mesh = label(text, { width, height, color, background, fontSize: 100 });
-    mesh.position.set(x, y, z); mesh.rotation.y = ry; group.add(mesh); return mesh;
+    return signs.add(text, {x, y, z, width, height, yaw: ry, color, background, layer: district});
   }
   function mesh(geometry, material, x, y, z, rotation) {
     const object = new THREE.Mesh(geometry, material); object.position.set(x, y, z);
@@ -114,12 +117,16 @@ export function createDistricts({glow = null} = {}) {
     }
   }
 
-  const context={box,solid,footprint,sign,mesh,decal,m,glow};
+  /** Add an object a district built for itself, such as a moored craft. */
+  function attach(object) { group.add(object); return object; }
+
+  const context={box,solid,footprint,sign,mesh,attach,decal,m,glow};
   const layouts=[];
   for (const [id, build] of [['observation',buildObservationDistrict],['market',buildMarketDistrict],['docks',buildDocksDistrict]]) {
     district = id; layouts.push(build(context));
   }
   district = 'shared';
+  if (ownSignage) { ownSignage.build(); group.add(ownSignage.group); }
 
   // Repeated static box work becomes one draw call per district and material.
   const unitCube = new THREE.BoxGeometry(1, 1, 1);
@@ -136,7 +143,7 @@ export function createDistricts({glow = null} = {}) {
     geometry.setAttribute('position', new THREE.Float32BufferAttribute(decalPositions, 3));
     geometry.setAttribute('uv', new THREE.Float32BufferAttribute(decalUVs, 2));
     geometry.computeBoundingSphere();
-    const details = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({map: atlas, side: THREE.DoubleSide}));
+    const details = new THREE.Mesh(geometry, readableTiles(new THREE.MeshBasicMaterial({map: atlas, side: THREE.DoubleSide}), 4));
     details.name = 'District information atlas / single batch';
     group.add(details);
   }
@@ -169,7 +176,8 @@ export function createDistricts({glow = null} = {}) {
   bags.name='Commuters / hands boots and luggage';
   const tint = new THREE.Color();
   const crowdMeshes=[bodies,heads,legs,bags];
-  for(const object of crowdMeshes){object.instanceMatrix.setUsage(THREE.DynamicDrawUsage);object.frustumCulled=false;}
+  // The commuters never leave the concourse: they are skipped with it.
+  for(const object of crowdMeshes){object.instanceMatrix.setUsage(THREE.DynamicDrawUsage);object.frustumCulled=false;object.userData.concourseInterior=true;}
   for(let i=0;i<crowdCount;i++) {
     const coat=HUMAN_PALETTE.coats[i%HUMAN_PALETTE.coats.length];
     const trousers=HUMAN_PALETTE.trousers[i%HUMAN_PALETTE.trousers.length];
@@ -197,6 +205,7 @@ export function createDistricts({glow = null} = {}) {
     get activities(){return commuterBehavior.counts(motionTime*CROWD_PACE);}});
   // Without the shadow map, a soft blob keeps each commuter on the deck.
   const contact = createContactShadows(crowdCount, 'Commuters / contact shadows');
+  contact.mesh.userData.concourseInterior=true;
   group.add(contact.mesh);
   const crowdBounds = new THREE.Box3(new THREE.Vector3(-30,-.5,-124),new THREE.Vector3(30,2.6,91));
   const crowdFrustum = new THREE.Frustum();
@@ -252,6 +261,8 @@ export function createDistricts({glow = null} = {}) {
       crowdFrustum.setFromProjectionMatrix(crowdProjection);
       crowdVisible = crowdFrustum.intersectsBox(crowdBounds);
     }
+    // From a district with no opening in view, the hall is not drawn at all.
+    if (context.concourseSeen === false) crowdVisible = false;
     const justShown = crowdVisible && !wasCrowdVisible;
     wasCrowdVisible = crowdVisible;
     for (const mesh of crowdMeshes) mesh.visible = crowdVisible;
@@ -326,6 +337,9 @@ export function createDistricts({glow = null} = {}) {
   function smoothWalk(value){const t=Math.max(0,Math.min(1,value));return t*t*(3-2*t);}
   return {group,colliders,layouts,update,obstructs,get behaviorSnapshot(){return commuterBehavior.snapshot(motionTime*CROWD_PACE);},dispose(){
     if(disposed)return;disposed=true;
+    ownSignage?.dispose();
+    // A district releases what the shared traversal below cannot reach.
+    for(const layout of layouts)layout.dispose?.();
     contact.mesh.removeFromParent();contact.dispose();
     const geometries=new Set(),materials=new Set(Object.values(m)),textures=new Set([atlas]);
     group.traverse(node=>{if(!node.isMesh&&!node.isPoints)return;node.dispose?.();geometries.add(node.geometry);for(const material of Array.isArray(node.material)?node.material:[node.material])materials.add(material);});

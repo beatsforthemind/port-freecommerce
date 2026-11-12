@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+import { partitionByHall } from './visibility.js';
+import { readableTiles } from './kit.js';
 
 /** Small independent traders make the port feel like a place people actually use. */
 export function createCommerce({importedTree = false, importedPot = false, glow = null} = {}) {
@@ -64,7 +66,7 @@ export function createCommerce({importedTree = false, importedPot = false, glow 
   const atlas = track(new THREE.CanvasTexture(canvas));
   atlas.colorSpace = THREE.SRGBColorSpace;
   atlas.anisotropy = 4;
-  m.print = track(new THREE.MeshBasicMaterial({map: atlas, side: THREE.DoubleSide}));
+  m.print = track(readableTiles(new THREE.MeshBasicMaterial({map: atlas, side: THREE.DoubleSide}), 2));
 
   const batches = new Map();
   const object = new THREE.Object3D();
@@ -251,15 +253,21 @@ export function createCommerce({importedTree = false, importedPot = false, glow 
   sign(3, orchardX, 1.18, orchardZ + 1.03, 2.8, .9);
   sign(3, orchardX, 1.18, orchardZ - 1.03, 2.8, .9, Math.PI);
 
-  let triangles = 0;
+  // Traders in the concourse and traders in the districts are batched apart:
+  // each has tight bounds, and the hall's share is skipped with the hall.
+  let triangles = 0, draws = 0;
   for (const [material, geometries] of batches) {
-    const geometry = mergeGeometries(geometries);
-    triangles += geometry.attributes.position.count / 3;
-    geometry.computeBoundingSphere();
-    if (material === m.glow) geometry.boundingSphere.radius += .08;
-    const mesh = new THREE.Mesh(track(geometry), material);
-    mesh.matrixAutoUpdate = false;
-    group.add(mesh);
+    for (const part of Object.values(partitionByHall(geometries))) {
+      if (!part.length) continue;
+      const geometry = mergeGeometries(part);
+      triangles += geometry.attributes.position.count / 3;
+      geometry.computeBoundingSphere();
+      if (material === m.glow) geometry.boundingSphere.radius += .08;
+      const mesh = new THREE.Mesh(track(geometry), material);
+      mesh.matrixAutoUpdate = false;
+      group.add(mesh);
+      draws++;
+    }
     geometries.forEach(geometry => geometry.dispose());
   }
   const vignettes = [
@@ -268,7 +276,7 @@ export function createCommerce({importedTree = false, importedPot = false, glow 
     {name: 'Borrowed Parts', x: repairX, z: repairZ, text: 'Repairs while you wait. The slate object on the counter is not on the price list, and the technician prefers it that way.'},
     {name: 'Orbital Orchard', x: orchardX, z: orchardZ, text: 'A traveling seed library takes the long way between habitable worlds. Someone has reserved an entire branch for home.'},
   ];
-  const stats = Object.freeze({drawCalls: batches.size, triangles, textures: 1, vignettes: vignettes.length});
+  const stats = Object.freeze({drawCalls: draws, triangles, textures: 1, vignettes: vignettes.length});
   group.userData.performance = stats;
   return {
     group, colliders, vignettes, stats,

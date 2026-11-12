@@ -1,5 +1,7 @@
 # Lighting and rendering pass
 
+The four items this pass left open are covered in [Ships, signs, typefaces, and sector visibility](ships-signs-and-visibility.md).
+
 This pass acts on a review of the station on real graphics hardware. Earlier passes were measured under software rendering, which reports draw calls, triangles, and submission time but not what the GPU spends per pixel. On hardware the frame is bound by per-pixel shading, and the largest single cost was a bloom chain that visibly changed 1.6% of pixels and kept the scene from being anti-aliased.
 
 ## What changed

@@ -58,7 +58,7 @@ export function createLighting({scene, renderer, detail = true, shadowMapSize = 
   const probes = {};
   let generator = null, placeholder = null;
   let current = null, wanted = null, blend = 1;
-  let shadowClock = 0, disposed = false;
+  let shadowClock = 0, shadowsStale = false, disposed = false;
 
   function applyDetail() {
     key.castShadow = detail;
@@ -130,10 +130,16 @@ export function createLighting({scene, renderer, detail = true, shadowMapSize = 
       if (value === detail) return;
       detail = value; applyDetail();
     },
-    update(dt, sector) {
+    /**
+     * `shadowed` is whether anything inside the shadow map's reach is being
+     * drawn. While it is not, the map is left alone; it is redrawn at once
+     * when the hall comes back into view.
+     */
+    update(dt, sector, shadowed = true) {
       if (disposed) return;
       shadowClock += dt;
-      if (detail && shadowClock >= 1 / 30) { shadowClock = 0; renderer.shadowMap.needsUpdate = true; }
+      if (!shadowed) shadowsStale = true;
+      else if (detail && (shadowClock >= 1 / 30 || shadowsStale)) { shadowClock = 0; shadowsStale = false; renderer.shadowMap.needsUpdate = true; }
       if (!detail || !current) return;
       // Dip, swap, recover: the probe changes at a doorway without a visible cut.
       wanted = (probes[sector] || probes.concourse).texture;
