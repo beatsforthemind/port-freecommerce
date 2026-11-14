@@ -238,10 +238,12 @@ export function createStation({glow = null, signage = null} = {}) {
     box(materials.rib, 0, 33.5625, z, 43, .825, 1.2);
     // Likewise the last rib's strip, which would lie inside the south end wall.
     if (z < 100) box(materials.cool, 0, 33.05, z + .05, 17, .06, .48);
+    // The first bay's panel and fins stop at the north bulkhead's inner face (z -129) instead of running out into the sky.
+    const north = Math.max(z - 10, -129);
     for (const side of [-1, 1]) {
-      box(materials.dark, side * 16.0, 33.0, z - 6, 4, .4, 8);
+      box(materials.dark, side * 16.0, 33.0, (north + z - 2) / 2, 4, .4, z - 2 - north);
       // The fins hang 3 cm clear of the panel: flush with it, their top edges flickered from afar.
-      for (let k = 0; k < 5; k++) box(materials.rib, side * 16.0, 32.67, z - 9 + k * 1.4, 3.7, .2, .3);
+      for (let k = 0; k < 5; k++) if (z - 9 + k * 1.4 - .15 >= north) box(materials.rib, side * 16.0, 32.67, z - 9 + k * 1.4, 3.7, .2, .3);
     }
   }
   // Like the ribs, the strips stop at the lining's underside.
@@ -328,11 +330,8 @@ export function createStation({glow = null, signage = null} = {}) {
   signs.forEach(([v,x,y,z,r,c]) => text(v,x,y,z,10.8,1.0,{rotation:r,color:c,size:65}));
 
   // Crates and baggage live on the margins. Their collider shapes match the deck.
-  for (const [x,z,w,h,d,buried] of [[-22,73,2,1.4,2.5],[24,57,1.8,1.2,2,true],[-27,-67,2.4,2,2],[27,-93,2.5,1.8,2.5],[-23,-110,1.7,1.2,2]]) {
+  for (const [x,z,w,h,d] of [[-22,73,2,1.4,2.5],[-27,-67,2.4,2,2],[27,-93,2.5,1.8,2.5],[-23,-110,1.7,1.2,2]]) {
     colliders.push({minX:x-w/2-.15,maxX:x+w/2+.15,minZ:z-d/2-.15,maxZ:z+d/2+.15});
-    // The east ramp stands over the second crate, whose north face lay in the
-    // ramp's end wall. Only its footprint is kept.
-    if (buried) continue;
     box(materials.rust,x,h/2,z,w,h,d);
     box(materials.dark,x,h/2,z+d/2+.02,w*.85,.15,.04);
     for (const dx of [-.35,.35]) box(materials.rib,x+dx*w,h/2,z,w*.06,h+.05,d+.04);

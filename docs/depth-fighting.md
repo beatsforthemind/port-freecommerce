@@ -12,7 +12,7 @@ Wherever two surfaces were drawn in the same place, the depth buffer could not d
 | 2 | Dock throat floor | The throat floor box overlapped the hall's deck plane for a metre | The throat floor starts where the deck ends |
 | 3 | North bulkhead from the docks | The rib piers and the dark lintel shared both faces | The piers stop under the lintel instead of running up through it |
 | 4, 5 | Residents | Not a depth fight: every sleeve's open top stood 3–7 cm above the sloped shoulder and read as a second torso | Sleeve tops lowered to the shoulder line, for every figure type |
-| 6 | Under the east balcony, Deck 01 | A crate was buried in the east ramp, its face in the ramp wall | The crate is no longer drawn. Its collider stays, so navigation is unchanged |
+| 6 | Under the east balcony, Deck 01 | A crate was buried in the east ramp, its face in the ramp wall | The crate and its collider are removed |
 
 **Concourse hall** (`src/world.js`)
 
@@ -91,7 +91,7 @@ Reversed depth was judged by walking instead: 24 steps of 2 mm with the eye, cou
 
 The five screenshot places measure 0–1 unstable pixels after the fixes; the bulkhead view measured 10,048 before.
 
-**Unchanged:** all 55 floors and 372 colliders, and 310,575 walkability probes over every deck. The hidden-concourse culling is still pixel-identical over 180 district poses with reversed depth. The production build passes its verifier, and the page loads with no console errors.
+**Unchanged:** all 55 floors, every collider except the removed crate's (372 → 371), and 310,575 walkability probes over every deck. All resident routes remain valid. The hidden-concourse culling is still pixel-identical over 180 district poses with reversed depth. The production build passes its verifier, and the page loads with no console errors.
 
 ## What is left
 
@@ -104,8 +104,8 @@ The five screenshot places measure 0–1 unstable pixels after the fixes; the bu
   - about 200 px where two areas' fixes meet on the hall floor beyond the gallery doorway, seen from the observation terrace
   - the glow cards in front of the hall's lit shop panes, edge-on
 
-**Found along the way, not depth fighting, for the owner:**
+**Also fixed, not depth fighting:**
 
-- The first roof bay's ceiling panel and two fins run about 3 m out through the north bulkhead into the sky above the dock throat (`src/world.js`, the roof bay loop).
-- The terminal contact shadows are placed at the terminals' original coordinates (`src/furnishings.js`). The exchange terminal has none, and the observation terminal's lies 2.8 m under the floor.
-- The collider of the crate removed from the east ramp still keeps walkers 16 cm further from the ramp wall, along 2.7 m. Deleting it, or moving the crate and its collider to open floor, would change navigation slightly.
+- The first roof bay's ceiling panel and three of its fins ran about 3 m out through the north bulkhead into the sky above the dock throat. That bay now stops at the bulkhead's inner face (`src/world.js`).
+- The terminal contact shadows were laid at the terminals' original coordinates. The exchange terminal had none, its print lay inside a market structure, and the observation terminal's lay 2.8 m under its floor. Each now lies under its terminal (`src/furnishings.js`).
+- The crate removed from the east ramp kept its collider, which held walkers 16 cm off the ramp wall along 2.7 m. The collider is gone too.

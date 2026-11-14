@@ -111,7 +111,7 @@ export function createFurnishings({importedTrees = false, glow = null} = {}) {
     for (let i = 0; i < uv.count; i++) uv.setXY(i, ((index % 2) + .008 + uv.getX(i) * .984) / 2, 1 - (Math.floor(index / 2) + .008 + (1 - uv.getY(i)) * .984) / 4);
     add(geometry, materials.print, x, y, z, rx, ry, rz);
   }
-  function shadow(x, z, w, d) { decal(3, x, .011, z, w, d, -Math.PI / 2); }
+  function shadow(x, z, w, d, y = 0) { decal(3, x, y + .011, z, w, d, -Math.PI / 2); }
 
   // Rest islands sit beyond the pedestrian traffic lanes and under the balconies.
   for (const side of [-1, 1]) {
@@ -161,7 +161,8 @@ export function createFurnishings({importedTrees = false, glow = null} = {}) {
 
   // Baked contact shadows anchor the existing architecture with no shadow maps.
   for (let z = -124; z <= 100; z += 16) for (const side of [-1, 1]) shadow(side * 26, z, 5.2, 4.5);
-  for (const [x, z] of [[-10, 18], [89, -20], [-72, 30], [5, -164]]) shadow(x, z, 3.4, 2.8);
+  // Under the four terminals where the districts place them: the exchange's at (-73, 46), the gallery's on its 2.8 m floor.
+  for (const [x, z, y] of [[-10, 18, 0], [89, -20, 2.8], [-73, 46, 0], [5, -164, 0]]) shadow(x, z, 3.4, 2.8, y);
   // Clear of the centre-line inlays (top .035): at .035 the print at -85 lay in an inlay's top.
   for (const z of [80, 0, -85]) decal(7, 0, .045, z, 5, 2.5, -Math.PI / 2);
   for (const side of [-1, 1]) {
