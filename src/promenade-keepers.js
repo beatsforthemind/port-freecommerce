@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
-import {createHumanHeadGeometry,createHumanTorsoGeometry,createHumanLimbGeometry,HUMAN_PALETTE,HUMAN_PROFILE} from './humanoid.js';
+import {createHumanHeadGeometry,createHumanHairGeometry,createHumanTorsoGeometry,createHumanLimbGeometry,HUMAN_PALETTE,HUMAN_PROFILE} from './humanoid.js';
 
 /** Quiet working poses: sixteen people share one immutable, vertex-colored draw. */
 export function buildPromenadeKeepers({group,anchors=[],height=7.625}) {
@@ -14,7 +14,7 @@ export function buildPromenadeKeepers({group,anchors=[],height=7.625}) {
   }
   if(!selected.length)return{stats:{keepers:0,keeperDrawCalls:0,keeperTriangles:0,keeperTextures:0,keeperLights:0,keeperPerFrameUpdates:0},placements:[]};
 
-  const sources={head:createHumanHeadGeometry(),torso:createHumanTorsoGeometry(),limb:createHumanLimbGeometry(),box:new THREE.BoxGeometry(1,1,1)};
+  const sources={head:createHumanHeadGeometry(),cap:createHumanHairGeometry(),torso:createHumanTorsoGeometry(),limb:createHumanLimbGeometry(),box:new THREE.BoxGeometry(1,1,1)};
   for(const[key,source]of Object.entries(sources)){
     if(source.index){sources[key]=source.toNonIndexed();source.dispose();}
     sources[key].deleteAttribute('uv');
@@ -39,8 +39,9 @@ export function buildPromenadeKeepers({group,anchors=[],height=7.625}) {
   }
   function hand(color,elbow,wrist){
     a.set(...elbow);b.set(...wrist);direction.copy(b).sub(a).normalize();
-    const rotation=new THREE.Quaternion().setFromUnitVectors(up,direction);
-    append('box',color,b.addScaledVector(direction,.025).toArray(),[.083,.115,.052],[0,0,0],rotation);
+    // The limb shape narrows toward its lower end: turned about, that end is the fingertips.
+    const rotation=new THREE.Quaternion().setFromUnitVectors(up,direction.clone().negate());
+    append('limb',color,b.addScaledVector(direction,.04).toArray(),[.086,.125,.05],[0,0,0],rotation);
   }
 
   selected.forEach((anchor,index)=>{
@@ -50,21 +51,26 @@ export function buildPromenadeKeepers({group,anchors=[],height=7.625}) {
     poseCounts[pose]=(poseCounts[pose]||0)+1;
     actor.position.set(x,y,anchor.z);actor.rotation.set(0,anchor.face??-anchor.side*Math.PI/2,0);actor.scale.setScalar(scale);actor.updateMatrix();
     append('torso',coat,[0,HUMAN_PROFILE.torsoY,.025],[...HUMAN_PROFILE.torsoScale],[.055,0,0]);
-    append('head',skin,[0,HUMAN_PROFILE.headY,.045],[...HUMAN_PROFILE.headScale],[pose==='reading'?.16:.07,(index%3-1)*.10,0]);
-    append('limb',skin,[0,1.49,.027],[.096,.11,.096]);
-    append('box',trousers,[0,.875,0],[.36,.14,.23]);
-    append('box',HUMAN_PALETTE.trim[index%4],[0,1.43,.045],[.29,.05,.16]);
-    if(pose==='serving'||pose==='folding')append('box','#b1a58c',[0,.97,.167],[.31,.43,.025]);
+    const nod=[pose==='reading'?.16:.07,(index%3-1)*.10,0],fuller=index%3===1?1.06:1;
+    append('head',skin,[0,HUMAN_PROFILE.headY,.045],[...HUMAN_PROFILE.headScale],nod);
+    append('cap',HUMAN_PALETTE.hair[(index*3+1)%HUMAN_PALETTE.hair.length],[0,HUMAN_PROFILE.headY,.045],HUMAN_PROFILE.headScale.map(value=>value*fuller),nod);
+    // Neck, a stand collar and rounded hips; servers and tailors wear an apron hung clear of the chest.
+    append('limb',skin,[0,1.492,.03],[.112,.125,.115]);
+    append('limb',HUMAN_PALETTE.trim[index%4],[0,1.456,.03],[.152,.06,.148]);
+    append('limb',trousers,[0,.886,0],[.33,.12,.22]);
+    if(pose==='serving'||pose==='folding')append('box','#b1a58c',[0,.97,.162],[.26,.43,.02]);
     for(const sign of[-1,1]){
       const hip=[sign*.105,.88,0],knee=[sign*.112,.51,sign*.015],ankle=[sign*.12,.15,.018];
       bone(trousers,hip,knee,.17,.185);bone(trousers,knee,ankle,.133,.145);
-      append('box','#29353a',[sign*.12,.075,.075],[.13,.15,.28]);
+      // A boot: a sole on the deck and a rounded upper, taller at the heel than at the toe.
+      append('box','#1d2325',[sign*.12,.014,.075],[.13,.028,.28]);
+      append('limb','#29353a',[sign*.12,.09,.071],[.122,.26,.14],[-Math.PI/2,0,0]);
     }
     const wrists=pose==='reading'?[[-.16,1.25,.37],[.16,1.25,.37]]:pose==='adjusting'?[[-.16,1.20,.43],[.13,1.29,.42]]:pose==='folding'?[[-.20,1.20,.43],[.20,1.20,.43]]:[[-.17,1.22,.44],[.17,1.24,.48]];
     for(let side=0;side<2;side++){
       const sign=side?1:-1,shoulder=[sign*.235,1.37,.025],elbow=[sign*.27,1.105,.15],wrist=wrists[side];
       bone(coat,shoulder,elbow,.145,.158);bone(coat,elbow,wrist,.112,.123);
-      append('box',coat,elbow,[.112,.112,.112]);hand(skin,elbow,wrist);
+      append('limb',coat,elbow,[.116,.116,.124]);hand(skin,elbow,wrist);
     }
     if(pose==='reading'){
       append('box','#3d4f51',[0,1.25,.405],[.30,.025,.23],[-.22,0,0]);

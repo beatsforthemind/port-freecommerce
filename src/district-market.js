@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
-import { createHumanHeadGeometry, createHumanTorsoGeometry, createHumanLimbGeometry, HUMAN_PALETTE, HUMAN_PROFILE } from './humanoid.js';
+import { createHumanHeadGeometry, createHumanHairGeometry, createHumanTorsoGeometry, createHumanLimbGeometry, HUMAN_PALETTE, HUMAN_PROFILE } from './humanoid.js';
 import { applyIndustrialSurface } from './surfaces.js';
 
 /**
@@ -78,7 +78,7 @@ export function buildMarketDistrict({box, solid, footprint:registerFootprint, si
   const canopies = [];
   // The existing matte, vertex-coloured fabric batch also carries the four
   // stationary stallkeepers. Skin stays nonmetallic without another draw.
-  const personGeometry={head:createHumanHeadGeometry(),torso:createHumanTorsoGeometry(),limb:createHumanLimbGeometry(),box:new THREE.BoxGeometry(1,1,1)};
+  const personGeometry={head:createHumanHeadGeometry(),cap:createHumanHairGeometry(),torso:createHumanTorsoGeometry(),limb:createHumanLimbGeometry(),box:new THREE.BoxGeometry(1,1,1)};
   const personRoot=new THREE.Object3D(),personPart=new THREE.Object3D();
   const personStart=new THREE.Vector3(),personEnd=new THREE.Vector3(),personDirection=new THREE.Vector3(),personUp=new THREE.Vector3(0,1,0),personRotation=new THREE.Quaternion(),personTint=new THREE.Color();
   let vendorCount=0;
@@ -107,19 +107,27 @@ export function buildMarketDistrict({box, solid, footprint:registerFootprint, si
     const skin=HUMAN_PALETTE.skin[(index*2+1)%HUMAN_PALETTE.skin.length],trousers=HUMAN_PALETTE.trousers[index%HUMAN_PALETTE.trousers.length];
     personRoot.position.set(x,0,z);personRoot.rotation.set(0,yaw,0);personRoot.scale.set(1,1,1);personRoot.updateMatrix();
     personPiece('torso',coat,0,HUMAN_PROFILE.torsoY,0,...HUMAN_PROFILE.torsoScale);
-    personPiece('head',skin,0,HUMAN_PROFILE.headY,0,...HUMAN_PROFILE.headScale,0,index%2?.09:-.06);
-    personPiece('box',skin,0,1.49,.005,.105,.1,.1);
-    personPiece('box',HUMAN_PALETTE.trim[index%HUMAN_PALETTE.trim.length],0,.99,.15,.31,.40,.025);
+    const turn=index%2?.09:-.06,fuller=index%2?1.06:1;
+    personPiece('head',skin,0,HUMAN_PROFILE.headY,0,...HUMAN_PROFILE.headScale,0,turn);
+    personPiece('cap',HUMAN_PALETTE.hair[(index*3+2)%HUMAN_PALETTE.hair.length],0,HUMAN_PROFILE.headY,0,...HUMAN_PROFILE.headScale.map(value=>value*fuller),0,turn);
+    // Neck, a stand collar, rounded hips, and an apron hung clear of the chest.
+    personPiece('limb',skin,0,1.492,.003,.112,.125,.115);
+    personPiece('limb',HUMAN_PALETTE.under[index%HUMAN_PALETTE.under.length],0,1.458,.003,.152,.06,.148);
+    personPiece('limb',trousers,0,.886,0,.33,.12,.22);
+    personPiece('box',HUMAN_PALETTE.trim[index%HUMAN_PALETTE.trim.length],0,.99,.152,.26,.40,.02);
     for(const side of [-1,1]) {
-      personSegment(trousers,[side*.112,.88,0],[side*.12,.48,.015],.135,.15);
-      personSegment(trousers,[side*.12,.48,.015],[side*.13,.105,0],.105,.12);
-      personPiece('box','#293338',side*.13,.055,.065,.14,.11,.26);
+      personSegment(trousers,[side*.112,.88,0],[side*.12,.48,.015],.15,.165);
+      personSegment(trousers,[side*.12,.48,.015],[side*.13,.105,0],.118,.132);
+      // A boot: a sole on the deck and a rounded upper, taller at the heel than at the toe.
+      personPiece('box','#1d2325',side*.13,.014,.065,.13,.028,.26);
+      personPiece('limb','#293338',side*.13,.067,.061,.122,.24,.1,-Math.PI/2);
       const working=side>0||index%2===0;
       const shoulder=[side*.272,HUMAN_PROFILE.shoulderY,0],elbow=[side*.29,1.10,working?.17:.025],wrist=[side*(working?.20:.29),working?1.04:.84,working?.38:.045];
-      // The sleeve hangs from just under the shoulder line (lower for a working arm, which leans forward),
-      // so its open top never stands above the jacket.
-      personSegment(coat,shoulder,elbow,.125,.14,working?-.05:-.012);personSegment(coat,elbow,wrist,.095,.11);
-      personPiece('box',skin,wrist[0],working?1.02:.79,working?.44:.045,.08,working?.06:.115,working?.14:.075);
+      // The sleeve's rounded top is the shoulder (lower for a working arm, which leans forward).
+      personSegment(coat,shoulder,elbow,.14,.152,working?-.03:.006);personSegment(coat,elbow,wrist,.108,.12);
+      // A working hand lies flat over the counter; a resting one hangs edge-on to the thigh.
+      if(working)personPiece('limb',skin,wrist[0],1.03,.43,.086,.14,.05,-Math.PI/2);
+      else personPiece('limb',skin,wrist[0],.785,.045,.054,.125,.088);
     }
   }
 

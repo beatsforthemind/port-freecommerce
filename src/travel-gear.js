@@ -8,7 +8,8 @@ const add=(type,role,position,scale,rotation=[0,0,0])=>pieces.push(Object.freeze
   sx:scale[0],sy:scale[1],sz:scale[2],rx:rotation[0],ry:rotation[1],rz:rotation[2],
 }));
 
-add('torso','body',[0,1.16,-.235],[.27,.32,.12]);
+// The body rests against the back of the jacket rather than hanging behind it.
+add('torso','body',[0,1.16,-.2],[.27,.32,.13]);
 const up=new THREE.Vector3(0,1,0),direction=new THREE.Vector3(),rotation=new THREE.Euler(),quaternion=new THREE.Quaternion();
 function strap(role,from,to){
   direction.set(to[0]-from[0],to[1]-from[1],to[2]-from[2]);
@@ -17,12 +18,15 @@ function strap(role,from,to){
 }
 for(const side of[-1,1]){
   const label=side<0?'left':'right';
-  strap(`front-strap-${label}`, [side*.105,1.00,.153],[side*.12,1.445,.153]);
-  strap(`shoulder-strap-${label}`, [side*.12,1.445,.153],[side*.12,1.445,-.16]);
-  strap(`rear-strap-${label}`, [side*.12,1.445,-.16],[side*.095,1.30,-.195]);
+  // Each strap follows the garment: up the chest, back over the slope of the shoulder, and down to the pack.
+  const chest=[side*.105,1.00,.141],collarbone=[side*.118,1.37,.152],crest=[side*.118,1.458,.04],blade=[side*.118,1.458,-.1];
+  strap(`front-strap-${label}`,chest,collarbone);
+  strap(`shoulder-strap-${label}`,collarbone,crest);
+  strap(`crest-strap-${label}`,crest,blade);
+  strap(`rear-strap-${label}`,blade,[side*.095,1.30,-.19]);
 }
-add('box','flap',[0,1.265,-.301],[.215,.048,.012]);
-add('box','fastener',[0,1.205,-.310],[.033,.045,.012]);
+add('box','flap',[0,1.265,-.262],[.11,.048,.012]);
+add('box','fastener',[0,1.205,-.268],[.033,.045,.012]);
 
 export const TRAVEL_PACK_PARTS=Object.freeze(pieces);
 export const TRAVEL_PACK_STRAPS=Object.freeze(pieces.filter(piece=>piece.type==='limb'));

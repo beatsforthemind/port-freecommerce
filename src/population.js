@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { sectorAt } from './navigation.js';
-import {createHumanHeadGeometry,createHumanTorsoGeometry,createHumanLimbGeometry,HUMAN_PALETTE,HUMAN_PROFILE} from './humanoid.js';
+import {createHumanHeadGeometry,createHumanHairGeometry,createHumanTorsoGeometry,createHumanLimbGeometry,HUMAN_PALETTE,HUMAN_PROFILE} from './humanoid.js';
 import {createJourneyPlanner,sampleJourney} from './population-behavior.js';
 import {applyPopulationTimetable,CROWD_PACE} from './population-timetable.js';
 import {createContactShadows} from './contact-shadows.js';
@@ -9,7 +9,7 @@ import {TRAVEL_PACK_PARTS,travelPackPieceColor} from './travel-gear.js';
 
 /**
  * A cross-section of the port: commuters, adapted travelers, readers, traders,
- * dock staff and small independent service units. Seven instanced draw calls
+ * dock staff and small independent service units. Eight instanced draw calls
  * render the entire population; matrix uploads are limited to twenty Hz.
  */
 export function createPopulation({districtLayouts = [], promenadeRoutes = [], navigation} = {}) {
@@ -26,10 +26,13 @@ export function createPopulation({districtLayouts = [], promenadeRoutes = [], na
   const cloth = new THREE.MeshStandardMaterial({color: '#ffffff', roughness: .9, metalness: .02});
   const skin = new THREE.MeshStandardMaterial({color: '#ffffff', roughness: .94, metalness: 0, vertexColors: true});
   const equipment = new THREE.MeshStandardMaterial({color: '#ffffff', roughness: .82, metalness: 0});
+  // Hair, hoods and helmet shells share one fitted cap and one matte finish.
+  const headwear = new THREE.MeshStandardMaterial({color: '#ffffff', roughness: .88, metalness: 0});
   const lights = new THREE.MeshBasicMaterial({color: '#ffffff'});
   const types = {
     torso: {geometry: createHumanTorsoGeometry(), material: cloth},
     head: {geometry: createHumanHeadGeometry(), material: skin},
+    cap: {geometry: createHumanHairGeometry(), material: headwear},
     limb: {geometry: createHumanLimbGeometry(), material: cloth},
     gear: {geometry: new THREE.BoxGeometry(1, 1, 1), material: equipment},
     robe: {geometry: createHumanLimbGeometry(), material: cloth},
@@ -40,6 +43,8 @@ export function createPopulation({districtLayouts = [], promenadeRoutes = [], na
   const coats = HUMAN_PALETTE.coats;
   const faces = HUMAN_PALETTE.skin;
   const boneDirection=new THREE.Vector3(),boneUp=new THREE.Vector3(0,1,0);
+  const headMatrix=new THREE.Matrix4();
+  const tone=(hex,factor)=>`#${color.set(hex).multiplyScalar(factor).getHexString()}`;
   const sectorNumbers={concourse:0,observation:1,market:2,docks:3};
   const sectorIndex=(x,z)=>sectorNumbers[sectorAt(x,z)];
   const planner=createJourneyPlanner({navigation});
@@ -85,47 +90,99 @@ export function createPopulation({districtLayouts = [], promenadeRoutes = [], na
     p.from=from;p.to=to;p.top=top;
     return p;
   }
-  function endpointPart(a,tint,joint,parent,width,height,depth,kind) {
-    const p=part(a,'gear',tint,0,0,0,width,height,depth);
+  // A band round part of a bone, from fraction `start` to `end` of the way down it: a cuff, an armband, a boot top.
+  function bandPart(a,tint,from,to,start,end,width,depth) {
+    const p=part(a,'limb',tint,0,0,0,width,1,depth,0,0,0,'',true);
+    p.from=from;p.to=to;p.start=start;p.end=end;
+    return p;
+  }
+  function endpointPart(a,tint,joint,parent,width,height,depth,kind,type='gear') {
+    const p=part(a,type,tint,0,0,0,width,height,depth);
     p.endpoint=joint;p.parentJoint=parent;p.endpointKind=kind;
+    return p;
+  }
+  // The head's own frame: where it sits and how it is turned, plus any glance toward the visitor.
+  function headFrame(a,turn) {
+    const h=a.headPart;
+    transform.position.set(h.x,h.y,h.z);transform.rotation.set(h.rx,h.ry+turn,h.rz);transform.scale.set(1,1,1);transform.updateMatrix();
+    return headMatrix.copy(transform.matrix);
+  }
+  // Hair, a helmet or eyewear: placed relative to the head's centre, and carried with it when it turns.
+  function headPiece(a,type,tint,x,y,z,sx,sy,sz,rx=0,detail=false) {
+    const p=part(a,type,tint,x,y,z,sx,sy,sz,rx,0,0,'',detail);
+    p.worn=p.matrix.clone();
+    p.matrix.multiplyMatrices(headFrame(a,0),p.worn);
     return p;
   }
   function person(a, index) {
     const coat = coats[index % coats.length];
     const face = faces[(index * 3) % faces.length];
-    const trousers=HUMAN_PALETTE.trousers[index%HUMAN_PALETTE.trousers.length];
     const seated=a.pose==='seated';
     const workwear=(a.homeSector??a.sector)===3||index%8===0;
     const longCoat=index%4===1&&!seated;
+    // Three cuts besides the crew coverall and the long coat: a trimmed jacket, a vest over a
+    // close undersuit, and a plain tunic.
+    const cut=workwear?'coverall':longCoat?'coat':['jacket','vest','tunic'][index%3];
+    const trim=HUMAN_PALETTE.trim[index%HUMAN_PALETTE.trim.length];
+    const under=HUMAN_PALETTE.under[index%HUMAN_PALETTE.under.length];
+    const signal=HUMAN_PALETTE.signal[index%5===0?1:0];
+    // A coverall is one garment, so its legs take the body's colour a shade down.
+    const trousers=workwear?tone(coat,.84):HUMAN_PALETTE.trousers[index%HUMAN_PALETTE.trousers.length];
+    const sleeve=cut==='vest'?under:coat;
+    const collar=cut==='coverall'?'#2e3537':cut==='vest'?under:cut==='jacket'?trim:tone(coat,.8);
+    const boots=workwear?'#272e30':index%3===1?'#3b3229':'#29353a';
+    const gloved=workwear&&index%2===0;
     a.joints=new Float32Array(36);
     a.seatedShift=seated?(a.seatHeight+.075)/(a.scale*a.height)-HUMAN_PROFILE.hipY:0;
     const shift=a.seatedShift;
     const breadth=workwear?1.055:1;
+    const lean=seated?.032:0;
     part(a,'torso',coat,0,HUMAN_PROFILE.torsoY+shift,0,.49*breadth,.55,.29,seated?.06:0);
-    a.headPart=part(a,'head',face,0,HUMAN_PROFILE.headY+shift,seated?.032:0,...HUMAN_PROFILE.headScale,seated?.14:0,(index%5-2)*.035);
-    // A short exposed neck connects the shaped collar to the jaw. Main heads,
-    // necks and endpoint pieces are essential at every accessory LOD.
-    part(a,'limb',face,0,1.49+shift,0,.096,.10,.096);
-    // Inside the jacket hem (1 cm) and the coat panels (2 cm), so its faces stay clear of theirs.
-    part(a,'gear',trousers,0,.875+shift,0,.34,.14,.21);
-    // Each coat panel keeps its inner edge and reaches past the outside of its thigh.
-    if(longCoat)for(const side of [-1,1])part(a,'robe',coat,side*.106,.76,0,.20,.37,.265,0,0,side*.025);
+    a.headPart=part(a,'head',face,0,HUMAN_PROFILE.headY+shift,lean,...HUMAN_PROFILE.headScale,seated?.14:0,(index%5-2)*.035);
+    // The neck rises out of a collar into the base of the skull. Main heads, necks and
+    // endpoint pieces are essential at every accessory LOD.
+    part(a,'limb',face,0,1.492+shift,lean*.6,.112,.125,.115);
+    // A stand collar closes every garment at the neck; the coverall's is a broad seal ring,
+    // the long coat's stands higher.
+    if(cut==='coverall')part(a,'limb',collar,0,1.458+shift,lean*.5,.2,.052,.185);
+    else part(a,'limb',collar,0,(cut==='coat'?1.468:1.458)+shift,lean*.5,.152,cut==='coat'?.082:.06,.148);
+    // Rounded hips, inside the garment's hem all the way round. A long coat closes over them.
+    part(a,'limb',longCoat?coat:trousers,0,.886+shift,0,.34,.12,.22);
     for(const side of [-1,1]) {
       const base=side<0?0:18;
-      jointPart(a,trousers,base,base+3,.172,.185);
-      jointPart(a,trousers,base+3,base+6,.133,.145);
-      endpointPart(a,'#29353a',base+6,base+3,.125,.11,.285,'shoe');
-      // The sleeve hangs from just under the shoulder line, deeper where the upper arm leans forward (seated,
-      // or the talking gesture), so its open top does not stand above the jacket.
-      jointPart(a,coat,base+9,base+12,.145,.158,seated?-.06:a.pose==='talking'&&side<0?-.045:-.02);
-      jointPart(a,coat,base+12,base+15,.112,.123);
-      endpointPart(a,face,base+15,base+12,.083,.12,.045,'hand');
+      jointPart(a,trousers,base,base+3,.176,.188);
+      jointPart(a,trousers,base+3,base+6,.136,.148);
+      // Each coat skirt hangs round its own thigh to a hem at the knee, so the two part with the stride.
+      // They sit toward the centre line, where their flat fronts and backs meet without a groove, and
+      // are widest at the hip, where they cover the top of the thigh. One side laps over the other by
+      // a centimetre, as a coat closes, so the two never share a face.
+      if(longCoat){const skirt=bandPart(a,coat,base,base+3,-.06,1.04,.29,side<0?.284:.262);skirt.detail=false;skirt.inset=-side*.04;}
+      // A boot: a sole on the deck and a rounded upper, taller at the heel than at the toe.
+      const sole=endpointPart(a,'#1d2325',base+6,base+3,.125,.028,.285,'shoe');sole.rise=-.041;sole.reach=0;sole.tilt=0;
+      const upper=endpointPart(a,boots,base+6,base+3,.118,.262,.1,'shoe','limb');upper.rise=.012;upper.reach=-.004;upper.tilt=-Math.PI/2;
+      // The sleeve's rounded top is the shoulder. It sits lower where the upper arm leans
+      // forward (seated, or the talking gesture), so that it stays within the garment.
+      jointPart(a,sleeve,base+9,base+12,.146,.158,seated?-.03:a.pose==='talking'&&side<0?-.025:.008);
+      jointPart(a,sleeve,base+12,base+15,.112,.123);
+      // A resting hand hangs edge-on to the thigh; a reader's lies flat on the page.
+      endpointPart(a,gloved?tone(coat,.55):face,base+15,base+12,seated?.088:.054,.125,seated?.05:.088,'hand','limb');
+      if(cut==='jacket'||cut==='coat')bandPart(a,cut==='coat'?tone(coat,.8):trim,base+12,base+15,.8,1.03,.124,.135);
+      if(workwear) {
+        // Station issue: a signal band on each upper arm and taller boots.
+        bandPart(a,signal,base+9,base+12,.3,.46,.158,.17);
+        bandPart(a,boots,base+3,base+6,.52,1.02,.15,.162);
+      } else if(cut==='tunic')bandPart(a,trim,base+9,base+12,.2,.3,.156,.168);
       if(seated) {
         const knee=part(a,'bot',trousers,0,0,0,.078,.085,.083);knee.endpoint=base+3;knee.endpointKind='hinge';
       }
       if(seated||(a.pose==='talking'&&side<0)) {
-        const elbow=part(a,'bot',coat,0,0,0,.07,.073,.07);elbow.endpoint=base+12;elbow.endpointKind='hinge';
+        const elbow=part(a,'bot',sleeve,0,0,0,.07,.073,.07);elbow.endpoint=base+12;elbow.endpointKind='hinge';
       }
+    }
+    // A utility belt reads from what hangs on it: a buckle plate and a pouch on each hip.
+    if(workwear) {
+      part(a,'gear','#3d4648',0,1.0+shift,.121,.045,.032,.024,0,0,0,'',true);
+      for(const side of [-1,1])part(a,'gear','#3d4648',side*.185*breadth,.985+shift,-.01,.05,.085,.1,0,0,0,'',true);
     }
     if(seated)part(a,'gear','#7f8b81',0,1.08+shift,.415,.37,.027,.265,-.13);
     else if(index%3===0||index%4===2) {
@@ -136,10 +193,31 @@ export function createPopulation({districtLayouts = [], promenadeRoutes = [], na
         p.accessory='travel-pack';p.accessoryPiece=piece.role;
       }
     }
-    // A few collars and practical credentials, rather than glowing chest LEDs
-    // and identical staring eyes, establish role without caricature.
-    if(workwear)part(a,'gear','#424b49',0,1.46+shift,.045,.31,.075,.18,0,0,0,'',true);
-    if(index%4===0)part(a,'light','#aaa891',-.105,1.29+shift,.153,.036,.053,.009,0,0,0,'',true);
+    // A few practical credentials, rather than glowing chest LEDs and identical
+    // staring eyes, establish role without caricature.
+    if(workwear)part(a,'light','#b5c6aa',.07,1.462+shift,lean*.5+.086,.022,.016,.012,0,0,0,'',true);
+    if(index%4===0)part(a,'light','#aaa891',-.085,1.29+shift,seated?.146:.139,.036,.053,.009,seated?.06:0,0,0,'',true);
+
+    // Hair in its own colours, cropped or fuller, sometimes tied back or worn long.
+    const [hx,hy,hz]=HUMAN_PROFILE.headScale;
+    const hair=HUMAN_PALETTE.hair[(index*5+(index>>3))%HUMAN_PALETTE.hair.length];
+    const helmet=workwear&&index%2===0;
+    if(helmet) {
+      // Deck crew wear a hard cranial with ear cups, and goggles pushed up on the brow.
+      headPiece(a,'cap',index%4===0?'#4f5a5c':HUMAN_PALETTE.signal[0],0,.008,0,hx*1.15,hy*1.1,hz*1.15);
+      for(const side of [-1,1])headPiece(a,'gear','#2a3133',side*.097,-.012,-.008,.03,.07,.07,0,true);
+      headPiece(a,'gear','#1b2224',0,.074,.1,.14,.03,.026,-.3,true);
+    } else {
+      const full=index%3===1;
+      headPiece(a,'cap',hair,0,full?.004:0,0,hx*(full?1.05:1),hy*(full?1.07:1),hz*(full?1.07:1));
+      if(index%5===1)headPiece(a,'limb',hair,0,-.075,-.078,.15,.17,.075,.12);
+      else if(index%6===3)headPiece(a,'bot',hair,0,.062,-.118,.043,.043,.043);
+    }
+    // A comms earpiece on a few. Nobody wears anything across the eyes: a dark bar there reads as a mask.
+    if(!helmet&&index%7===3) {
+      headPiece(a,'gear','#2a3133',.088,-.005,.004,.016,.05,.04,0,true);
+      headPiece(a,'light','#b5c6aa',.097,-.005,.012,.006,.012,.012,0,true);
+    }
     if(seated||a.pose==='standing'||a.journey) {
       a.poseCache={valid:false};
       for(const p of a.parts)p.worldMatrix=new THREE.Matrix4();
@@ -223,19 +301,28 @@ export function createPopulation({districtLayouts = [], promenadeRoutes = [], na
       boneDirection.set(j[from]-j[to],j[from+1]-j[to+1],j[from+2]-j[to+2]);
       const length=boneDirection.length();
       transform.quaternion.setFromUnitVectors(boneUp,boneDirection.multiplyScalar(1/length));
-      transform.position.set((j[from]+j[to])*.5,(j[from+1]+j[to+1])*.5,(j[from+2]+j[to+2])*.5).addScaledVector(boneDirection,(p.top-.0175)*.5);
-      transform.scale.set(p.sx,length+.0175+p.top,p.sz);transform.updateMatrix();p.matrix.copy(transform.matrix);
+      if(p.start!==undefined) {
+        transform.position.set(j[from],j[from+1],j[from+2]).addScaledVector(boneDirection,-length*(p.start+p.end)*.5);
+        transform.scale.set(p.sx,length*(p.end-p.start),p.sz);
+        if(p.inset)transform.position.x+=p.inset;
+      } else {
+        transform.position.set((j[from]+j[to])*.5,(j[from+1]+j[to+1])*.5,(j[from+2]+j[to+2])*.5).addScaledVector(boneDirection,(p.top-.0175)*.5);
+        transform.scale.set(p.sx,length+.0175+p.top,p.sz);
+      }
+      transform.updateMatrix();p.matrix.copy(transform.matrix);
     } else if(p.endpoint!==undefined) {
       const i=p.endpoint,parent=p.parentJoint;
       if(p.endpointKind==='hinge'){
         transform.position.set(j[i],j[i+1],j[i+2]);transform.quaternion.identity();
       } else if(p.endpointKind==='hand') {
         boneDirection.set(j[i]-j[parent],j[i+1]-j[parent+1],j[i+2]-j[parent+2]).normalize();
-        transform.position.set(j[i]+boneDirection.x*.0525,j[i+1]+boneDirection.y*.0525,j[i+2]+boneDirection.z*.0525);
-        transform.quaternion.setFromUnitVectors(boneUp,boneDirection);
+        transform.position.set(j[i]+boneDirection.x*.052,j[i+1]+boneDirection.y*.052,j[i+2]+boneDirection.z*.052);
+        // The limb shape narrows toward its lower end: turned about, that end is the fingertips.
+        transform.quaternion.setFromUnitVectors(boneUp,boneDirection.negate());
       } else {
-        const pitch=a.route?Math.max(0,gait*(i<18?-1:1))*.07:0;
-        transform.position.set(j[i],j[i+1]-.07,j[i+2]+.07);transform.rotation.set(pitch,0,0);
+        // Sole and upper turn as one about the centre of the boot, which the footfall above assumes.
+        const pitch=a.route?Math.max(0,gait*(i<18?-1:1))*.07:0,c=Math.cos(pitch),s=Math.sin(pitch);
+        transform.position.set(j[i],j[i+1]-.07+p.rise*c-p.reach*s,j[i+2]+.07+p.rise*s+p.reach*c);transform.rotation.set(pitch+p.tilt,0,0);
       }
       transform.scale.set(p.sx,p.sy,p.sz);transform.updateMatrix();p.matrix.copy(transform.matrix);
     }
@@ -446,7 +533,8 @@ export function createPopulation({districtLayouts = [], promenadeRoutes = [], na
     const delta=shift-a.seatedShift;
     if(delta===0)return;
     a.seatedShift=shift;
-    for(const p of a.parts)if(p.from===undefined&&p.endpoint===undefined) {
+    for(const p of a.parts)if(p.worn)p.matrix.multiplyMatrices(headFrame(a,0),p.worn);
+    else if(p.from===undefined&&p.endpoint===undefined) {
       p.y+=delta;
       transform.position.set(p.x,p.y,p.z);transform.rotation.set(p.rx,p.ry,p.rz);transform.scale.set(p.sx,p.sy,p.sz);transform.updateMatrix();
       p.matrix.copy(transform.matrix);
@@ -602,7 +690,8 @@ export function createPopulation({districtLayouts = [], promenadeRoutes = [], na
         else if (a.route && p.motion.startsWith('shoe')) angle = gait * (p.motion === 'shoe0' ? .12 : -.12);
         else if (p.motion === 'gesture') angle = Math.sin(simulationTime * .75 + a.phase) * .13;
         const turn = p === a.headPart ? a.look : 0;
-        if (angle || turn) {
+        if (p.worn && a.look) combined.multiplyMatrices(a.matrix,headFrame(a,a.look)).multiply(p.worn);
+        else if (angle || turn) {
           transform.position.set(p.x,p.y,p.z); transform.rotation.set(p.rx+angle,p.ry+turn,p.rz); transform.scale.set(p.sx,p.sy,p.sz); transform.updateMatrix();
           combined.multiplyMatrices(a.matrix,transform.matrix);
         } else combined.multiplyMatrices(a.matrix,p.matrix);
@@ -618,12 +707,12 @@ export function createPopulation({districtLayouts = [], promenadeRoutes = [], na
     contact.end();
   }
   update(0,0);
-  const stats = Object.freeze({actors:actors.length, travelers:56, seated:8, social:12, serviceUnits:4,pathRoutes,upperDeckTravelers:10, drawCalls:batches.size, triangles:triangleCount, updateHz:20, textures:0, lights:0, humanStyle:'tailored adult proportions / understated faces', humanHeadHeight:.26,travelPacks,accessoryStyle:'fitted upper-back packs / connected shoulder straps',
+  const stats = Object.freeze({actors:actors.length, travelers:56, seated:8, social:12, serviceUnits:4,pathRoutes,upperDeckTravelers:10, drawCalls:batches.size, triangles:triangleCount, updateHz:20, textures:0, lights:0, humanStyle:'rounded tailored figures / station wardrobe / understated faces', humanHeadHeight:.26,travelPacks,accessoryStyle:'fitted upper-back packs / connected shoulder straps',
     get behavior(){const states={};for(const a of actors){const state=a.state||a.pose||'standing';states[state]=(states[state]||0)+1;}return{scheduledResidents:journeys.length,crossSectorJourneys:14,crossDeckJourneys:2,destinationStops:journeys.reduce((n,p)=>n+p.stops.length,0),invalidRoutes:[...invalidJourneys],states,planner:planner.stats,timetable};},
     get visibleActors(){return visibleActors;}, get submittedTriangles(){return submittedTriangles;}, get detailedActors(){return detailedActors;}});
   group.userData.population = stats;
   return {group,update,stats,obstructs,
     get behaviorSnapshot(){return actors.map(a=>({id:a.id,journeyId:a.journey?.id||null,role:a.role||(a.pose==='seated'?'reader':a.pose==='talking'?'conversation partner':'local visitor'),state:a.state||a.pose||'standing',intent:a.intent||(a.pose==='seated'?'Reading while waiting':a.pose==='talking'?'Talking with a companion':'Looking over the nearby display'),x:a.x,z:a.z,floor:a.floor||0,yaw:a.yaw,speed:a.journey?a.speed*CROWD_PACE*a.hold:0,cruiseSpeed:(a.journey?.speed||0)*CROWD_PACE,gait:a.gait||0,walkWeight:a.walkWeight||0,travelDistance:a.travelDistance||0,cycleDuration:a.journey?.duration||0,localTime:a.localTime||0,goal:a.goal?{x:a.goal.point[0],z:a.goal.point[1],intent:a.goal.intent,facing:a.goal.facing}:null}));},
     get behaviorPlans(){return journeys.map(p=>structuredClone(p));},
-    dispose(){if(disposed)return;disposed=true;contact.dispose();for(const type of renderTypes){type.mesh.dispose();type.geometry.dispose();}for(const material of [cloth,skin,equipment,lights])material.dispose();group.clear();}};
+    dispose(){if(disposed)return;disposed=true;contact.dispose();for(const type of renderTypes){type.mesh.dispose();type.geometry.dispose();}for(const material of [cloth,skin,equipment,headwear,lights])material.dispose();group.clear();}};
 }

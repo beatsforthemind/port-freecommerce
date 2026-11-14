@@ -1,5 +1,7 @@
 # Human models and wardrobe
 
+> The figures' shapes and clothing were reworked later; see [residents: rounded figures and a station wardrobe](station-wardrobe.md). The proportions, joint chains, seating and pose cache described here still apply. The triangle counts and the "seven batches" do not.
+
 Four fresh agents worked on shared anatomy, the older crowd and stallkeepers, visual/performance verification, and an independent review. The pass updates 76 humans in the main population, 20 older commuters, and four market stallkeepers. The four service robots remain part of the 80-actor population.
 
 ## Visual direction
