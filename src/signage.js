@@ -39,8 +39,9 @@ function encoded(style, target, offset) {
 function signMaterial(backed) {
   const material = new THREE.MeshBasicMaterial({
     side: THREE.DoubleSide, transparent: !backed, depthWrite: backed,
-    // Signs sit a few centimetres proud of their backing panels.
-    polygonOffset: true, polygonOffsetFactor: -1,
+    // Signs sit a few centimetres proud of their backing panels. The bias is constant: one scaled by
+    // slope moves a sign in depth with the viewing angle, into a halo or trim just in front of it.
+    polygonOffset: true, polygonOffsetUnits: -2,
   });
   material.onBeforeCompile = shader => {
     shader.vertexShader = `attribute vec3 signInk;\nattribute vec3 signPaper;\nattribute vec3 signReverse;\nvarying vec3 vSignInk;\nvarying vec3 vSignPaper;\nvarying vec3 vSignReverse;\n${shader.vertexShader}`

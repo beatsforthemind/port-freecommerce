@@ -32,7 +32,7 @@ function liftVelocity(clock) {
   const t=wrap(clock,120);
   if(t<8||(t>=24&&t<104))return 0;
   const u=t<24?(t-8)/16:(t-104)/16;
-  return 5.735*6*u*(1-u)/16;
+  return 5.715*6*u*(1-u)/16;
 }
 
 function roomAt(x,z) {
@@ -261,7 +261,8 @@ export function createSpatialStationAudio({context,dryInput,reverbInput,noiseBuf
       updateEmitter(repair,28.7,1.45,28,moving?.002+.012*Math.max(0,Math.sin(service*.5))**16:0,23,1350,0,now);
       const northDistance=(x-23)**2+(z+108)**2,southDistance=(x-23)**2+(z-78)**2;
       const north=northDistance<southDistance,phase=north?60:0,liftSpeed=moving?liftVelocity(service+phase):0;
-      updateEmitter(lift,23,18.335+5.735*liftProgress(service+phase),north?-108:78,.012*Math.min(1,liftSpeed/.35),35,440,0,now);
+      // 0.8 m above the staff-lift cage floor, which parks 2 cm above the gallery deck and rises 5.715 m (station-life.js).
+      updateEmitter(lift,23,18.355+5.715*liftProgress(service+phase),north?-108:78,.012*Math.min(1,liftSpeed/.35),35,440,0,now);
       if(moving&&Number.isFinite(previousService)&&service>=previousService&&service-previousService<2)transportCues(previousService,service);
       previousService=service;
       updateSteps(x,z,time,environment,now);

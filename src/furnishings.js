@@ -91,7 +91,9 @@ export function createFurnishings({importedTrees = false, glow = null} = {}) {
     sage: new THREE.MeshStandardMaterial({color: '#718473', roughness: .91, metalness: .02}),
     rust: new THREE.MeshStandardMaterial({color: '#965c3d', roughness: .8, metalness: .3}),
     warm: new THREE.MeshBasicMaterial({color: '#dfb67e'}),
-    print: new THREE.MeshBasicMaterial({map: atlas, transparent: true, depthWrite: false, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -1}),
+    // A constant bias: one scaled by slope pulled a floor print seen at a low angle out through the foot of
+    // every bench, planter and board standing on it. Prints sit 1 to 5 cm clear of their surface.
+    print: new THREE.MeshBasicMaterial({map: atlas, transparent: true, depthWrite: false, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetUnits: -2}),
   };
   materials.print.forceSinglePass = true;
   const batches = new Map();
@@ -123,8 +125,9 @@ export function createFurnishings({importedTrees = false, glow = null} = {}) {
         box(materials.sage, x + side * .9, .92, z + i * 2.1, .2, .75, 1.95);
         box(materials.metal, x - side * .25, .79, z + i * 2.1 + 1, 1.7, .11, .1);
       }
-      box(materials.warm, x - side * 1.06, .5, z, .035, .055, 5.9);
-      glow?.beam([x - side * 1.06, .5, z - 2.95], [x - side * 1.06, .5, z + 2.95], .3, '#dfb67e', .3);
+      // The strip stands half proud of the seat edge: nearly flush, it shimmered against it from across the hall.
+      box(materials.warm, x - side * 1.075, .5, z, .035, .055, 5.9);
+      glow?.beam([x - side * 1.075, .5, z - 2.95], [x - side * 1.075, .5, z + 2.95], .3, '#dfb67e', .3);
       colliders.push({minX: x - 1.25, maxX: x + 1.25, minZ: z - 3.6, maxZ: z + 3.6});
       const pz = z + 5.3;
       shadow(x, pz, 4, 4);
@@ -159,7 +162,8 @@ export function createFurnishings({importedTrees = false, glow = null} = {}) {
   // Baked contact shadows anchor the existing architecture with no shadow maps.
   for (let z = -124; z <= 100; z += 16) for (const side of [-1, 1]) shadow(side * 26, z, 5.2, 4.5);
   for (const [x, z] of [[-10, 18], [89, -20], [-72, 30], [5, -164]]) shadow(x, z, 3.4, 2.8);
-  for (const z of [80, 0, -85]) decal(7, 0, .035, z, 5, 2.5, -Math.PI / 2);
+  // Clear of the centre-line inlays (top .035): at .035 the print at -85 lay in an inlay's top.
+  for (const z of [80, 0, -85]) decal(7, 0, .045, z, 5, 2.5, -Math.PI / 2);
   for (const side of [-1, 1]) {
     decal(1, side * 15, .036, -121, 4, 1.8, -Math.PI / 2);
     decal(6, side * 30.96, 2.4, 91, 3.5, 1.7, 0, -side * Math.PI / 2);

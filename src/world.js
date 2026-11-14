@@ -134,9 +134,12 @@ export function createStation({glow = null, signage = null} = {}) {
   deck.rotation.x = -Math.PI / 2; deck.position.set(0, 0, -15); deck.receiveShadow = true; deck.userData.castShadow = false; group.add(deck);
 
   const shopWindows = [];
+  // A lit box's glow is made from its own shape, unless another box is set for it here.
+  const glowShapes = new Map();
   // Layered pressure hull and the long, continuous vaulted roof.
   box(materials.dark, 0, 35.5, -15, 72, 2, 234);
-  box(materials.shell, 0, 34.3, -15, 38, .65, 232);
+  // The roof lining stops inside the north bulkhead's top rib, not flush with its outer face.
+  box(materials.shell, 0, 34.3, -14.75, 38, .65, 231.5);
   for (const side of [-1, 1]) {
     const sx = side * 32;
     // The pressure shell clears a generous gallery threshold beneath the first
@@ -163,7 +166,8 @@ export function createStation({glow = null, signage = null} = {}) {
           if(high>low)for(const [inner,outer]of[[21,26.7],[30.3,32]])box(material,side*(inner+outer)/2,y,(low+high)/2,outer-inner,thickness,high-low);
         }
         slab(materials.rib,level,.85);
-        slab(materials.soffit,level-.5,.32);
+        // The soffit hangs under the slab. Where the two overlapped, their edge faces fought.
+        slab(materials.soffit,level-.5425,.235);
         box(materials.amber,side*20.9,level+.05,(a+b)/2,.1,.14,b-a);
       }
       const rails = first ? [[-130,-103],[-97,45],[51,RAMP_NORTH],[RAMP_SOUTH,100]] : [[-130,-87],[-81,17],[23,100]];
@@ -178,7 +182,8 @@ export function createStation({glow = null, signage = null} = {}) {
       box(materials.rib, side * 30.8, 15.8, z, 1.5, 31.6, 2.0);
       colliders.push({ minX: side * 30.8 - .85, maxX: side * 30.8 + .85, minZ: z - 1.1, maxZ: z + 1.1, minY:0, maxY:31.6 });
       box(materials.dark, side * 30.0, 3, z, .25, 6, 2.5);
-      box(materials.amber, side * 29.97, 4, z, .04, 3.5, .22);
+      // Not in the last bay, where the strip would lie inside the south end wall and its halo float out through the wall.
+      if (z < 100) box(materials.amber, side * 29.97, 4, z, .04, 3.5, .22);
       beam(materials.rib, [side * 30.8, 26.0, z], [side * 21, 34, z], 1, 1.2);
       beam(materials.dark, [side * 29.8, 26.3, z + 1], [side * 20.6, 33.8, z + 1], .35, .3);
       box(materials.rib, side * 23.2, 33.5, z, 2.0, .6, 2.5);
@@ -193,8 +198,10 @@ export function createStation({glow = null, signage = null} = {}) {
     }
     // Industrial service trunks and fine horizontal conduits.
     for (const yy of [10.1, 12.0, 20.5, 22.6, 29.8]) {
-      box(materials.dark, side * 32.0, yy, -15, .8, .3, 230);
-      box(materials.edge, side * 31.55, yy + .2, -15, .12, .12, 230);
+      // The trunk stands on the shell face, not half inside it, and stops short of the shell's end
+      // faces; the conduit stands on the trunk. Buried faces showed through every joint from afar.
+      box(materials.dark, side * 31.8, yy, -15, .4, .3, 229.6);
+      box(materials.edge, side * 31.54, yy + .2, -15, .12, .12, 230);
     }
     for (let z = -118; z < 94; z += 16) {
       if (z > gapMin - 6 && z < gapMax + 6) continue;
@@ -202,6 +209,8 @@ export function createStation({glow = null, signage = null} = {}) {
       box(materials.rust, side * 31.7, 2.65, z, .28, 5.3, 12.6);
       box(materials.dark, side * 31.4, 2.5, z, .3, 4.7, 11.8);
       box(materials.warm, side * 31.17, 2.8, z - 2, .08, 2.8, 5.8);
+      // Its glow card stops at the face of the column rib to the north, which the full-size card ran 0.88 m into.
+      glowShapes.set(batches.get(materials.warm).at(-1), new THREE.Matrix4().makeScale(.08, 2.8, 4.92).setPosition(side * 31.17, 2.8, z - 1.56));
       shopWindows.push({x: side * 31.12, y: 2.8, z: z - 2, width: 5.8, height: 2.8, facing: -side});
       // Lit glazing spills onto the deck in front of it.
       glow?.pool(side * 28.3, 0, z - 2, 2.5, '#f5dec0', .17, .8, 2.6);
@@ -212,7 +221,8 @@ export function createStation({glow = null, signage = null} = {}) {
       box(materials.amber, side * 31.0, 5.2, z, .15, .1, 11.7);
       // Balconies reveal dense repeating hab windows at the higher levels.
       for (const yy of [11.5, 21.6, 27.7]) {
-        box(materials.dark, side * 32.0, yy, z, .2, 3.2, 11.6);
+        // On the shell face, like the trunks, rather than sunk into it.
+        box(materials.dark, side * 31.95, yy, z, .1, 3.2, 11.6);
         for (let k = 0; k < 4; k++) {
           const light = (Math.floor(z + 160) + k) % 5 < 3 ? materials.dim : materials.warm;
           box(light, side * 31.85, yy, z - 4.5 + k * 3, .08, 1.6, 1.8);
@@ -224,14 +234,18 @@ export function createStation({glow = null, signage = null} = {}) {
 
   // Roof ribs cross the entire station, beneath broad luminous service panels.
   for (let z = -124; z <= 100; z += 16) {
-    box(materials.rib, 0, 33.6, z, 43, .9, 1.2);
-    box(materials.cool, 0, 33.05, z + .05, 17, .06, .48);
+    // Up to the lining's underside, not into it.
+    box(materials.rib, 0, 33.5625, z, 43, .825, 1.2);
+    // Likewise the last rib's strip, which would lie inside the south end wall.
+    if (z < 100) box(materials.cool, 0, 33.05, z + .05, 17, .06, .48);
     for (const side of [-1, 1]) {
       box(materials.dark, side * 16.0, 33.0, z - 6, 4, .4, 8);
-      for (let k = 0; k < 5; k++) box(materials.rib, side * 16.0, 32.7, z - 9 + k * 1.4, 3.7, .2, .3);
+      // The fins hang 3 cm clear of the panel: flush with it, their top edges flickered from afar.
+      for (let k = 0; k < 5; k++) box(materials.rib, side * 16.0, 32.67, z - 9 + k * 1.4, 3.7, .2, .3);
     }
   }
-  for (const x of [-8.7, 8.7]) box(materials.dim, x, 34, -15, .2, .2, 230);
+  // Like the ribs, the strips stop at the lining's underside.
+  for (const x of [-8.7, 8.7]) box(materials.dim, x, 33.9375, -15, .2, .075, 230);
   for (let z = -115; z < 95; z += 10) {
     for (const x of [-9.5, 9.5]) {
       box(materials.amber, x, .025, z, .13, .018, 5.6);
@@ -250,8 +264,9 @@ export function createStation({glow = null, signage = null} = {}) {
   }
 
   // North bulkhead: a monumental observation aperture above the dock throat.
-  box(materials.rib, -25, 4.8, -130, 14, 9.6, 2);
-  box(materials.rib, 25, 4.8, -130, 14, 9.6, 2);
+  // The piers stop under the lintel, which crosses them at full depth.
+  box(materials.rib, -25, 4.375, -130, 14, 8.75, 2);
+  box(materials.rib, 25, 4.375, -130, 14, 8.75, 2);
   for (const x of [-25,25]) colliders.push({minX:x-7,maxX:x+7,minZ:-131,maxZ:-129,minY:0,maxY:9.6});
   box(materials.rib, 0, 33.3, -130, 65, 2.3, 2);
   box(materials.dark, 0, 9.4, -130, 64, 1.3, 2);
@@ -303,19 +318,24 @@ export function createStation({glow = null, signage = null} = {}) {
     ['OBSERVATION GALLERY   →', 22.7, 5.0, -19, -Math.PI / 2, '#c3dcd2'],
     ['CARGO / SERVICE', -30.6, 5.8, -51, Math.PI / 2, '#f8bc75'],
     ['PASSAGE / SUPPLY', 30.6, 5.8, 43, -Math.PI / 2, '#f8bc75'],
-    ['NOODLES  /  24H', -30.7, 4.6, 83, Math.PI / 2, '#ffb75c'],
-    ['ORBITAL SUPPLY', 30.7, 4.6, 75, -Math.PI / 2, '#d2d8c9'],
-    ['CONTRACTS & CLAIMS', -30.7, 4.6, -99, Math.PI / 2, '#a8c7bf'],
-    ['SHORT-STAY HABITATS', 30.7, 4.6, -83, -Math.PI / 2, '#e7cc9b'],
+    // These four hang clear in front of the wall exchangers, whose louvres stood through three of them,
+    // and in front of the glow that floats off the amber strip above them: nearer the wall, it cut through them.
+    ['NOODLES  /  24H', -30.2, 4.6, 83, Math.PI / 2, '#ffb75c'],
+    ['ORBITAL SUPPLY', 30.2, 4.6, 75, -Math.PI / 2, '#d2d8c9'],
+    ['CONTRACTS & CLAIMS', -30.2, 4.6, -99, Math.PI / 2, '#a8c7bf'],
+    ['SHORT-STAY HABITATS', 30.2, 4.6, -83, -Math.PI / 2, '#e7cc9b'],
   ];
   signs.forEach(([v,x,y,z,r,c]) => text(v,x,y,z,10.8,1.0,{rotation:r,color:c,size:65}));
 
   // Crates and baggage live on the margins. Their collider shapes match the deck.
-  for (const [x,z,w,h,d] of [[-22,73,2,1.4,2.5],[24,57,1.8,1.2,2],[-27,-67,2.4,2,2],[27,-93,2.5,1.8,2.5],[-23,-110,1.7,1.2,2]]) {
+  for (const [x,z,w,h,d,buried] of [[-22,73,2,1.4,2.5],[24,57,1.8,1.2,2,true],[-27,-67,2.4,2,2],[27,-93,2.5,1.8,2.5],[-23,-110,1.7,1.2,2]]) {
+    colliders.push({minX:x-w/2-.15,maxX:x+w/2+.15,minZ:z-d/2-.15,maxZ:z+d/2+.15});
+    // The east ramp stands over the second crate, whose north face lay in the
+    // ramp's end wall. Only its footprint is kept.
+    if (buried) continue;
     box(materials.rust,x,h/2,z,w,h,d);
     box(materials.dark,x,h/2,z+d/2+.02,w*.85,.15,.04);
     for (const dx of [-.35,.35]) box(materials.rib,x+dx*w,h/2,z,w*.06,h+.05,d+.04);
-    colliders.push({minX:x-w/2-.15,maxX:x+w/2+.15,minZ:z-d/2-.15,maxZ:z+d/2+.15});
   }
 
   // Service infrastructure stays in the existing material batches and above the
@@ -400,7 +420,7 @@ export function createStation({glow = null, signage = null} = {}) {
       [materials.amber, '#ffb65e', {strip: .46, panel: .3}],
       [materials.warm, '#f5dec0', {strip: .24, panel: .15}],
       [materials.cool, '#c2d7cf', {strip: .5, panel: .3}],
-    ]) for (const matrix of batches.get(material) || []) if (glow.box(matrix, value, strength)) glowFixtures++;
+    ]) for (const matrix of batches.get(material) || []) if (glow.box(glowShapes.get(matrix) || matrix, value, strength)) glowFixtures++;
     // Three broad pools replace point lights that had no fixture: the tea
     // caravan's lanterns, the gallery doorway, and the dock sign.
     glow.pool(-20, 0, 51, 15, '#ffae62', .26);

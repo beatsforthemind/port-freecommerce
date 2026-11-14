@@ -318,7 +318,8 @@ export function createDistricts({glow = null, signage = null} = {}) {
         const lower=upper-.12-.10*Math.max(0,side?-cadence:cadence);
         const sx=sign*.272,ey=HUMAN_PROFILE.shoulderY-Math.cos(upper)*.29,ez=-Math.sin(upper)*.29;
         const wy=ey-Math.cos(lower)*.27,wz=ez-Math.sin(lower)*.27;
-        place(legs,i*8+4+side*2,sx,(HUMAN_PROFILE.shoulderY+ey)/2,ez/2,.125,.315,.14,upper,0,-sign*.025);
+        // The sleeve hangs from just under the shoulder line, so its top never stands above the jacket.
+        place(legs,i*8+4+side*2,sx,HUMAN_PROFILE.shoulderY-Math.cos(upper)*.157,-Math.sin(upper)*.157,.125,.29,.14,upper,0,-sign*.025);
         place(legs,i*8+5+side*2,sx,(ey+wy)/2,(ez+wz)/2,.095,.295,.11,lower);
         place(bags,i*5+1+side,sx,wy-.047*Math.cos(lower),wz-.047*Math.sin(lower),.078,.115,.075,lower);
       }

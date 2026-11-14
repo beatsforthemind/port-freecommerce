@@ -145,7 +145,8 @@ export function createAtmosphere({ renderer, camera, reducedMotion = false } = {
     }
     shaftIndices.push(index, index + 2, index + 1, index + 1, index + 2, index + 3);
   }
-  for (const z of [-105, -57, -9, 39, 87]) {
+  // The southern shaft ends inside the hall: from 87 it ran out through the arrivals wall and its sign.
+  for (const z of [-105, -57, -9, 39, 81]) {
     const start = [0, 32.9, z];
     const end = [12, 1, z + 18];
     ribbon(start, end, 4.8, [1, 0, 0]);

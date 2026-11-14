@@ -59,7 +59,8 @@ export function buildConcourseAccess({group, box, beam, text, materials,collider
     surfaces.push({sector:'concourse',minX:-23.1,maxX:23.1,minZ:z-2.72,maxZ:z+2.72,height:h});
     for (const edge of [-1,1]) {
       box(materials.edge,0,h+1.15,z+edge*2.85,43,.1,.1);
-      box(materials.amber,0,h+.08,z+edge*2.86,43,.05,.05);
+      // The edge light runs outboard of the posts: threaded through them, its face lay 2.5 mm inside theirs.
+      box(materials.amber,0,h+.08,z+edge*2.92,43,.05,.05);
       for (let x=-21;x<=21;x+=3) box(materials.edge,x,h+.58,z+edge*2.85,.075,1.15,.075);
     }
     for (const x of [-18,18]) beam(materials.rib,[x,h-.45,z],[Math.sign(x)*25,h-2.7,z],.34);
@@ -106,7 +107,8 @@ function buildEscalatorAccess({box,beam,materials:m,colliders}) {
     surfaces.push({sector:'concourse',level:'promenade',escalatorLanding:flight.id,...landing});
     box(m.rib,supportX,(height-.24)/2,topZ-1.4,.22,height-.24,.24);
     solid(supportX,topZ-1.4,.25,.27,0,height-.24);
-    beam(m.edge,[supportX,4.6,topZ-1.4],[side*21,height-.22,topZ-1.4],.14,.19);
+    // The brace is slimmer than the post it rises from, so their faces stay 4 cm apart.
+    beam(m.edge,[supportX,4.6,topZ-1.4],[side*21,height-.22,topZ-1.4],.14,.16);
 
     // There is no solid wedge: high portions have real public headroom below.
     beam(m.rib,[x,height-.25,topZ],[x,-.25,bottomZ],width+.24,.25);
@@ -133,7 +135,8 @@ function buildEscalatorAccess({box,beam,materials:m,colliders}) {
     sloped(x,width+.24,-.52,-.12);
     for(const edge of[-1,1])sloped(x+edge*(width/2+.17),.18,-.12,1.3);
     for(const [z,y]of[[bottomZ+ESCALATOR_FLAT/2,0],[topZ-ESCALATOR_FLAT/2,height]]){
-      box(m.dark,x,y-.12,z,width,.16,ESCALATOR_FLAT);
+      // The backing plates stop short of the landing's edge, whose face they shared.
+      box(m.dark,x,y-.12,z,width,.16,ESCALATOR_FLAT-.1);
     }
     // The comb teeth are static inlays in the same amber batch as navigation.
     for(const [z,y]of[[bottomZ+ESCALATOR_FLAT,0],[topZ-ESCALATOR_FLAT,height]]){

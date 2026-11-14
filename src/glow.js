@@ -84,9 +84,10 @@ export function createGlow() {
 
       if (beams.length) {
         const geometry = new THREE.InstancedBufferGeometry();
-        // (which end, which side, cap direction): two end caps around a ribbon.
-        geometry.setAttribute('position', new THREE.Float32BufferAttribute([0,-1,-1, 0,1,-1, 0,-1,0, 0,1,0, 1,-1,0, 1,1,0, 1,-1,1, 1,1,1], 3));
-        geometry.setIndex([0,1,2, 2,1,3, 2,3,4, 4,3,5, 4,5,6, 6,5,7]);
+        // (which end, which side, cap direction): two end caps around a ribbon, with a
+        // centre line along the strip so the ribbon can fold there (see the float below).
+        geometry.setAttribute('position', new THREE.Float32BufferAttribute([0,-1,-1, 0,0,-1, 0,1,-1, 0,-1,0, 0,0,0, 0,1,0, 1,-1,0, 1,0,0, 1,1,0, 1,-1,1, 1,0,1, 1,1,1], 3));
+        geometry.setIndex([0,1,3, 3,1,4, 1,2,4, 4,2,5, 3,4,6, 6,4,7, 4,5,7, 7,5,8, 6,7,9, 9,7,10, 7,8,10, 10,8,11]);
         attribute(geometry, 'aA', beams.flatMap(b => b.a), 3);
         attribute(geometry, 'aB', beams.flatMap(b => b.b), 3);
         attribute(geometry, 'aShape', beams.flatMap(b => [b.radius, b.capA, b.capB]), 3);
@@ -115,8 +116,11 @@ export function createGlow() {
               float radius = aShape.x * (1. + range * .006);
               float cap = position.z < 0. ? aShape.y : aShape.z;
               vec3 world = base + across * position.y * radius + along * position.z * cap * radius;
-              // Float clear of the mounting surface so the halo is not sliced by it.
-              world += toCamera * min(radius * .8, range * .5);
+              // Float clear of the mounting surface so the halo is not sliced by it. The rim floats half as far
+              // again as the strip: a flat ribbon facing the eye lies in the plane of any face that also faces
+              // the eye, and where it floated into one the two fought over the whole overlap.
+              float rim = min(1., length(vec2(position.y, position.z * cap)));
+              world += toCamera * min(radius * .8, range * .5) * (1. + .5 * rim);
               vUv = position.zy;
               vColor = aColor * exp(-uFog * uFog * range * range) * smoothstep(.25, 1.4, range);
               gl_Position = projectionMatrix * viewMatrix * vec4(world, 1.);
@@ -146,7 +150,9 @@ export function createGlow() {
         attribute(geometry, 'aColor', cards.flatMap(c => [...c.rgb, c.lift]), 4);
         geometry.instanceCount = cards.length;
         const material = new THREE.ShaderMaterial({
-          ...shared, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2,
+          // Pushed two depth steps back, never pulled forward: a card is lifted clear of its panel, so what lies
+          // within a step of it is trim in front (a service trunk before a window), which must keep the card behind it.
+          ...shared, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetUnits: 2,
           vertexShader: `
             attribute vec3 aCenter; attribute vec3 aU; attribute vec3 aV; attribute vec4 aExtent; attribute vec4 aColor;
             uniform float uFog;
@@ -183,7 +189,7 @@ export function createGlow() {
       }
 
       let disposed = false;
-      const stats = Object.freeze({beams: beams.length, cards: cards.length, drawCalls: group.children.length, triangles: beams.length * 6 + cards.length * 2, textures: 0, lights: 0, perFrameUploads: 0});
+      const stats = Object.freeze({beams: beams.length, cards: cards.length, drawCalls: group.children.length, triangles: beams.length * 12 + cards.length * 2, textures: 0, lights: 0, perFrameUploads: 0});
       return {
         group, stats,
         /** Halos thin out with the same fog as the room they are in. */

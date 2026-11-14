@@ -102,7 +102,9 @@ export function createStorefrontDisplays(windows) {
   });
   const geometry = mergeGeometries(pieces);
   pieces.forEach(piece => piece.dispose());
-  const material = new THREE.MeshBasicMaterial({map: texture});
+  // The pictures lie 1 cm in front of the lit panes (world.js), too close to hold from 130 m away.
+  // A constant depth bias, not one scaled by slope, keeps them in front without reaching the mullions.
+  const material = new THREE.MeshBasicMaterial({map: texture, polygonOffset: true, polygonOffsetUnits: -2});
   const mesh = new THREE.Mesh(geometry, material);
   mesh.name = 'Concourse / backlit shop windows';
   mesh.matrixAutoUpdate = false;

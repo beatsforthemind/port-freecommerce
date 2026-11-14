@@ -92,20 +92,31 @@ function cap(section, around = 24) {
   geometry.setIndex(index); geometry.computeVertexNormals();
   return geometry;
 }
-/** A patch lying on a hull between two stations and two angles (which may vary along it). */
+/**
+ * A patch lying on a hull between two stations and two angles (which may vary along it).
+ * Its rows fall on the hull's own sections as well: a patch that bridged a knuckle of the
+ * hull would sink into it there.
+ */
 function patch(sections, z0, z1, angle0, angle1, lift = .03, steps = 10, across = 1) {
   const from = typeof angle0 === 'function' ? angle0 : () => angle0, to = typeof angle1 === 'function' ? angle1 : () => angle1;
-  return grid(steps + 1, across + 1, (j, i, p, surface) => {
-    const z = z0 + (z1 - z0) * j / steps, a = from(z) + (to(z) - from(z)) * i / across;
+  const step = Math.abs(z1 - z0) / steps, knuckles = sections.map(({z}) => z).filter(z => (z - z0) * (z - z1) < 0);
+  // A row within half a step of a section gives way to it: a sliver of a row beside the
+  // knuckle would turn the patch's shading there abruptly.
+  const rows = Array.from({length: steps + 1}, (_, j) => z0 + (z1 - z0) * j / steps)
+    .filter((row, j) => j === 0 || j === steps || knuckles.every(z => Math.abs(row - z) >= step / 2))
+    .concat(knuckles).sort((a, b) => (a - b) * (z1 - z0));
+  return grid(rows.length, across + 1, (j, i, p, surface) => {
+    const z = rows[j], a = from(z) + (to(z) - from(z)) * i / across;
     p.copy(hullFrame(sections, z, a, lift).p);
-    surface[0] = i / across; surface[1] = j / steps;
+    surface[0] = i / across; surface[1] = (z - z0) / (z1 - z0);
   });
 }
 /** A band at fixed heights along one side of a hull. */
 function band(sections, z0, z1, low, high, side, lift = .04, steps = 12) {
   // On the +x side angle grows upwards; on the -x side it grows downwards.
   const bottom = z => sideAngle(sectionAt(sections, z), side > 0 ? low : high, side), top = z => sideAngle(sectionAt(sections, z), side > 0 ? high : low, side);
-  return patch(sections, z0, z1, bottom, top, lift, steps);
+  // Three strips across: one flat strip would cut inside the curve of the side.
+  return patch(sections, z0, z1, bottom, top, lift, steps, 3);
 }
 function slab(w, h, d) {
   const geometry = new THREE.BoxGeometry(w, h, d), uv = geometry.attributes.uv;
@@ -346,12 +357,13 @@ function collar(yard, sections, z, y, side, radius) {
 }
 /** Dark glazing over the crown of a hull, divided into panes by slim frames. */
 function glazing(yard, sections, z0, z1, from, to, panes) {
-  yard.add(patch(sections, z0, z1, from, to, .04, 5, panes), PAINT.glass);
+  // Three facets to a pane: one flat facet each would dip under the hull's shoulders.
+  yard.add(patch(sections, z0, z1, from, to, .04, 5, panes * 3), PAINT.glass);
   for (let i = 0; i <= panes; i++) {
     const angle = from + (to - from) * i / panes;
     yard.add(patch(sections, z0, z1, angle - .011, angle + .011, .09, 5), PAINT.steel);
   }
-  for (const z of [z0, z1]) yard.add(patch(sections, z - .07, z + .07, from - .011, to + .011, .09, 1, panes), PAINT.steel);
+  for (const z of [z0, z1]) yard.add(patch(sections, z - .07, z + .07, from - .011, to + .011, .09, 1, panes * 3), PAINT.steel);
 }
 
 // ---------------------------------------------------------------------------

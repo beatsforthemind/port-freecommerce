@@ -48,10 +48,12 @@ export function buildPromenadeShops({group,box,beam,materials,colliders,shops,he
 
     // Each bay is a real recessed fixture, with a roof, side cheeks and counter fascia.
     // The clear public lane is entirely inward of x +/-26.82 after body allowance.
-    b(m.dark,31.40,2.05,0,.16,4.1,width);
-    b(m.rib,29.30,.065,0,4.25,.13,width);
+    // The back wall, floor and fascia fit between the two .14 cheeks. Run to
+    // the bay's full width, their ends lay in the cheeks' outer faces.
+    b(m.dark,31.40,2.05,0,.16,4.1,width-.28);
+    b(m.rib,29.30,.065,0,4.25,.13,width-.28);
     for(const v of[-width/2+.07,width/2-.07])b(accent,29.30,2.05,v,4.25,4.10,.14);
-    b(m.dark,27.31,3.30,0,.28,1.22,width);
+    b(m.dark,27.31,3.30,0,.28,1.22,width-.28);
     b(accent,29.30,4.11,0,4.25,.15,width);
     b(m.warm,27.16,3.97,0,.08,.045,width-.28);
 

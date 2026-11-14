@@ -29,8 +29,8 @@ function shaderMotionBounds(geometry) {
       // Both express door leaves slide longitudinally inside a fixed recess.
       if(kind>7.5) {z0-=.72;z1+=.72;}
     } else if(kind>9.5) {
-      // The service cage floor travels from gallery17.625 to berth23.36.
-      y1+=5.735;
+      // The service cage floor travels from 2 cm above gallery17.625 to berth23.36.
+      y1+=5.715;
     }
     // Kind 9 is a stationary berth signal; only its vertex colour changes.
     const ax=anchors.getX(i),ay=anchors.getY(i),az=anchors.getZ(i);
@@ -168,7 +168,8 @@ export function createStationLife() {
     for(const dz of [-1.3,1.3]) box('dark',[20.19,23.25,z],[0,1.05,dz],[3.28,.08,.08]);
     for(const dz of [-1.5,1.5]) box('dark',[24.22,21.45,z],[0,0,dz],[.12,7.65,.12]);
     box('steel',[24.22,25.25,z],[0,0,0],[.22,.18,3.15]);
-    const cage=[23,17.535,z];
+    // Parked, the cage floor stands 2 cm proud of the gallery deck: flush, the two shared a plane.
+    const cage=[23,17.555,z];
     box('steel',cage,[0,0,0],[2.3,.18,2.7],10,phase,1);
     box('rust',cage,[1.2,.85,0],[.08,1.6,2.7],10,phase,1);
     for(const dz of [-1.3,1.3]) box('cream',cage,[0,1.05,dz],[2.3,.08,.08],10,phase,1);
@@ -214,7 +215,8 @@ export function createStationLife() {
 
   // Dock workers let an automated winch shoulder the awkward cargo.
   const dock=[-7.4,13.8,-171.5];
-  box('steel',dock,[0,.2,0],[5.5,.6,1.1]);
+  // The winch beam lies in the dock gantry beam; at 1.1 deep its faces stood 5 cm inside the gantry's.
+  box('steel',dock,[0,.2,0],[5.5,.6,.9]);
   for(const x of [-2.3,2.3]) box('dark',dock,[x,1.5,0],[.12,2.8,.16]);
   cylinder('rust',dock,[0,-.35,0],.5,1.3,0,0,0,[Math.PI/2,0,0]);
   box('gold',dock,[0,-.54,.67],[1.6,.11,.04],0,0,2);
@@ -294,7 +296,7 @@ export function createStationLife() {
         float occupied=aPhase<0.?1.-step(.0001,progress):step(.9999,progress);
         signal=.12+occupied*(.35+.53*doorOpening(clock));
       }
-      else {p.y+=5.735*liftProgress(uTime+aPhase);}
+      else {p.y+=5.715*liftProgress(uTime+aPhase);}
       p+=aAnchor;
       vec4 mv=modelViewMatrix*vec4(p,1.);
       vDistance=length(mv.xyz);vColor=color*signal;

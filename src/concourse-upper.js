@@ -5,8 +5,8 @@ export function buildUpperConcourse({box,beam,materials,colliders}) {
   const promenade=CONCOURSE_LEVELS[1].height,gallery=CONCOURSE_LEVELS[2].height,express=CONCOURSE_LEVELS[3].height;
   const surfaces=[],landmarks=[];
   function footprint(x,z,w,d,bottom,top){colliders.push({minX:x-w/2,maxX:x+w/2,minZ:z-d/2,maxZ:z+d/2,minY:bottom,maxY:top});}
-  function rail(x,z,w,d,height){
-    box(materials.edge,x,height+1.12,z,w,.08,d);
+  function rail(x,z,w,d,height,drop=0){
+    box(materials.edge,x,height+1.12-drop/2,z,w,.08+drop,d);
     box(materials.dark,x,height+.57,z,w,.065,d);
     footprint(x,z,w,d,height,height+1.3);
     if(w>d){for(let a=-w/2+.3;a<=w/2;a+=4)box(materials.edge,x+a,height+.56,z,.075,1.12,.075);}
@@ -32,13 +32,16 @@ export function buildUpperConcourse({box,beam,materials,colliders}) {
     rail(side*25.45,99.25,8.5,.12,promenade);
     footprint(side*21.2,96.4,.14,4.8,promenade,promenade+1.3);
     box(materials.dark,side*26.4,promenade+.25,97.2,2.4,.5,.8);
-    box(materials.rust,side*26.4,promenade+.53,97.2,2.4,.08,.8);
-    box(materials.edge,side*26.4,promenade+.92,97.58,2.4,.75,.08);
+    // Seat and back stack on the plinth: sunk into each other, their flush sides fought.
+    box(materials.rust,side*26.4,promenade+.535,97.2,2.4,.07,.8);
+    box(materials.edge,side*26.4,promenade+.93,97.58,2.4,.72,.08);
     footprint(side*26.4,97.2,2.6,1.2,promenade,promenade+1.3);
     landmarks.push({x:side*26,z:95.3,y:promenade,radius:2.6,code:'DECK 02 / ARRIVALS SUNWALK',title:'Arrivals seen from the slow lane.',hint:'Read the sunwalk notice',text:['The narrow outer walk goes around the promenade ramp instead of over it. The original southern balcony is public again.','Below, people arrive in a hurry. Up here, the view has no departure time. The lantern lifts are farther north on either gallery.']});
 
     surfaces.push({sector:'concourse',level:'galleries',minX:side<0?-29.25:21.7,maxX:side<0?-21.7:29.25,minZ:-127.5,maxZ:98.8,height:gallery});
-    for(const [a,b]of[[-127.5,-87],[-81,17],[23,98.8]])rail(side*21.2,(a+b)/2,.14,b-a,gallery);
+    // The hall's own gallery balustrade (world.js) shares this line. This top rail sheathes the hall's top rail,
+    // at least 1.5 cm clear all round, instead of resting half on it with its sides showing beneath.
+    for(const [a,b]of[[-127.5,-87],[-81,17],[23,98.8]])rail(side*21.2,(a+b)/2,.14,b-a,gallery,.075);
     rail(side*25.45,-128,8.5,.12,gallery);rail(side*25.45,99.25,8.5,.12,gallery);
     floorNumber(3,side,gallery,-58);
 
@@ -62,8 +65,8 @@ export function buildUpperConcourse({box,beam,materials,colliders}) {
 
     for(const z of[-84,62]){
       box(materials.dark,side*28.6,gallery+.25,z,1.2,.5,3.8);
-      box(materials.rust,side*28.6,gallery+.53,z,1.2,.08,3.8);
-      box(materials.dark,side*29.08,gallery+.92,z,.12,.75,3.8);
+      box(materials.rust,side*28.6,gallery+.535,z,1.2,.07,3.8);
+      box(materials.dark,side*29.08,gallery+.93,z,.12,.72,3.8);
       footprint(side*28.6,z,1.35,3.95,gallery,gallery+1.3);
     }
     landmarks.push({x:side*26.4,z:-84,y:gallery,radius:3,code:'DECK 03 / LANTERN GALLERIES',title:'The light someone leaves on.',hint:'Read the gallery notice',text:['The upper galleries look onto the sleeping quarters and long-stay rooms. A lit window is not an invitation.','Two bridges cross the interchange below the freight and express lines. Lantern lifts connect every public deck; the old promenade ramps remain open below.']});
@@ -76,7 +79,8 @@ export function buildUpperConcourse({box,beam,materials,colliders}) {
     surfaces.push({sector:'concourse',level:'galleries',minX:-23.1,maxX:23.1,minZ:z-2.72,maxZ:z+2.72,height:gallery});
     for(const side of[-1,1]){
       rail(0,z+side*2.85,43,.12,gallery);
-      box(materials.amber,0,gallery+.07,z+side*2.86,43,.04,.04);
+      // Outboard of the rail posts, as on the promenade bridges.
+      box(materials.amber,0,gallery+.07,z+side*2.92,43,.04,.04);
       beam(materials.rib,[side*22,gallery-.44,z],[side*14,gallery-2.1,z],.22,.28);
     }
   }

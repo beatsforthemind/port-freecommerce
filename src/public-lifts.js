@@ -7,6 +7,9 @@ const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
 const ease=t=>{t=clamp(t,0,1);return t*t*t*(t*(t*6-15)+10);};
 const LEVELS=new Map(CONCOURSE_LEVELS.map(level=>[level.id,level]));
 const DOOR_SECONDS=.65;
+// Sill plates and the car floor stand this far proud of the deck. Flush,
+// they shared a plane with the deck and slabs, and the two flickered.
+const SILL=.02;
 
 /** Two small panoramic cars. All geometry is local, and idle matrices stay put. */
 export function createPublicLifts({onStateChange}={}) {
@@ -36,8 +39,8 @@ export function createPublicLifts({onStateChange}={}) {
     const body=[],glass=[];
     // The inward lip meets the fixed threshold. Roof and walls stay outside
     // the threshold envelope, so they never sweep through a landing slab.
-    boxPiece(body,-side*.025,-.09,0,2.95,.18,3.3);
-    boxPiece(body,-side*1.525,-.055,0,.15,.11,2.55);
+    boxPiece(body,-side*.025,SILL-.09,0,2.95,.18,3.3);
+    boxPiece(body,-side*1.525,SILL-.055,0,.15,.11,2.55);
     boxPiece(body,0,3.03,0,2.9,.12,3.3);
     for(const sx of[-1,1])for(const sz of[-1,1])boxPiece(body,sx*1.4,1.5,sz*1.6,.075,3,.075);
     boxPiece(body,side*1.4,1.08,0,.07,.07,3.15);
@@ -53,7 +56,7 @@ export function createPublicLifts({onStateChange}={}) {
     for(const level of CONCOURSE_LEVELS){
       const lo=side>0?26.35:-26.9,hi=side>0?26.9:-26.35;
       surfaces.push({sector:'concourse',minX:lo,maxX:hi,minZ:shaft.z-1.2,maxZ:shaft.z+1.2,height:level.height,liftThreshold:shaft.id});
-      staticBox('steel',(lo+hi)/2,level.height-.075,shaft.z,hi-lo,.15,2.4);
+      staticBox('steel',(lo+hi)/2,level.height+SILL-.075,shaft.z,hi-lo,.15,2.4);
       // Every absent car closes the complete bay, rather than relying on old
       // decorative floor rectangles that still overlap the physical opening.
       blockers.push(collider(shaft.minX,shaft.maxX,shaft.minZ,shaft.maxZ,level.height+.015,level.height+2.5));
@@ -98,7 +101,9 @@ export function createPublicLifts({onStateChange}={}) {
       for(let i=0;i<CONCOURSE_LEVELS.length;i++){
         const level=CONCOURSE_LEVELS[i],docked=Math.abs(car.height-level.height)<.001&&car.level.id===level.id;
         const amount=docked?car.doors:0;
-        for(const sign of[-1,1])gateMesh.setMatrixAt(gate++,matrix(car.shaft.entranceX,level.height+1.22,car.shaft.z+sign*(.6+amount*1.25),.075,2.4,1.18));
+        // Open, a leaf's leading edge tucks 4.5 cm into its jamb post. At 1.25 it
+        // lay 5 mm behind the post's face and showed through it from down the hall.
+        for(const sign of[-1,1])gateMesh.setMatrixAt(gate++,matrix(car.shaft.entranceX,level.height+1.22,car.shaft.z+sign*(.6+amount*1.29),.075,2.4,1.18));
         const block=car.blockers[i];block.minY=open&&docked?1e6:level.height+.015;block.maxY=open&&docked?1e6+1:level.height+2.5;
       }
       for(const sign of[-1,1])carDoors.setMatrixAt(door++,matrix(car.shaft.x-car.shaft.side*1.52,car.height+1.22,car.shaft.z+sign*(.6+car.doors*1.25),.055,2.4,1.18));

@@ -66,7 +66,8 @@ export function createCommerce({importedTree = false, importedPot = false, glow 
   const atlas = track(new THREE.CanvasTexture(canvas));
   atlas.colorSpace = THREE.SRGBColorSpace;
   atlas.anisotropy = 4;
-  m.print = track(readableTiles(new THREE.MeshBasicMaterial({map: atlas, side: THREE.DoubleSide}), 2));
+  // Prints stand 1 to 3 cm proud of their stalls; a constant two-step bias keeps them ahead from the far end of the hall.
+  m.print = track(readableTiles(new THREE.MeshBasicMaterial({map: atlas, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetUnits: -2}), 2));
 
   const batches = new Map();
   const object = new THREE.Object3D();
@@ -126,7 +127,8 @@ export function createCommerce({importedTree = false, importedPot = false, glow 
   box(m.clay, teaX, 1.1, teaZ, 4.7, .98, 3.5);
   box(m.bone, teaX, 1.66, teaZ, 4.9, .14, 3.65);
   for (const dx of [-2.2, 2.2]) for (const dz of [-1.7, 1.7]) {
-    rod(m.metal, [teaX + dx, .6, teaZ + dz], [teaX + dx, 4.7, teaZ + dz], .055);
+    // The posts rise from inside the counter: run down through the cart body, they lay just inside its faces.
+    rod(m.metal, [teaX + dx, 1.66, teaZ + dz], [teaX + dx, 4.7, teaZ + dz], .055);
     cylinder(m.dark, teaX + dx, .35, teaZ + dz, .28, .28, .18, 8, Math.PI / 2);
   }
   box(m.clay, teaX, 4.65, teaZ, 5.1, .18, 4.1);
@@ -185,7 +187,7 @@ export function createCommerce({importedTree = false, importedPot = false, glow 
     }
   }
   sign(1, sporeX, 5.65, sporeZ + 1.95, 4.7, 1.2);
-  sign(5, sporeX, .45, sporeZ + 1.96, 3.2, .55);
+  sign(5, sporeX, .45, sporeZ + 1.98, 3.2, .55);
   sign(1, sporeX, 5.65, sporeZ - 1.95, 4.7, 1.2, Math.PI);
   for (const dx of [-1.95, 1.95]) {
     cylinder(m.dark, sporeX + dx, 1.4, sporeZ + 1.4, .23, .3, .85, 8);

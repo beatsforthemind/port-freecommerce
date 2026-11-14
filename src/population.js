@@ -79,9 +79,10 @@ export function createPopulation({districtLayouts = [], promenadeRoutes = [], na
     records.push(p); parts.push(p); a.parts.push(p);
     return p;
   }
-  function jointPart(a,tint,from,to,width,depth) {
+  // `top` is how far the shell runs past its upper joint; every shell runs 17.5 mm past the lower one.
+  function jointPart(a,tint,from,to,width,depth,top=.0175) {
     const p=part(a,'limb',tint,0,0,0,width,1,depth);
-    p.from=from;p.to=to;
+    p.from=from;p.to=to;p.top=top;
     return p;
   }
   function endpointPart(a,tint,joint,parent,width,height,depth,kind) {
@@ -105,14 +106,18 @@ export function createPopulation({districtLayouts = [], promenadeRoutes = [], na
     // A short exposed neck connects the shaped collar to the jaw. Main heads,
     // necks and endpoint pieces are essential at every accessory LOD.
     part(a,'limb',face,0,1.49+shift,0,.096,.10,.096);
-    part(a,'gear',trousers,0,.875+shift,0,.36,.14,.23);
-    if(longCoat)for(const side of [-1,1])part(a,'robe',coat,side*.095,.76,0,.17,.37,.265,0,0,side*.025);
+    // Inside the jacket hem (1 cm) and the coat panels (2 cm), so its faces stay clear of theirs.
+    part(a,'gear',trousers,0,.875+shift,0,.34,.14,.21);
+    // Each coat panel keeps its inner edge and reaches past the outside of its thigh.
+    if(longCoat)for(const side of [-1,1])part(a,'robe',coat,side*.106,.76,0,.20,.37,.265,0,0,side*.025);
     for(const side of [-1,1]) {
       const base=side<0?0:18;
       jointPart(a,trousers,base,base+3,.172,.185);
       jointPart(a,trousers,base+3,base+6,.133,.145);
       endpointPart(a,'#29353a',base+6,base+3,.125,.11,.285,'shoe');
-      jointPart(a,coat,base+9,base+12,.145,.158);
+      // The sleeve hangs from just under the shoulder line, deeper where the upper arm leans forward (seated,
+      // or the talking gesture), so its open top does not stand above the jacket.
+      jointPart(a,coat,base+9,base+12,.145,.158,seated?-.06:a.pose==='talking'&&side<0?-.045:-.02);
       jointPart(a,coat,base+12,base+15,.112,.123);
       endpointPart(a,face,base+15,base+12,.083,.12,.045,'hand');
       if(seated) {
@@ -133,8 +138,8 @@ export function createPopulation({districtLayouts = [], promenadeRoutes = [], na
     }
     // A few collars and practical credentials, rather than glowing chest LEDs
     // and identical staring eyes, establish role without caricature.
-    if(workwear)part(a,'gear','#424b49',0,1.46,.045,.31,.075,.18,0,0,0,'',true);
-    if(index%4===0)part(a,'light','#aaa891',-.105,1.29,.153,.036,.053,.009,0,0,0,'',true);
+    if(workwear)part(a,'gear','#424b49',0,1.46+shift,.045,.31,.075,.18,0,0,0,'',true);
+    if(index%4===0)part(a,'light','#aaa891',-.105,1.29+shift,.153,.036,.053,.009,0,0,0,'',true);
     if(seated||a.pose==='standing'||a.journey) {
       a.poseCache={valid:false};
       for(const p of a.parts)p.worldMatrix=new THREE.Matrix4();
@@ -217,9 +222,9 @@ export function createPopulation({districtLayouts = [], promenadeRoutes = [], na
       const from=p.from,to=p.to;
       boneDirection.set(j[from]-j[to],j[from+1]-j[to+1],j[from+2]-j[to+2]);
       const length=boneDirection.length();
-      transform.position.set((j[from]+j[to])*.5,(j[from+1]+j[to+1])*.5,(j[from+2]+j[to+2])*.5);
       transform.quaternion.setFromUnitVectors(boneUp,boneDirection.multiplyScalar(1/length));
-      transform.scale.set(p.sx,length+.035,p.sz);transform.updateMatrix();p.matrix.copy(transform.matrix);
+      transform.position.set((j[from]+j[to])*.5,(j[from+1]+j[to+1])*.5,(j[from+2]+j[to+2])*.5).addScaledVector(boneDirection,(p.top-.0175)*.5);
+      transform.scale.set(p.sx,length+.0175+p.top,p.sz);transform.updateMatrix();p.matrix.copy(transform.matrix);
     } else if(p.endpoint!==undefined) {
       const i=p.endpoint,parent=p.parentJoint;
       if(p.endpointKind==='hinge'){

@@ -92,11 +92,16 @@ export function buildObservationDistrict({box, solid, footprint: registerFootpri
   // Compressed, acoustically sheltered vestibule; the view appears only after
   // the shell starts to flare, then the planet becomes the room's focal point.
   for (const z of [-28, -12]) {
-    s(m.dark, 36.5, 3.3, z, 9, 6.6, .65);
+    // The wall stops under the concourse shell (y 6.5) rather than inside it; its collider is unchanged.
+    b(m.dark, 36.5, 3.25, z, 9, 6.5, .65);
+    registerFootprint(36.5, 3.3, z, 9, 6.6, .65);
     b(pale, 33.1, 3.1, z, .45, 6.2, .85);
     b(m.soft, 36.5, .24, z + (z < -20 ? .43 : -.43), 8.8, .08, .06);
   }
-  b(m.dark, 36.5, 6.45, -20, 9, .4, 16.5);
+  // The ceiling stops at the shell's underside (y 6.5) too. Past the shell (x 38) a cap restores the
+  // portal's full height, 1 cm back from the faces below it: flush, the joint between them would flicker.
+  b(m.dark, 36.5, 6.375, -20, 9, .25, 16.5);
+  b(m.dark, 39.495, 6.575, -20, 2.99, .15, 16.63);
   title('OBSERVATION  /  QUIET DECK', 35.1, 5.1, -20, 12.5, .85, -Math.PI / 2, '#c7d6c6', '#23383d');
 
   // The rear fan edges shelter reading alcoves. Low warm strips are embedded

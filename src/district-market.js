@@ -48,7 +48,13 @@ export function buildMarketDistrict({box, solid, footprint:registerFootprint, si
     const x=(a[0]+b[0])/2, z=(a[1]+b[1])/2;
     const w=Math.abs(a[0]-b[0])||.32, d=Math.abs(a[1]-b[1])||.32;
     const height=i%3===0 ? 9.3 : 10.8;
-    B(m.wall,x,height/2,z,w,height,d);
+    // The wall stands on its rust band (top 2.24) instead of continuing behind it: only 2.5 cm
+    // apart, the two faces flicker when seen from the docks or the far end of the hall.
+    // The last 6 m of a wall that runs to the doorway is under the concourse shell (underside 6.5);
+    // it stops at the underside there, so that no wall end lies in the shell's face.
+    const under=Math.max(a[0],b[0])===-32 ? 6 : 0;
+    B(m.wall,x-under/2,(height+2.24)/2,z,w-under,height-2.24,d);
+    if(under) B(m.wall,-35,(6.5+2.24)/2,z,under,6.5-2.24,d);
     B(m.rust,x,1.12,z,w+.05,2.24,d+.05);
     B(m.steel,x,height-.25,z,w+.15,.28,d+.15);
   }
@@ -89,10 +95,12 @@ export function buildMarketDistrict({box, solid, footprint:registerFootprint, si
     personPart.position.set(x,y,z);personPart.rotation.set(rx,ry,rz);if(quaternion)personPart.quaternion.copy(quaternion);personPart.scale.set(sx,sy,sz);personPart.updateMatrix();
     geometry.applyMatrix4(personPart.matrix);geometry.applyMatrix4(personRoot.matrix);canopies.push(geometry);
   }
-  function personSegment(tint,a,b,width,depth) {
+  // `top` is how far the shell runs past its upper joint; every shell runs 12.5 mm past the lower one.
+  function personSegment(tint,a,b,width,depth,top=.0125) {
     personStart.set(...a);personEnd.set(...b);personDirection.subVectors(personStart,personEnd);
     const length=personDirection.length();personRotation.setFromUnitVectors(personUp,personDirection.normalize());
-    personPiece('limb',tint,(a[0]+b[0])/2,(a[1]+b[1])/2,(a[2]+b[2])/2,width,length+.025,depth,0,0,0,personRotation);
+    personStart.add(personEnd).multiplyScalar(.5).addScaledVector(personDirection,(top-.0125)*.5);
+    personPiece('limb',tint,personStart.x,personStart.y,personStart.z,width,length+.0125+top,depth,0,0,0,personRotation);
   }
   function stallkeeper(x,z,yaw) {
     const index=vendorCount++,coat=HUMAN_PALETTE.coats[(index*2+1)%HUMAN_PALETTE.coats.length];
@@ -108,7 +116,9 @@ export function buildMarketDistrict({box, solid, footprint:registerFootprint, si
       personPiece('box','#293338',side*.13,.055,.065,.14,.11,.26);
       const working=side>0||index%2===0;
       const shoulder=[side*.272,HUMAN_PROFILE.shoulderY,0],elbow=[side*.29,1.10,working?.17:.025],wrist=[side*(working?.20:.29),working?1.04:.84,working?.38:.045];
-      personSegment(coat,shoulder,elbow,.125,.14);personSegment(coat,elbow,wrist,.095,.11);
+      // The sleeve hangs from just under the shoulder line (lower for a working arm, which leans forward),
+      // so its open top never stands above the jacket.
+      personSegment(coat,shoulder,elbow,.125,.14,working?-.05:-.012);personSegment(coat,elbow,wrist,.095,.11);
       personPiece('box',skin,wrist[0],working?1.02:.79,working?.44:.045,.08,working?.06:.115,working?.14:.075);
     }
   }
@@ -140,13 +150,14 @@ export function buildMarketDistrict({box, solid, footprint:registerFootprint, si
     if(east){
       B(m.dark,x-w/2,2.45,z,.22,4.9,d);
       for(const side of [-1,1]) B(tint,x,1.8,z+side*d/2,w,3.6,.22);
-      B(tint,faceX+.26,.43,z,.12,.86,d-.35);
+      // The counter front stops under the counter top (y .81), not inside it: their ends shared a plane.
+      B(tint,faceX+.26,.405,z,.12,.81,d-.35);
       B(m.cream,faceX,.90,z,.72,.18,d-.35);
       L(name,faceX+.09,3.55,z,d-.5,.86,Math.PI/2,'#eed0a0','#392f2b');
     }else{
       B(m.dark,x,2.45,z-d/2,w,4.9,.22);
       for(const side of [-1,1]) B(tint,x+side*w/2,1.8,z,.22,3.6,d);
-      B(tint,x,.43,faceZ+.26,w-.35,.86,.12);
+      B(tint,x,.405,faceZ+.26,w-.35,.81,.12);
       B(m.cream,x,.90,faceZ,w-.35,.18,.72);
       L(name,x,3.65,faceZ+.08,w-.5,.86,0,'#eed0a0','#392f2b');
     }
@@ -241,8 +252,9 @@ export function buildMarketDistrict({box, solid, footprint:registerFootprint, si
   }
   // Existing Borrowed Parts occupies the clear pocket at(-79,36.2).
   for(const z of [33,39.5]) B(m.steel,-79,4.6,z,9,.13,.13);
-  B(m.dark,-83.3,2.3,39.5,.13,4.6,.13);
-  B(m.dark,-74.7,2.3,39.5,.13,4.6,.13);
+  // The posts stop under the rail (y 4.535) instead of sharing its faces.
+  B(m.dark,-83.3,2.2675,39.5,.13,4.535,.13);
+  B(m.dark,-74.7,2.2675,39.5,.13,4.535,.13);
   canopy(-79,36.2,8.8,6.4,5.6,'#878a69',.15);
 
   const routes = [

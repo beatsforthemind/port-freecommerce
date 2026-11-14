@@ -55,7 +55,10 @@ export function buildDocksDistrict({box, solid, sign, mesh, attach, decal, m, gl
       s(m.dark,(x0+x1)/2,.57,(z0+z1)/2,Math.abs(x1-x0)+.21,1.14,Math.abs(z1-z0)+.21);
     }
     beam(m.steel,[a[0],1.2,a[1]],[end[0],1.2,end[1]],.11);
-    panel(m.glass,a,end,1.2,16.3,.025);
+    // The glazing is let into its head beam and stops 2 cm short of each end, so no edge of
+    // a pane lies in the face of a beam, slab or pane that ends on the same corner.
+    const ix = (end[0]-a[0])/length*.02, iz = (end[1]-a[1])/length*.02;
+    panel(m.glass,[a[0]+ix,a[1]+iz],[end[0]-ix,end[1]-iz],1.2,16.4,.025);
     beam(m.steel,[a[0],17.7,a[1]],[end[0],17.7,end[1]],.4);
   }
   function arrow(x,z,yaw=0,material=m.amber) {
@@ -69,7 +72,8 @@ export function buildDocksDistrict({box, solid, sign, mesh, attach, decal, m, gl
 
   // A short, low customs throat makes the tall, many-directional departure
   // head reveal itself only after entering it from the monumental concourse.
-  b(deck,0,-.24,-135,22,.48,12);
+  // This floor runs between the concourse deck, which ends at z = -130, and the hub floor, which starts at z = -139.
+  b(deck,0,-.24,-134.5,22,.48,9);
   b(m.dark,0,5.7,-135,22,.5,12);
   for (const side of [-1,1]) {
     s(m.wall,side*10.8,2.7,-135,.45,5.4,12);
@@ -81,7 +85,8 @@ export function buildDocksDistrict({box, solid, sign, mesh, attach, decal, m, gl
     s(m.dark,side*7.9,.76,-135.8,2.2,1.52,2.4);
     b(m.steel,side*7.9,1.56,-135.8,2.3,.12,2.5);
     b(m.soft,side*7.9,2,-135.2,1.4,.48,.05);
-    decal(14,side*7.9,1,-134.57,1.65,.65);
+    // The notice stands 8 cm off the desk: any closer, it fights the desk seen from the far end of the hall.
+    decal(14,side*7.9,1,-134.52,1.65,.65);
   }
   lettering('04  /  DEPARTURES',0,4.65,-131.1,14,.9,0,'#d7dbc9','#24333b');
   b(m.amber,0,.024,-135,.11,.03,10);
@@ -125,7 +130,7 @@ export function buildDocksDistrict({box, solid, sign, mesh, attach, decal, m, gl
   b(m.steel,0,7.2,-171,10.6,.6,1.1);
   for (const side of [-1,1]) {
     b(m.steel,side*22,6.8,-159,.8,.65,10.3);
-    b(m.dark,side*22,12,-159,.8,9.8,10.3);
+    b(m.dark,side*22,12.025,-159,.8,9.8,10.3);
   }
   lettering('06  /  LOCAL  ←',-11.7,6.4,-168.1,9,.95,0,'#d8ddca','#263a3c');
   lettering('07  /  LONG-HAUL',0,8.7,-170.52,10.3,1.3,0,'#edc38c','#26353d');
@@ -154,14 +159,14 @@ export function buildDocksDistrict({box, solid, sign, mesh, attach, decal, m, gl
   // into the exterior void. No hidden rectangle joins their separated ends.
   b(deck,0,-.24,-186,10,.48,30);
   b(m.dark,0,5.75,-183.25,10,.4,30.5);
-  b(m.dark,0,6.85,-199.75,10.4,.35,2.5);
+  b(m.dark,0,6.85,-199.75,10.4,.35,2.6);
   for (const side of [-1,1]) {
     b(deck,side*31,-.24,-159,18,.48,10);
     b(m.dark,side*27.25,5.75,-159,16.5,.4,10);
     b(m.dark,side*37.75,6.85,-159,4.5,.35,10.4);
     for (const z of [-164,-154]) {
       s(m.dark,side*29.9,.57,z,16.2,1.14,.22);
-      b(m.glass,side*29.9,3.36,z,16.2,4.35,.025);
+      b(m.glass,side*29.9,3.36,z,16.1,4.35,.025);
       b(m.steel,side*29.9,5.5,z,16.2,.18,.15);
       b(m.steel,side*37,6.15,z,2,1.3,.15);
       for (const x of [23,27,31,35,38]) {
@@ -181,7 +186,7 @@ export function buildDocksDistrict({box, solid, sign, mesh, attach, decal, m, gl
     for (let z=-174;z>=-198;z-=6) b(m.amber,side*3.7,.025,z,.065,.025,3.3);
     // Lateral-lock floor seams and external pressure coupling collars.
     b(m.cream,side*36,.025,-159,.12,.025,8.8);
-    b(m.steel,side*38.15,-.6,-159,.9,1.2,11.2);
+    b(m.steel,side*38.15,-.65,-159,.9,1.1,11.2);
   }
 
   function airlock({x,z,yaw,code,caption,material=m.cream}) {
@@ -198,8 +203,10 @@ export function buildDocksDistrict({box, solid, sign, mesh, attach, decal, m, gl
     const sx = Math.abs(Math.cos(yaw))>.5?9.4:.35, sz = Math.abs(Math.cos(yaw))>.5?.35:9.4;
     s(m.dark,x-front[0]*.25,2.6,z-front[1]*.25,sx,5.2,sz);
     // Keep the flat collision backplate behind the articulated visible doors.
-    lettering(code,x+front[0]*.31,4.5,z+front[1]*.31,3.4,.95,yaw,'#24333b','#c4b899');
-    lettering(caption,x+front[0]*.31,1.1,z+front[1]*.31,4.8,.36,yaw,'#cfdbc9','#2d3d42');
+    // Lettering stands 13 cm clear of the doors (11 cm clear of their seams): any closer, it
+    // fights them seen from the hall, up to 300 m away.
+    lettering(code,x+front[0]*.41,4.5,z+front[1]*.41,3.4,.95,yaw,'#24333b','#c4b899');
+    lettering(caption,x+front[0]*.41,1.1,z+front[1]*.41,4.8,.36,yaw,'#cfdbc9','#2d3d42');
     b(m.soft,x+front[0]*.22,5.55,z+front[1]*.22,2.8,.07,.08,yaw);
   }
   airlock({x:-37.6,z:-159,yaw:Math.PI/2,code:'06',caption:'LOCAL SHUTTLE / CYCLING',material:m.sage});

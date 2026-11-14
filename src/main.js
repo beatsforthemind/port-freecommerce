@@ -326,10 +326,12 @@ function buildTerminals({importedComputer = false} = {}) {
     if (!usesImportedComputer) {
       box(group, base, 0, .55, 0, 1.15, 1.1, .8);
       box(group, dark, 0, 1.4, 0, 1.65, 1.1, .32);
-      box(group, glow, 0, 1.95, .05, 1.65, .04, .35);
+      // The lamp bar overhangs the housing: at the same width their ends shared a plane.
+      box(group, glow, 0, 1.95, .05, 1.7, .04, .35);
       // The screen is a fixed sign, read at arm's length; the terminal only turns it.
       const turn = group.rotation.y;
-      signage.add('STATION / INFO', {x: data.x + Math.sin(turn) * .17, y: data.y + 1.43, z: data.z + Math.cos(turn) * .17, width: 1.43, height: .61, yaw: turn,
+      // It stands 3 cm proud of the housing: at 1 cm the two fought from the far end of the hall.
+      signage.add('STATION / INFO', {x: data.x + Math.sin(turn) * .19, y: data.y + 1.43, z: data.z + Math.cos(turn) * .19, width: 1.43, height: .61, yaw: turn,
         scale: 55, density: 360, color: '#d0d8b7', background: '#263e3d', layer: sectorAt(data.x, data.z)});
     }
     const marker = signage.sprite('+', {width: .5, height: .5, density: 256, color: '#e7b37e'});
@@ -434,7 +436,9 @@ function interact() {
 }
 
 async function init() {
-  renderer = new THREE.WebGLRenderer({canvas, antialias: true, powerPreference: 'high-performance'});
+  // Reversed depth: where the browser stores depth as floats (Apple GPUs), layers millimetres apart stop
+  // flickering at the far end of the hall. Without EXT_clip_control, or with fixed-point depth, nothing changes.
+  renderer = new THREE.WebGLRenderer({canvas, antialias: true, powerPreference: 'high-performance', reversedDepthBuffer: true});
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.45;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
