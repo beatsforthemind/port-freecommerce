@@ -26,6 +26,9 @@ export function createDistricts({glow = null, signage = null} = {}) {
     floor: mat('#253334'), wall: mat('#354345'), dark: mat('#152528'), steel: mat('#667371'),
     cream: mat('#c0b194'), rust: mat('#985b3d'), sage: mat('#627a68'), red: mat('#995c51'),
     cloth: mat('#b36d43', { metalness: .05 }),
+    // Stall paint and counter tops: plain, where the hull's stencilled panels read as cargo containers.
+    stallRust: mat('#8f563b', { metalness: .05 }), stallSage: mat('#5f7866', { metalness: .05 }),
+    stallRed: mat('#8f574d', { metalness: .05 }), stallTop: mat('#b7a98c', { metalness: .05 }),
     amber: new THREE.MeshBasicMaterial({ color: '#edb96c' }),
     warm: new THREE.MeshBasicMaterial({ color: '#e2cfab' }),
     soft: new THREE.MeshBasicMaterial({ color: '#8aafa1' }),

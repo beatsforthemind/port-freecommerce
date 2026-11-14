@@ -1,5 +1,7 @@
 # Deck 02 promenade traders
 
+> The shops were refitted later in plain painted finishes, with lit back walls and stocked shelves; see [shops and trading areas](shopfronts.md). The directory, access rules and shopkeepers described here still apply. The geometry and ownership figures do not: fittings and merchandise are now merged meshes from `src/shop-kit.js`.
+
 Six fresh agents handled the original business directory, storefront geometry, shopkeepers, independent access/performance QA, adversarial visual review, and resource lifecycle review. Both walls of the public promenade now form a trading street of thirty-two businesses across eleven physical shop types.
 
 Take either lantern lift to **02 / Public promenade**, use the amber ramps, or select the promenade on the station map. The businesses sit along both pressure walls from the north end to the Arrivals bridge. **E**, or the touch interaction button, opens the nearest shop's original environmental story. The map shows traders in sage on Deck 02 and in the all-decks view.

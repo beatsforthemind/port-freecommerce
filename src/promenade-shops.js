@@ -1,45 +1,80 @@
 import * as THREE from 'three';
-import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
+import {createShopKit,shopRandom} from './shop-kit.js';
 
-/** Wall traders share the station's material batches; only curved stock needs meshes. */
+const scratch=new THREE.Color();
+const shade=(hex,factor)=>`#${scratch.set(hex).multiplyScalar(factor).getHexString()}`;
+// What stands on a trader's shelves, by trade.
+const STOCK={
+  food:['#a8573b','#c9a45a','#5f8f8a','#cbc5b2','#4f6b55','#b98a56'],
+  botany:['#4f7a52','#6f9a5c','#a8573b','#cbc5b2','#8aa86a'],
+  repair:['#9aa3a3','#c98a4b','#b5533c','#5c7f86','#3f5f6b'],
+  tailoring:['#526563','#8b705b','#a09278','#796268','#a87351','#c1b89e'],
+  charts:['#7b2f2a','#2f4b5c','#c9a45a','#3d5a43','#cbc2a8','#6f8f8c'],
+  curios:['#6b5a78','#c9a45a','#5f8f8a','#9a5560','#cbc5b2'],
+  exchange:['#d8d2bf','#c9a45a','#a9c9c1','#b9b09a'],
+  sensory:['#8fb5ab','#cbc5b2','#5f8f8a','#b9d3c9'],
+  habitat:['#a09278','#7d9a92','#cbc5b2','#8b705b'],
+  luggage:['#8b4a3a','#3f5f6b','#c9a45a','#526563','#796268'],
+  pharmacy:['#e6e1d2','#8fb5ab','#5f8f8a','#c9a45a','#a8573b'],
+};
+
+/**
+ * Wall traders. Each bay is fitted out in plain painted finishes in the shop's
+ * own colour, with a lit back wall; only light fixtures use the station's box
+ * batches, so that they keep their glow.
+ */
 export function buildPromenadeShops({group,box,beam,materials,colliders,shops,height=7.625}) {
-  const curved=new Map(),object=new THREE.Object3D();
+  const kit=createShopKit('Promenade shops');
   const landmarks=[],vendorAnchors=[],typeCounts={};
-  let boxInstances=0,curveTriangles=0;
+  let boxInstances=0;
   const staffTypes=new Set(['food','repair','tailoring','charts','exchange','pharmacy','luggage']);
   const m=materials;
+  // The hull's panel materials carry stencils and vents. Inside a shop the same colours are plain paint.
+  const plain=new Map([[m.rust,'#a35a3c'],[m.sage,'#7d9a92'],[m.edge,'#7d8787'],[m.rib,'#4b5a5e'],[m.dark,'#1a2427'],[m.shell,'#2a383c']]);
+  const shaped=new Map([[m.edge,'#8a9494'],[m.sage,'#6f9a6a'],[m.rust,'#a35a3c'],[m.rib,'#4b5a5e'],[m.dark,'#1a2427'],[m.warm,'#f1dcb8'],[m.dim,'#536b67'],[m.cool,'#c2d7cf']]);
 
   for(const [index,shop]of shops.entries()){
     const {side,z,width,type}=shop,span=width/2-.35;
-    const variant=shop.variant??index%4;
-    // Structure is always a lit material. `m.dim` is a light colour and stays
-    // on fixtures; used on walls it rendered them flat and self-luminous.
-    const accent=type==='botany'||type==='sensory'?m.sage:type==='tailoring'||type==='food'?m.rust:m.edge;
+    const variant=shop.variant??index%4,rnd=shopRandom(index*97+5);
+    // The bay's paint is a deep shade of the shop's own sign colour; its counter is a little lighter.
+    const accent=shade(shop.accent,.24),counterPaint=shade(shop.accent,.4);
     typeCounts[type]=(typeCounts[type]||0)+1;
     function b(material,x,y,v,w,h,d,ry=0,rz=0){
-      box(material,side*x,height+y,z+v,w,h,d,side*ry,side*rz);boxInstances++;
+      const colour=typeof material==='string'?material:plain.get(material);
+      if(colour)kit.box(colour,side*x,height+y,z+v,w,h,d,{ry:side*ry,rz:side*rz});
+      else box(material,side*x,height+y,z+v,w,h,d,side*ry,side*rz);
+      boxInstances++;
     }
     function rod(material,a,c,w=.06,d=w){
       beam(material,[side*a[0],height+a[1],z+a[2]],[side*c[0],height+c[1],z+c[2]],w,d);boxInstances++;
     }
     function curve(geometry,material,x,y,v,rx=0,ry=0,rz=0){
-      if(geometry.index){const indexed=geometry;geometry=indexed.toNonIndexed();indexed.dispose();}
-      object.position.set(side*x,height+y,z+v);object.rotation.set(rx,side*ry,side*rz);object.scale.set(1,1,1);object.updateMatrix();
-      geometry.applyMatrix4(object.matrix);
-      if(!curved.has(material))curved.set(material,[]);
-      curved.get(material).push(geometry);
+      kit.shape(shaped.get(material)||'#8a9494',geometry,side*x,height+y,z+v,{rx,ry:side*ry,rz:side*rz,light:material===m.warm||material===m.dim||material===m.cool});
     }
     function cylinder(material,x,y,v,r,h,top=r,segments=5,rx=0,ry=0,rz=0){curve(new THREE.CylinderGeometry(top,r,h,segments),material,x,y,v,rx,ry,rz);}
     function crystal(x,y,v,r=.24){curve(new THREE.OctahedronGeometry(r),m.warm,x,y,v,.2,variant*.4,.15);}
     function ring(x,y,v,r=.65,ry=Math.PI/2,rz=0){curve(new THREE.TorusGeometry(r,.035,3,12),m.edge,x,y,v,0,ry,rz);}
-    function counter(material=accent,h=1.05,depth=1.65){
+    function counter(_material,h=1.05,depth=1.65){
       const center=27.20+depth/2;
-      b(material,center,h/2,0,depth,h,width-.4);
-      b(m.edge,center,h+.055,0,depth+.10,.11,width-.28);
+      b(counterPaint,center,h/2,0,depth,h,width-.4);
+      b('#2c3638',center,h+.055,0,depth+.10,.11,width-.28);
       b(m.dark,27.16,.65,0,.12,.89,Math.min(width-.5,3.4));
+      // A till at the customer's end of the counter.
+      b('#1a2427',27.62,h+.2,span*.82,.26,.18,.3);
+      kit.box('#9fd3c7',side*27.485,height+h+.2,z+span*.82,.03,.12,.22,{light:true});
     }
-    function shelves(){
-      for(const y of[1.5,2.35])b(m.rib,30.84,y,0,.72,.10,width-.6);
+    // Two stocked shelves across the back of the bay.
+    function shelves(from=-1,to=1){
+      const u0=from*(width/2-.3),u1=to*(width/2-.3),palette=STOCK[type];
+      for(const y of[1.5,2.35]){
+        b('#4b5a5e',30.84,y,(u0+u1)/2,.72,.10,u1-u0);
+        for(let u=u0+.12;u<u1-.12;){
+          const w=.1+rnd()*.14,tall=.14+rnd()*.22,colour=palette[Math.floor(rnd()*palette.length)];
+          if(rnd()<.45)kit.can(colour,side*(30.7+rnd()*.2),height+y+.05,z+u+w/2,w*.42,tall);
+          else kit.box(colour,side*(30.7+rnd()*.2),height+y+.05+tall/2,z+u+w/2,.22+rnd()*.16,tall,w);
+          u+=w+.03+rnd()*.07;
+        }
+      }
     }
     function bottle(x,y,v,material=m.edge,scale=1){
       cylinder(material,x,y+.24*scale,v,.13*scale,.48*scale,.10*scale);
@@ -51,11 +86,23 @@ export function buildPromenadeShops({group,box,beam,materials,colliders,shops,he
     // The back wall, floor and fascia fit between the two .14 cheeks. Run to
     // the bay's full width, their ends lay in the cheeks' outer faces.
     b(m.dark,31.40,2.05,0,.16,4.1,width-.28);
-    b(m.rib,29.30,.065,0,4.25,.13,width-.28);
-    for(const v of[-width/2+.07,width/2-.07])b(accent,29.30,2.05,v,4.25,4.10,.14);
+    b('#353f41',29.30,.065,0,4.25,.13,width-.28);
+    // Cheeks and roof are dark outside, where they face the street and the galleries above, and lined
+    // with the shop's paint inside.
+    for(const end of[-1,1]){
+      b('#232d30',29.30,2.05,end*(width/2-.07),4.25,4.10,.14);
+      b(accent,29.32,2.07,end*(width/2-.155),4.1,3.9,.03);
+    }
     b(m.dark,27.31,3.30,0,.28,1.22,width-.28);
-    b(accent,29.30,4.11,0,4.25,.15,width);
+    b('#232d30',29.30,4.11,0,4.25,.15,width);
+    b(accent,29.40,4.02,0,3.9,.03,width-.34);
     b(m.warm,27.16,3.97,0,.08,.045,width-.28);
+    // A lit back wall in the shop's colour, and a lamp under the roof: without them the bay is a dark recess.
+    kit.box(shade(shop.accent,.15),side*31.30,height+2.08,z,.04,3.9,width-.34,{light:true});
+    // Battens give the wall a scale, and a dado rail runs behind the counter.
+    for(let v=-width/2+.5;v<width/2-.3;v+=.62)kit.box(shade(shop.accent,.23),side*31.265,height+2.08,z+v,.03,3.9,.06,{light:true});
+    kit.box(shade(shop.accent,.3),side*31.25,height+1.02,z,.05,.07,width-.34,{light:true});
+    b(m.warm,29.6,3.99,0,2.4,.04,.1);
 
     if(type==='food'){
       counter(m.rust,.98,1.60);
@@ -85,7 +132,7 @@ export function buildPromenadeShops({group,box,beam,materials,colliders,shops,he
         rod(m.edge,[28.16,1.72,-span*.54],[27.58,1.55,-span*.54],.12);
         for(let i=0;i<3;i++)cylinder(m.warm,27.70,1.21,span*.08+i*.34,.12,.26,.14);
         if(shop.specialty==='spice'||variant===2){
-          shelves();for(let i=0;i<4;i++)bottle(30.8,1.55,-span*.65+i*span*.40,m.dim,.85);
+          shelves();
         }else{
           b(m.dark,30.80,.43,-span*.58,.95,.85,Math.min(1.65,width*.35));
           for(let i=0;i<3;i++)b(m.rust,30.80,.95+i*.19,-span*.58,.64,.16,.85);
@@ -120,6 +167,7 @@ export function buildPromenadeShops({group,box,beam,materials,colliders,shops,he
         rod(m.edge,[28.05,1.46,v+direction*.42],[28.42,1.24,v+direction*.70],.12);
         cylinder(m.edge,28.42,1.22,v+direction*.73,.13,.20);
       }
+      shelves(.25,1);
       rod(m.rib,[30.45,1.1,-span*.7],[30.20,2.6,-span*.7],.13);
       rod(m.rib,[30.20,2.6,-span*.7],[28.7,2.3,-span*.7],.12);
       b(m.warm,28.68,2.24,-span*.7,.18,.12,.3);
@@ -127,9 +175,11 @@ export function buildPromenadeShops({group,box,beam,materials,colliders,shops,he
       counter(m.rust,.94,1.45);
       // Draped bolts, a pressure-suit form and stacked textiles have no transparency.
       rod(m.edge,[30.40,2.85,-span],[30.40,2.85,span],.075);
-      for(let i=0;i<3;i++){
-        const v=-span*.65+i*span*.64;
-        b(i%2?m.sage:m.rust,30.42,1.93,v,.15,1.66,Math.min(.72,width*.14),0,(i-1)*.04);
+      // The rail is hung along its whole length, however wide the bay.
+      const lengths=Math.max(3,Math.round(width/1.5));
+      for(let i=0;i<lengths;i++){
+        const v=-span*.82+i*span*1.64/(lengths-1);
+        b(['#7d9a92','#a35a3c','#a09278','#4d5968','#c1b89e'][i%5],30.42,1.93,v,.15,1.66,Math.min(.72,width*.14),0,(i%3-1)*.04);
         b(m.warm,30.29,1.30,v,.055,.06,.55);
       }
       for(let i=0;i<3;i++)b(i%2?m.sage:m.rust,27.97,1.10+i*.15,span*.55,.70,.13,.88);
@@ -140,6 +190,7 @@ export function buildPromenadeShops({group,box,beam,materials,colliders,shops,he
     }else if(type==='charts'){
       counter(m.rib,.99,1.65);
       b(m.dark,30.91,2.1,0,.18,2.15,width-.65);
+      shelves(-1,-.45);shelves(.45,1);
       const radius=Math.min(1.0,width*.17);
       ring(30.72,2.15,0,radius);ring(30.65,2.15,0,radius*.63);
       crystal(30.60,2.15,0,radius*.28);
@@ -202,6 +253,7 @@ export function buildPromenadeShops({group,box,beam,materials,colliders,shops,he
       b(m.sage,29.03,1.52,v+w*.27,.065,.22,.62);
       b(m.amber,29.01,2.55,v,.035,.055,w-.38);
       for(let i=0;i<3;i++)b(m.sage,27.98,1.02+i*.16,span*.60,.60,.13,.86);
+      shelves(.35,1);
     }else if(type==='luggage'){
       counter(m.rib,.92,1.5);
       const v=-span*.58;
@@ -209,6 +261,7 @@ export function buildPromenadeShops({group,box,beam,materials,colliders,shops,he
         b(i%2?m.rust:m.sage,30.45,.44+i*.65,v,.95,.58,1.15-i*.12,0,0);
         b(m.edge,29.94,.42+i*.65,v,.06,.07,.45);
       }
+      shelves(.05,1);
       for(let i=0;i<2;i++){
         const vv=span*.12+i*span*.52;
         b(i%2?m.rust:m.dark,28.03,1.28,vv,.55,.60,.67);
@@ -218,10 +271,6 @@ export function buildPromenadeShops({group,box,beam,materials,colliders,shops,he
     }else if(type==='pharmacy'){
       counter(m.sage,1.08,1.60);
       shelves();
-      for(let i=0;i<4;i++){
-        const v=-span*.74+i*span*.49;
-        bottle(30.80,1.57,v,m.edge,.85);
-      }
       b(m.dark,28.12,1.31,-span*.45,.8,.34,.78);
       for(const v of[-.14,.14])bottle(28.10,1.51,-span*.45+v,m.warm,.64);
       b(m.warm,30.70,2.48,span*.62,.07,.62,.17);
@@ -234,11 +283,7 @@ export function buildPromenadeShops({group,box,beam,materials,colliders,shops,he
     if(staffTypes.has(type))vendorAnchors.push({id:shop.id,type,side,x:side*29.75,y:height,z:z+width*.17,face:side<0?Math.PI/2:-Math.PI/2});
   }
 
-  for(const[material,geometries]of curved){
-    const geometry=mergeGeometries(geometries);geometries.forEach(part=>part.dispose());
-    curveTriangles+=(geometry.index?.count??geometry.attributes.position.count)/3;
-    const mesh=new THREE.Mesh(geometry,material);mesh.name='Promenade / shaped merchandise';mesh.matrixAutoUpdate=false;group.add(mesh);
-  }
   // Station traversal owns all appended geometry and shared materials at disposal.
-  return{landmarks,vendorAnchors,surfaces:[],stats:{shops:shops.length,types:Object.keys(typeCounts).length,typeCounts,boxes:boxInstances,geometryTriangles:boxInstances*12+curveTriangles,curvedTriangles:curveTriangles,geometryDrawCalls:curved.size,geometryTextures:0,geometryLights:0,shopColliders:shops.length,perFrameUpdates:0}};
+  const fittings=kit.build(group);
+  return{landmarks,vendorAnchors,surfaces:[],stats:{shops:shops.length,types:Object.keys(typeCounts).length,typeCounts,boxes:boxInstances,geometryTriangles:fittings.triangles,geometryDrawCalls:fittings.drawCalls,geometryTextures:0,geometryLights:0,shopColliders:shops.length,perFrameUpdates:0}};
 }

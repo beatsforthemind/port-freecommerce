@@ -65,7 +65,8 @@ Travelers follow each area's real routes; readers sit on both observation levels
 | `src/signage.js` | One shared lettering sheet for every plain sign, readable from both sides |
 | `src/visibility.js` | Sorts what lies inside the concourse and skips it while no opening to it is in view |
 | `src/world.js` | Batched concourse architecture, balconies, floor, navigation sculpture |
-| `src/storefronts.js` | Backlit deck-level shop windows from one shared sheet |
+| `src/deck-shops.js` | The 22 Deck 01 shopfronts: fascias, doors, glazed display cases, stock, and price boards |
+| `src/shop-kit.js` | Shop fittings and stock in any colour, merged into static lit and self-lit meshes |
 | `src/districts.js` | Shared district batching, signs, travelers, and drones |
 | `src/district-observation.js` | Fan-shaped observatory, ramp, terrace, ringed planet, and quiet alcoves |
 | `src/district-market.js` | Irregular bazaar, winding streets, canopies, shop islands, and common court |
@@ -78,7 +79,7 @@ Travelers follow each area's real routes; readers sit on both observation levels
 | `src/escalator-layout.js` | Shared flight positions, landing connections, and balustrade openings |
 | `src/escalators.js` | GPU moving treads, direction nosings, automatic belt carry, and reduced-motion access |
 | `src/promenade-directory.js` | Original business catalog and a shared atlas for storefront signs and counter notices |
-| `src/promenade-shops.js` | Eleven types of stocked shops and stalls along both promenade walls |
+| `src/promenade-shops.js` | Eleven types of stocked shops along both promenade walls, each fitted out in its own colour |
 | `src/promenade-keepers.js` | Stationary merchants in one mesh, sharing the established human proportions |
 | `src/navigation.js` | Shared polygon floors, height sampling, vertical collisions, sector classification, and a cell index for fast queries |
 | `src/station-plan.js` | Station map generated from the real public floors |
@@ -133,6 +134,8 @@ The ships, signs, and visibility pass finishes what the lighting pass left open.
 The depth-fighting pass removes the flicker where two surfaces were drawn in the same place. Examples are a lift floor in the deck, the dock throat floor over the hall deck, the bulkhead piers inside their lintel, and a crate buried in a ramp, along with about seventy other patterns across every deck and district. Each fix gives one surface clear ownership of its plane. Floors, colliders and navigation are unchanged, except that the buried crate is removed. The renderer also uses a reversed depth buffer where the browser supports it. Across 910 standing views and 45 long sight lines, flickering pixels fell by 92% and 85%. See [depth fighting](docs/depth-fighting.md) for the causes, the rules for new geometry, the measurements, and what is left.
 
 The wardrobe pass makes the 116 human figures look like people who live on a station. Bodies and limbs are rounded instead of folded card; heads have a brow, a nose, ears and a jaw; hair is a separate cut shape in its own colours. Crew wear one-colour coveralls with seal collars, signal armbands, tall boots and deck helmets, and travellers wear long coats, trimmed jackets, vests over undersuits, or tunics. Faces stay featureless on purpose: no eyes, no mouth, and nothing across the eyes. Skeletons, routes and timetables are unchanged, and frame time on the test machine did not move. See [residents: rounded figures and a station wardrobe](docs/station-wardrobe.md) for the design choices and measured costs.
+
+The shopfront pass makes the station's businesses read as shops. Deck 01's flat picture windows are now 22 named businesses: provisions, noodle and tea bars, outfitters, chandlers, offices, bookshops, lockers, a pharmacy and a greenhouse. Each has a signed fascia, a door, a price board and a glazed display case about a metre deep, with real shelves and stock. The 32 promenade shops and the Exchange stalls are refitted in plain painted finishes in their own colours, with lit back walls and stocked shelves, where every counter used to be stencilled hull plate. Floors, colliders and routes are unchanged. See [shops and trading areas](docs/shopfronts.md) for the directory, the measured costs, and what is left.
 
 The imported foreground models are **Animated Robot**, **Scifi Computer**, **Tree Spiral**, and **Cooking Pot** by Quaternius, downloaded from Poly Pizza under CC0. The service unit uses its supplied idle animation. Repeated consoles, plants, and pots share geometry and materials. Selected terminal bodies, planter growth, specimen branches, and cookware proxies are omitted only after their replacement asset loads successfully; otherwise the procedural versions remain available. Creator/source links and exact file inspection records are in [model assets](docs/model-assets.md), [machine-readable metadata](docs/model-assets.json), and the in-app Controls credits link. Run `node scripts/inspect-glb.mjs public/models/poly-pizza/*.glb` to inspect the original files again.
 

@@ -8,7 +8,7 @@ import {buildPromenadeKeepers} from './promenade-keepers.js';
 import {splitPromenadeRail} from './escalator-layout.js';
 import {applyGlassSheen} from './kit.js';
 import {createSignage} from './signage.js';
-import {createStorefrontDisplays} from './storefronts.js';
+import {buildDeckShops,DECK_SHOPS} from './deck-shops.js';
 import {createSky} from './sky.js';
 import {CONCOURSE_INTERIOR} from './visibility.js';
 
@@ -133,7 +133,6 @@ export function createStation({glow = null, signage = null} = {}) {
   const deck = new THREE.Mesh(new THREE.PlaneGeometry(64, 230), deckMat);
   deck.rotation.x = -Math.PI / 2; deck.position.set(0, 0, -15); deck.receiveShadow = true; deck.userData.castShadow = false; group.add(deck);
 
-  const shopWindows = [];
   // A lit box's glow is made from its own shape, unless another box is set for it here.
   const glowShapes = new Map();
   // Layered pressure hull and the long, continuous vaulted roof.
@@ -205,19 +204,9 @@ export function createStation({glow = null, signage = null} = {}) {
     }
     for (let z = -118; z < 94; z += 16) {
       if (z > gapMin - 6 && z < gapMax + 6) continue;
-      // Inset storefronts, lit merchandise windows and rolling cargo shutters.
-      box(materials.rust, side * 31.7, 2.65, z, .28, 5.3, 12.6);
-      box(materials.dark, side * 31.4, 2.5, z, .3, 4.7, 11.8);
-      box(materials.warm, side * 31.17, 2.8, z - 2, .08, 2.8, 5.8);
-      // Its glow card stops at the face of the column rib to the north, which the full-size card ran 0.88 m into.
-      glowShapes.set(batches.get(materials.warm).at(-1), new THREE.Matrix4().makeScale(.08, 2.8, 4.92).setPosition(side * 31.17, 2.8, z - 1.56));
-      shopWindows.push({x: side * 31.12, y: 2.8, z: z - 2, width: 5.8, height: 2.8, facing: -side});
-      // Lit glazing spills onto the deck in front of it.
-      glow?.pool(side * 28.3, 0, z - 2, 2.5, '#f5dec0', .17, .8, 2.6);
-      for (let k = 0; k < 4; k++) box(materials.dark, side * 31.03, 2.7, z - 4.3 + k * 1.5, .1, 3.1, .15);
-      box(materials.shell, side * 31.06, 1.35, z - 2, .12, 1.2, 6.2);
-      box(materials.dark, side * 30.95, 3.6, z + 4, .14, 1.8, 2.3);
-      for (let l = 0; l < 6; l++) box(materials.rib, side * 30.84, 2.6 + l * .27, z + 4, .1, .055, 2.2);
+      // Each bay is framed in hull plate, with a business set into it (deck-shops.js) under a light strip.
+      for (const end of [-6.1, 6.1]) box(materials.rust, side * 31.7, 2.65, z + end, .28, 5.3, .4);
+      box(materials.rust, side * 31.7, 5.075, z, .28, .45, 11.8);
       box(materials.amber, side * 31.0, 5.2, z, .15, .1, 11.7);
       // Balconies reveal dense repeating hab windows at the higher levels.
       for (const yy of [11.5, 21.6, 27.7]) {
@@ -320,12 +309,6 @@ export function createStation({glow = null, signage = null} = {}) {
     ['OBSERVATION GALLERY   →', 22.7, 5.0, -19, -Math.PI / 2, '#c3dcd2'],
     ['CARGO / SERVICE', -30.6, 5.8, -51, Math.PI / 2, '#f8bc75'],
     ['PASSAGE / SUPPLY', 30.6, 5.8, 43, -Math.PI / 2, '#f8bc75'],
-    // These four hang clear in front of the wall exchangers, whose louvres stood through three of them,
-    // and in front of the glow that floats off the amber strip above them: nearer the wall, it cut through them.
-    ['NOODLES  /  24H', -30.2, 4.6, 83, Math.PI / 2, '#ffb75c'],
-    ['ORBITAL SUPPLY', 30.2, 4.6, 75, -Math.PI / 2, '#d2d8c9'],
-    ['CONTRACTS & CLAIMS', -30.2, 4.6, -99, Math.PI / 2, '#a8c7bf'],
-    ['SHORT-STAY HABITATS', 30.2, 4.6, -83, -Math.PI / 2, '#e7cc9b'],
   ];
   signs.forEach(([v,x,y,z,r,c]) => text(v,x,y,z,10.8,1.0,{rotation:r,color:c,size:65}));
 
@@ -373,8 +356,7 @@ export function createStation({glow = null, signage = null} = {}) {
   const sky = createSky();
   group.add(sky.group);
 
-  const storefronts = createStorefrontDisplays(shopWindows);
-  group.add(storefronts.mesh);
+  const deckShops = buildDeckShops({group, box, materials, glow, shops: DECK_SHOPS});
   const access = buildConcourseAccess({group,box,beam,text,materials,colliders});
   const promenade=buildPromenadeShops({group,box,beam,materials,colliders,shops:PROMENADE_SHOPS,height:PROMENADE_HEIGHT});
   const promenadeSigns=createPromenadeSigns({group,shops:PROMENADE_SHOPS,height:PROMENADE_HEIGHT});
@@ -430,10 +412,10 @@ export function createStation({glow = null, signage = null} = {}) {
   return {
     group, colliders, surfaces:access.surfaces, journeySurfaces:access.journeySurfaces,
     shops:PROMENADE_SHOPS,promenadeStats,
-    landmarks:[...access.landmarks,...shopLandmarks], routes:access.routes,
+    landmarks:[...access.landmarks,...shopLandmarks,...deckShops.landmarks], routes:access.routes,
     // Shown once the visitor is inside: on the arrival title it sits behind the copy.
     titleCardHidden:access.titleCardHidden,
-    stats:{...access.stats,promenadeShops:PROMENADE_SHOPS.length,glowFixtures,storefronts:storefronts.stats,sky:sky.stats,boxes:batchCounts},
+    stats:{...access.stats,promenadeShops:PROMENADE_SHOPS.length,glowFixtures,deckShops:deckShops.stats,sky:sky.stats,boxes:batchCounts},
     update(dt,_time,context = {}) {
       if (disposed) return;
       // Following the eye is placement, so it continues under reduced motion.

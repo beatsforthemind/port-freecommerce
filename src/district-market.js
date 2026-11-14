@@ -160,13 +160,13 @@ export function buildMarketDistrict({box, solid, footprint:registerFootprint, si
       for(const side of [-1,1]) B(tint,x,1.8,z+side*d/2,w,3.6,.22);
       // The counter front stops under the counter top (y .81), not inside it: their ends shared a plane.
       B(tint,faceX+.26,.405,z,.12,.81,d-.35);
-      B(m.cream,faceX,.90,z,.72,.18,d-.35);
+      B(m.stallTop,faceX,.90,z,.72,.18,d-.35);
       L(name,faceX+.09,3.55,z,d-.5,.86,Math.PI/2,'#eed0a0','#392f2b');
     }else{
       B(m.dark,x,2.45,z-d/2,w,4.9,.22);
       for(const side of [-1,1]) B(tint,x+side*w/2,1.8,z,.22,3.6,d);
       B(tint,x,.405,faceZ+.26,w-.35,.81,.12);
-      B(m.cream,x,.90,faceZ,w-.35,.18,.72);
+      B(m.stallTop,x,.90,faceZ,w-.35,.18,.72);
       L(name,x,3.65,faceZ+.08,w-.5,.86,0,'#eed0a0','#392f2b');
     }
     for(let row=0;row<3;row++){
@@ -175,7 +175,7 @@ export function buildMarketDistrict({box, solid, footprint:registerFootprint, si
       else B(m.steel,x,y,z-d/2+.3,w-.65,.075,.5);
       for(let i=0;i<7;i++){
         const along=(i-3)*(east?d:w)/8;
-        B(i%3?m.sage:m.cream,east?x-w/2+.45:x+along,y+.24,east?z+along:z-d/2+.45,east?.46:.6,.4,east?.6:.46);
+        B([m.stallSage,m.stallTop,m.cloth,m.stallRed][(i+row)%4],east?x-w/2+.45:x+along,y+.24,east?z+along:z-d/2+.45,east?.46:.6,.26+((i*7+row*3)%4)*.05,east?.6:.46);
       }
     }
     const vendorX=east?faceX-.75:x-1.1,vendorZ=east?z+1:faceZ-.75;
@@ -211,9 +211,9 @@ export function buildMarketDistrict({box, solid, footprint:registerFootprint, si
   }
 
   // These alternate sides of the route, so no sight line crosses the whole room.
-  stall({x:-49,z:27,w:10,d:8,face:'east',tint:m.rust,name:'SALT + STATIC',kind:'produce'});
-  stall({x:-64,z:35,w:9,d:9,face:'north',tint:m.sage,name:'HOT NOODLES / 24',kind:'food'});
-  stall({x:-81,z:18,w:12,d:8,face:'north',tint:m.red,name:'SECOND ORBIT',kind:'salvage'});
+  stall({x:-49,z:27,w:10,d:8,face:'east',tint:m.stallRust,name:'SALT + STATIC',kind:'produce'});
+  stall({x:-64,z:35,w:9,d:9,face:'north',tint:m.stallSage,name:'HOT NOODLES / 24',kind:'food'});
+  stall({x:-81,z:18,w:12,d:8,face:'north',tint:m.stallRed,name:'SECOND ORBIT',kind:'salvage'});
   stall({x:-91,z:43,w:6,d:7,face:'east',tint:m.cloth,name:'AFTER HOURS',kind:'salvage'});
 
   // The threshold and the second elbow have overlapping, lower fabric ceilings.
